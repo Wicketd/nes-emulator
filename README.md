@@ -63,7 +63,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] TSX
 - [x] TXA
 - [ ] TXS
-- [ ] TYA
+- [x] TYA
 
 ## Instruction modes
 - [ ] Byte

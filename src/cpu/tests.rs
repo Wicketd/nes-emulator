@@ -290,3 +290,14 @@ fn process_txa() {
     process_instruction(&mut cpu, &[TXA_IMPLIED]);
     assert_eq!(cpu.registers.a, cpu.registers.x);
 }
+
+#[test]
+fn process_tya() {
+    let mut cpu = cpu(bus());
+
+    process_instruction(&mut cpu, &[INY_IMPLIED]);
+    assert_eq!(cpu.registers.y, 0x01);
+
+    process_instruction(&mut cpu, &[TYA_IMPLIED]);
+    assert_eq!(cpu.registers.a, cpu.registers.y);
+}

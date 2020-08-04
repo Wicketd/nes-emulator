@@ -57,6 +57,7 @@ impl Instruction {
             TAX_IMPLIED     => (Tax, Implied,     1, 2),
             TAY_IMPLIED     => (Tay, Implied,     1, 2),
             TXA_IMPLIED     => (Txa, Implied,     1, 2),
+            TYA_IMPLIED     => (Tya, Implied,     1, 2),
         }
     }
 }

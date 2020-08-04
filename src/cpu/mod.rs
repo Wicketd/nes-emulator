@@ -127,7 +127,7 @@ impl Cpu {
             InstructionOperation::Tsx => unimplemented!("execute | Tsx"),
             InstructionOperation::Txa => self.run_txa(),
             InstructionOperation::Txs => unimplemented!("execute | Txs"),
-            InstructionOperation::Tya => unimplemented!("execute | Tya"),
+            InstructionOperation::Tya => self.run_tya(),
         };
 
         Ok(())
@@ -432,7 +432,7 @@ impl Cpu {
     }
 
     fn run_tya(&mut self) {
-        unimplemented!("run | tya");
+        self.registers.a = self.registers.y;
     }
 }
 

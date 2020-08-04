@@ -22,4 +22,5 @@ opcodes! {
     TAX_IMPLIED     = 0xAA;
     TAY_IMPLIED     = 0xA8;
     TXA_IMPLIED     = 0x8A;
+    TYA_IMPLIED     = 0x98;
 }
