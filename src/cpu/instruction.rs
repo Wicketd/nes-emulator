@@ -51,6 +51,7 @@ impl Instruction {
             SED_IMPLIED   => (Sed, Implied,   1, 2),
             SEI_IMPLIED   => (Sei, Implied,   1, 2),
             TAX_IMPLIED   => (Tax, Implied,   1, 2),
+            TAY_IMPLIED   => (Tay, Implied,   1, 2),
         }
     }
 }

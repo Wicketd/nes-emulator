@@ -120,7 +120,7 @@ impl Cpu {
             InstructionOperation::Stx => unimplemented!("execute | Stx"),
             InstructionOperation::Sty => unimplemented!("execute | Sty"),
             InstructionOperation::Tax => self.run_tax(),
-            InstructionOperation::Tay => unimplemented!("execute | Tay"),
+            InstructionOperation::Tay => self.run_tay(),
             InstructionOperation::Tsx => unimplemented!("execute | Tsx"),
             InstructionOperation::Txa => unimplemented!("execute | Txa"),
             InstructionOperation::Txs => unimplemented!("execute | Txs"),
@@ -367,7 +367,7 @@ impl Cpu {
     }
 
     fn run_tay(&mut self) {
-        unimplemented!("run | tay");
+        self.registers.y = self.registers.a;
     }
 
     fn run_tsx(&mut self) {
@@ -646,5 +646,13 @@ mod tests {
         process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x40]);
         process_instruction(&mut cpu, &[TAX_IMPLIED]);
         assert_eq!(cpu.registers.x, cpu.registers.a);
+    }
+
+    #[test]
+    fn process_tay() {
+        let mut cpu = cpu(bus());
+        process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x40]);
+        process_instruction(&mut cpu, &[TAY_IMPLIED]);
+        assert_eq!(cpu.registers.y, cpu.registers.a);
     }
 }
