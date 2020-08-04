@@ -12,4 +12,5 @@ opcodes! {
     LDA_ABSOLUTE    = 0xAD;
     NOP_IMPLIED     = 0xEA;
     SEC_IMPLIED     = 0x38;
+    SEI_IMPLIED     = 0x78;
 }

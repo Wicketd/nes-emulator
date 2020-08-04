@@ -118,7 +118,7 @@ impl Cpu {
             InstructionOperation::Sbc => unimplemented!("execute | Sbc"),
             InstructionOperation::Sec => self.run_sec(),
             InstructionOperation::Sed => unimplemented!("execute | Sed"),
-            InstructionOperation::Sei => unimplemented!("execute | Sei"),
+            InstructionOperation::Sei => self.run_sei(),
             InstructionOperation::Sta => unimplemented!("execute | Sta"),
             InstructionOperation::Stx => unimplemented!("execute | Stx"),
             InstructionOperation::Sty => unimplemented!("execute | Sty"),
@@ -350,7 +350,7 @@ impl Cpu {
     }
 
     fn run_sei(&mut self) {
-        unimplemented!("run | sei");
+        self.registers.p.insert(StatusFlags::INTERRUPT_DISABLE);
     }
 
     fn run_sta(&mut self, target: Address) {
@@ -517,6 +517,7 @@ impl Instruction {
             LDA_ABSOLUTE  => (Lda, Absolute,  3, 4),
             NOP_IMPLIED   => (Nop, Implied,   1, 2),
             SEC_IMPLIED   => (Sec, Implied,   1, 2),
+            SEI_IMPLIED   => (Sei, Implied,   1, 2),
         }
     }
 }
@@ -562,7 +563,9 @@ mod tests {
     }
 
     fn cpu(bus: Bus) -> Cpu {
-        Cpu::new(bus).unwrap()
+        let cpu = Cpu::new(bus).unwrap();
+        assert_eq!(cpu.registers.p, StatusFlags::empty());
+        cpu
     }
 
     fn write_instruction(cpu: &mut Cpu, bytes: &[u8]) {
@@ -656,9 +659,14 @@ mod tests {
     #[test]
     fn process_sec() {
         let mut cpu = cpu(bus());
-        assert_eq!(cpu.registers.p, StatusFlags::empty());
-
         process_instruction(&mut cpu, &[SEC_IMPLIED]);
         assert_eq!(cpu.registers.p, StatusFlags::CARRY);
+    }
+
+    #[test]
+    fn process_sei() {
+        let mut cpu = cpu(bus());
+        process_instruction(&mut cpu, &[SEI_IMPLIED]);
+        assert_eq!(cpu.registers.p, StatusFlags::INTERRUPT_DISABLE);
     }
 }
