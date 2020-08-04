@@ -28,7 +28,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] EOR
 - [x] CLC
 - [x] SEC
-- [ ] CLI
+- [x] CLI
 - [x] SEI
 - [ ] CLV
 - [ ] CLD
