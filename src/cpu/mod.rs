@@ -85,7 +85,7 @@ impl Cpu {
             InstructionOperation::Bvs => unimplemented!("execute | Bvs"),
             InstructionOperation::Clc => self.run_clc(),
             InstructionOperation::Cld => unimplemented!("execute | Cld"),
-            InstructionOperation::Cli => unimplemented!("execute | Cli"),
+            InstructionOperation::Cli => self.run_cli(),
             InstructionOperation::Clv => unimplemented!("execute | Clv"),
             InstructionOperation::Cmp => unimplemented!("execute | Cmp"),
             InstructionOperation::Cpx => unimplemented!("execute | Cpx"),
@@ -227,7 +227,7 @@ impl Cpu {
     }
 
     fn run_cli(&mut self) {
-        unimplemented!("run | cli");
+        self.registers.p.remove(StatusFlags::INTERRUPT_DISABLE);
     }
 
     fn run_clv(&mut self) {
@@ -514,6 +514,7 @@ impl Instruction {
             // opcode => (operation, mode, len, cycles_base)
             ADC_IMMEDIATE => (Adc, Immediate, 2, 2),
             CLC_IMPLIED   => (Clc, Implied,   1, 2),
+            CLI_IMPLIED   => (Cli, Implied,   1, 2),
             LDA_ABSOLUTE  => (Lda, Absolute,  3, 4),
             NOP_IMPLIED   => (Nop, Implied,   1, 2),
             SEC_IMPLIED   => (Sec, Implied,   1, 2),
@@ -633,6 +634,17 @@ mod tests {
 
         process_instruction(&mut cpu, &[CLC_IMPLIED]);
         assert_eq!(cpu.registers.p, StatusFlags::OVERFLOW);
+    }
+
+    #[test]
+    fn process_cli() {
+        let mut cpu = cpu(bus());
+
+        process_instruction(&mut cpu, &[SEI_IMPLIED]);
+        assert_eq!(cpu.registers.p, StatusFlags::INTERRUPT_DISABLE);
+
+        process_instruction(&mut cpu, &[CLI_IMPLIED]);
+        assert_eq!(cpu.registers.p, StatusFlags::empty());
     }
 
     #[test]
