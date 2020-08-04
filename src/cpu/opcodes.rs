@@ -15,6 +15,7 @@ opcodes! {
     INX_IMPLIED     = 0xE8;
     INY_IMPLIED     = 0xC8;
     LDA_ABSOLUTE    = 0xAD;
+    LDX_IMMEDIATE   = 0xA2;
     NOP_IMPLIED     = 0xEA;
     SEC_IMPLIED     = 0x38;
     SED_IMPLIED     = 0xF8;

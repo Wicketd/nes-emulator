@@ -117,6 +117,7 @@ fn process_asl_accumulator() {
 
 #[test]
 // TODO: set X with LDX
+// TODO: is this test necessary?
 fn process_asl_zero_page_x() {
     let mut bus = bus();
     let address = ADDRESS_ZERO_PAGE + (OFFSET_REGISTER_X as Address);
@@ -240,6 +241,23 @@ fn process_lda() {
 
     process_instruction(&mut cpu,  &[LDA_ABSOLUTE, ADDRESS_INDIRECT_LOW + 2, ADDRESS_INDIRECT_HIGH]);
     assert_eq!(cpu.registers.a, 0x80);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
+
+#[test]
+fn process_ldx() {
+    let mut cpu = cpu(bus());
+
+    process_instruction(&mut cpu, &[LDX_IMMEDIATE, 0x10]);
+    assert_eq!(cpu.registers.x, 0x10);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    process_instruction(&mut cpu, &[LDX_IMMEDIATE, 0x00]);
+    assert_eq!(cpu.registers.x, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    process_instruction(&mut cpu, &[LDX_IMMEDIATE, 0xFF]);
+    assert_eq!(cpu.registers.x, 0xFF);
     assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
 
