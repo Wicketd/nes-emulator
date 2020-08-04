@@ -1,5 +1,7 @@
+mod instruction;
 mod opcodes;
 
+use self::instruction::{Instruction, InstructionMode, InstructionOperation};
 use self::opcodes::*;
 use crate::bus::Bus;
 use crate::types::{Address, Result, BitRead};
@@ -41,7 +43,7 @@ impl Cpu {
         let instruction = Instruction::from_opcode(opcode);
 
         // TODO: check if this is correct
-        if self.registers.pc + (instruction.len as Address) < ADDRESS_NMI {
+        if self.registers.pc + (instruction.len() as Address) < ADDRESS_NMI {
             Ok(Some(instruction))
         } else {
             Ok(None)
@@ -56,7 +58,7 @@ impl Cpu {
         // account for opcode
         self.registers.pc += 1;
 
-        let instruction_len = instruction.len;
+        let instruction_len = instruction.len();
         self.run_instruction(instruction)?;
         self.registers.pc += (instruction_len as Address) - 1;
 
@@ -65,9 +67,9 @@ impl Cpu {
 
     // TODO: find clean way to prevent unwrapping
     fn run_instruction(&mut self, instruction: Instruction) -> Result {
-        match instruction.operation {
+        match instruction.operation() {
             InstructionOperation::Adc => {
-                self.run_adc(self.determine_input_byte(instruction.mode)?.unwrap());
+                self.run_adc(self.determine_input_byte(instruction.mode())?.unwrap());
             },
             InstructionOperation::And => unimplemented!("execute | And"),
             InstructionOperation::Asl => unimplemented!("execute | Asl"),
@@ -100,7 +102,7 @@ impl Cpu {
             InstructionOperation::Jmp => unimplemented!("execute | Jmp"),
             InstructionOperation::Jsr => unimplemented!("execute | Jsr"),
             InstructionOperation::Lda => {
-                self.run_lda(self.determine_input_byte(instruction.mode)?.unwrap());
+                self.run_lda(self.determine_input_byte(instruction.mode())?.unwrap());
             },
             InstructionOperation::Ldx => unimplemented!("execute | Ldx"),
             InstructionOperation::Ldy => unimplemented!("execute | Ldy"),
@@ -471,81 +473,6 @@ enum BreakType {
 enum Location {
     Accumulator,
     Address(Address),
-}
-
-#[derive(Debug)]
-struct Instruction {
-    opcode: u8,
-    operation: InstructionOperation,
-    mode: InstructionMode,
-    len: u8,
-    cycles_base: u8,
-}
-
-macro_rules! match_opcode {
-    (
-        use $opcode_ident:ident;
-
-        $($opcode:ident => (
-            $operation:ident,
-            $mode:ident,
-            $len:literal,
-            $cycles_base:literal
-        ),)+
-    ) => {
-        match $opcode_ident {
-            $($opcode => Instruction {
-                opcode: $opcode,
-                operation: InstructionOperation::$operation,
-                mode: InstructionMode::$mode,
-                len: $len,
-                cycles_base: $cycles_base,
-            },)+
-            _ => unimplemented!("no instruction found for opcode `${:02X}`", $opcode_ident),
-        }
-    };
-}
-
-impl Instruction {
-    fn from_opcode(opcode: u8) -> Self {
-        match_opcode! {
-            use opcode;
-
-            // opcode => (operation, mode, len, cycles_base)
-            ADC_IMMEDIATE => (Adc, Immediate, 2, 2),
-            CLC_IMPLIED   => (Clc, Implied,   1, 2),
-            CLI_IMPLIED   => (Cli, Implied,   1, 2),
-            LDA_ABSOLUTE  => (Lda, Absolute,  3, 4),
-            NOP_IMPLIED   => (Nop, Implied,   1, 2),
-            SEC_IMPLIED   => (Sec, Implied,   1, 2),
-            SEI_IMPLIED   => (Sei, Implied,   1, 2),
-        }
-    }
-}
-
-#[derive(Debug)]
-enum InstructionOperation {
-    Adc, And, Asl, Bcc, Bcs, Beq, Bit, Bmi, Bne, Bpl, Brk, Bvc, Bvs, Clc,
-    Cld, Cli, Clv, Cmp, Cpx, Cpy, Dec, Dex, Dey, Eor, Inc, Inx, Iny, Jmp,
-    Jsr, Lda, Ldx, Ldy, Lsr, Nop, Ora, Pha, Php, Pla, Plp, Rol, Ror, Rti,
-    Rts, Sbc, Sec, Sed, Sei, Sta, Stx, Sty, Tax, Tay, Tsx, Txa, Txs, Tya,
-}
-
-#[derive(Debug)]
-enum InstructionMode {
-    Implied,
-    Accumulator,
-    Immediate,
-    Relative,
-    ZeroPage,
-    ZeroPageX,
-    ZeroPageY,
-    Absolute,
-    AbsoluteX,
-    AbsoluteY,
-    Indirect,
-    IndirectX,
-    IndirectY,
 }
 
 #[cfg(test)]

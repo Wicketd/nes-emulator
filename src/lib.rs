@@ -2,6 +2,8 @@
 extern crate anyhow;
 #[macro_use]
 extern crate bitflags;
+#[macro_use]
+extern crate getset;
 
 mod types;
 mod bus;

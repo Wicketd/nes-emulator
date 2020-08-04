@@ -7,3 +7,4 @@ edition = "2018"
 [dependencies]
 anyhow = "1.0.31"
 bitflags = "1.2.1"
+getset = "0.1.1"
