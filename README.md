@@ -32,7 +32,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [x] SEI
 - [x] CLV
 - [ ] CLD
-- [ ] SED
+- [x] SED
 - [ ] INC
 - [ ] JMP
 - [ ] JSR

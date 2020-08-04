@@ -118,7 +118,7 @@ impl Cpu {
             InstructionOperation::Rts => unimplemented!("execute | Rts"),
             InstructionOperation::Sbc => unimplemented!("execute | Sbc"),
             InstructionOperation::Sec => self.run_sec(),
-            InstructionOperation::Sed => unimplemented!("execute | Sed"),
+            InstructionOperation::Sed => self.run_sed(),
             InstructionOperation::Sei => self.run_sei(),
             InstructionOperation::Sta => unimplemented!("execute | Sta"),
             InstructionOperation::Stx => unimplemented!("execute | Stx"),
@@ -347,7 +347,7 @@ impl Cpu {
     }
 
     fn run_sed(&mut self) {
-        unimplemented!("run | sed");
+        self.registers.p.insert(StatusFlags::DECIMAL);
     }
 
     fn run_sei(&mut self) {
@@ -613,6 +613,13 @@ mod tests {
         let mut cpu = cpu(bus());
         process_instruction(&mut cpu, &[SEC_IMPLIED]);
         assert_eq!(cpu.registers.p, StatusFlags::CARRY);
+    }
+
+    #[test]
+    fn process_sed() {
+        let mut cpu = cpu(bus());
+        process_instruction(&mut cpu, &[SED_IMPLIED]);
+        assert_eq!(cpu.registers.p, StatusFlags::DECIMAL);
     }
 
     #[test]

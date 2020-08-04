@@ -47,6 +47,7 @@ impl Instruction {
             LDA_ABSOLUTE  => (Lda, Absolute,  3, 4),
             NOP_IMPLIED   => (Nop, Implied,   1, 2),
             SEC_IMPLIED   => (Sec, Implied,   1, 2),
+            SED_IMPLIED   => (Sed, Implied,   1, 2),
             SEI_IMPLIED   => (Sei, Implied,   1, 2),
         }
     }
