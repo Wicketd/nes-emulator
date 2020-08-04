@@ -9,6 +9,7 @@ opcodes! {
     ADC_ZERO_PAGE   = 0x65;
     ADC_ZERO_PAGE_X = 0x75;
     CLC_IMPLIED     = 0x18;
+    CLD_IMPLIED     = 0xD8;
     CLI_IMPLIED     = 0x58;
     CLV_IMPLIED     = 0xB8;
     LDA_ABSOLUTE    = 0xAD;

@@ -42,6 +42,7 @@ impl Instruction {
             // opcode => (operation, mode, len, cycles_base)
             ADC_IMMEDIATE => (Adc, Immediate, 2, 2),
             CLC_IMPLIED   => (Clc, Implied,   1, 2),
+            CLD_IMPLIED   => (Cld, Implied,   1, 2),
             CLI_IMPLIED   => (Cli, Implied,   1, 2),
             CLV_IMPLIED   => (Clv, Implied,   1, 2),
             LDA_ABSOLUTE  => (Lda, Absolute,  3, 4),

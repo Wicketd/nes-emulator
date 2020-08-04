@@ -31,7 +31,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [x] CLI
 - [x] SEI
 - [x] CLV
-- [ ] CLD
+- [x] CLD
 - [x] SED
 - [ ] INC
 - [ ] JMP

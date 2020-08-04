@@ -85,7 +85,7 @@ impl Cpu {
             InstructionOperation::Bvc => unimplemented!("execute | Bvc"),
             InstructionOperation::Bvs => unimplemented!("execute | Bvs"),
             InstructionOperation::Clc => self.run_clc(),
-            InstructionOperation::Cld => unimplemented!("execute | Cld"),
+            InstructionOperation::Cld => self.run_cld(),
             InstructionOperation::Cli => self.run_cli(),
             InstructionOperation::Clv => self.run_clv(),
             InstructionOperation::Cmp => unimplemented!("execute | Cmp"),
@@ -224,7 +224,7 @@ impl Cpu {
     }
 
     fn run_cld(&mut self) {
-        unimplemented!("run | cld");
+        self.registers.p.remove(StatusFlags::DECIMAL);
     }
 
     fn run_cli(&mut self) {
@@ -561,6 +561,17 @@ mod tests {
 
         process_instruction(&mut cpu, &[CLC_IMPLIED]);
         assert_eq!(cpu.registers.p, StatusFlags::OVERFLOW);
+    }
+
+    #[test]
+    fn process_cld() {
+        let mut cpu = cpu(bus());
+
+        process_instruction(&mut cpu, &[SED_IMPLIED]);
+        assert_eq!(cpu.registers.p, StatusFlags::DECIMAL);
+
+        process_instruction(&mut cpu, &[CLD_IMPLIED]);
+        assert_eq!(cpu.registers.p, StatusFlags::empty());
     }
 
     #[test]
