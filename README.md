@@ -8,7 +8,7 @@ This README really only functions as my personal to-do list. Why are you here?
 
 Note: Partial mode coverage, implement full mode coverage after the instructions themselves.
 
-- [ ] ADC
+- [x] ADC
 - [ ] AND
 - [ ] ASL
 - [ ] BIT
