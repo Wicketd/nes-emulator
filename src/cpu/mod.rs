@@ -105,7 +105,9 @@ impl Cpu {
             InstructionOperation::Ldx => {
                 self.run_ldx(self.determine_input_byte(instruction.mode())?.unwrap());
             },
-            InstructionOperation::Ldy => unimplemented!("execute | Ldy"),
+            InstructionOperation::Ldy => {
+                self.run_ldy(self.determine_input_byte(instruction.mode())?.unwrap());
+            },
             InstructionOperation::Lsr => unimplemented!("execute | Lsr"),
             InstructionOperation::Nop => {},
             InstructionOperation::Ora => unimplemented!("execute | Ora"),
@@ -345,7 +347,10 @@ impl Cpu {
     }
 
     fn run_ldy(&mut self, input: u8) {
-        unimplemented!("run | ldy");
+        self.registers.y = input;
+
+        self.registers.p.set(StatusFlags::ZERO, self.registers.y == 0);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(self.registers.y));
     }
 
     fn run_lsr(&mut self, target: Location) {

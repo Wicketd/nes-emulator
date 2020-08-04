@@ -39,7 +39,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] JSR
 - [x] LDA
 - [x] LDX
-- [ ] LDY
+- [x] LDY
 - [ ] LSR
 - [x] NOP
 - [ ] ORA

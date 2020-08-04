@@ -51,6 +51,7 @@ impl Instruction {
             INY_IMPLIED     => (Iny, Implied,     1, 2),
             LDA_ABSOLUTE    => (Lda, Absolute,    3, 4),
             LDX_IMMEDIATE   => (Ldx, Immediate,   2, 2),
+            LDY_IMMEDIATE   => (Ldy, Immediate,   2, 2),
             NOP_IMPLIED     => (Nop, Implied,     1, 2),
             SEC_IMPLIED     => (Sec, Implied,     1, 2),
             SED_IMPLIED     => (Sed, Implied,     1, 2),

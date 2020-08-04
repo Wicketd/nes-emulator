@@ -262,6 +262,23 @@ fn process_ldx() {
 }
 
 #[test]
+fn process_ldy() {
+    let mut cpu = cpu(bus());
+
+    process_instruction(&mut cpu, &[LDY_IMMEDIATE, 0x10]);
+    assert_eq!(cpu.registers.y, 0x10);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    process_instruction(&mut cpu, &[LDY_IMMEDIATE, 0x00]);
+    assert_eq!(cpu.registers.y, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    process_instruction(&mut cpu, &[LDY_IMMEDIATE, 0xFF]);
+    assert_eq!(cpu.registers.y, 0xFF);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
+
+#[test]
 fn process_sec() {
     let mut cpu = cpu(bus());
     process_instruction(&mut cpu, &[SEC_IMPLIED]);
