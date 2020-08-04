@@ -95,7 +95,7 @@ impl Cpu {
             InstructionOperation::Ldx => unimplemented!("execute | Ldx"),
             InstructionOperation::Ldy => unimplemented!("execute | Ldy"),
             InstructionOperation::Lsr => unimplemented!("execute | Lsr"),
-            InstructionOperation::Nop => unimplemented!("execute | Nop"),
+            InstructionOperation::Nop => {},
             InstructionOperation::Ora => unimplemented!("execute | Ora"),
             InstructionOperation::Pha => unimplemented!("execute | Pha"),
             InstructionOperation::Php => unimplemented!("execute | Php"),
@@ -283,7 +283,6 @@ impl Instruction {
     }
 }
 
-#[allow(dead_code)] // TODO: remove me
 enum InstructionOperation {
     Adc, And, Asl, Bcc, Bcs, Beq, Bit, Bmi, Bne, Bpl, Brk, Bvc, Bvs, Clc,
     Cld, Cli, Clv, Cmp, Cpx, Cpy, Dec, Dex, Dey, Eor, Inc, Inx, Iny, Jmp,
