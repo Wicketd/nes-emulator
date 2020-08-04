@@ -30,7 +30,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [x] SEC
 - [x] CLI
 - [x] SEI
-- [ ] CLV
+- [x] CLV
 - [ ] CLD
 - [ ] SED
 - [ ] INC

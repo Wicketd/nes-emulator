@@ -2,7 +2,6 @@ mod instruction;
 mod opcodes;
 
 use self::instruction::{Instruction, InstructionMode, InstructionOperation};
-use self::opcodes::*;
 use crate::bus::Bus;
 use crate::types::{Address, Result, BitRead};
 
@@ -88,7 +87,7 @@ impl Cpu {
             InstructionOperation::Clc => self.run_clc(),
             InstructionOperation::Cld => unimplemented!("execute | Cld"),
             InstructionOperation::Cli => self.run_cli(),
-            InstructionOperation::Clv => unimplemented!("execute | Clv"),
+            InstructionOperation::Clv => self.run_clv(),
             InstructionOperation::Cmp => unimplemented!("execute | Cmp"),
             InstructionOperation::Cpx => unimplemented!("execute | Cpx"),
             InstructionOperation::Cpy => unimplemented!("execute | Cpy"),
@@ -233,7 +232,7 @@ impl Cpu {
     }
 
     fn run_clv(&mut self) {
-        unimplemented!("run | clv");
+        self.registers.p.remove(StatusFlags::OVERFLOW);
     }
 
     fn run_cmp(&mut self, input: u8) {
@@ -478,6 +477,7 @@ enum Location {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::cpu::opcodes::*;
 
     const ADDRESS_PRG: Address = 0x8000;
     const ADDRESS_INDIRECT: Address = 0x2000;
@@ -572,6 +572,19 @@ mod tests {
 
         process_instruction(&mut cpu, &[CLI_IMPLIED]);
         assert_eq!(cpu.registers.p, StatusFlags::empty());
+    }
+
+    #[test]
+    fn process_clv() {
+        let mut cpu = cpu(bus());
+
+        process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0xFF]);
+        process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x02]);
+        assert_eq!(cpu.registers.a, 0x01);
+        assert_eq!(cpu.registers.p, StatusFlags::OVERFLOW | StatusFlags::CARRY);
+
+        process_instruction(&mut cpu, &[CLV_IMPLIED]);
+        assert_eq!(cpu.registers.p, StatusFlags::CARRY);
     }
 
     #[test]
