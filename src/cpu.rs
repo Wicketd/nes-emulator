@@ -56,10 +56,11 @@ impl Cpu {
         Ok(())
     }
 
+    // TODO: find clean way to prevent unwrapping
     fn run_instruction(&mut self, instruction: Instruction) -> Result {
         match instruction.operation {
             InstructionOperation::Adc => {
-                self.run_adc(self.determine_input_byte(&instruction).unwrap());
+                self.run_adc(self.determine_input_byte(instruction.mode)?.unwrap());
             },
             InstructionOperation::And => unimplemented!("execute | And"),
             InstructionOperation::Asl => unimplemented!("execute | Asl"),
@@ -91,7 +92,9 @@ impl Cpu {
             InstructionOperation::Iny => unimplemented!("execute | Iny"),
             InstructionOperation::Jmp => unimplemented!("execute | Jmp"),
             InstructionOperation::Jsr => unimplemented!("execute | Jsr"),
-            InstructionOperation::Lda => unimplemented!("execute | Lda"),
+            InstructionOperation::Lda => {
+                self.run_lda(self.determine_input_byte(instruction.mode)?.unwrap());
+            },
             InstructionOperation::Ldx => unimplemented!("execute | Ldx"),
             InstructionOperation::Ldy => unimplemented!("execute | Ldy"),
             InstructionOperation::Lsr => unimplemented!("execute | Lsr"),
@@ -123,22 +126,29 @@ impl Cpu {
         Ok(())
     }
 
-    fn determine_input_byte(&self, instruction: &Instruction) -> Option<u8> {
-        match instruction.mode {
+    fn determine_input_byte(&self, instruction_mode: InstructionMode) -> Result<Option<u8>> {
+        let input = match instruction_mode {
             InstructionMode::Implied => None,
             InstructionMode::Accumulator => unimplemented!("input byte | Accumulator"),
-            InstructionMode::Immediate => Some(self.bus.read(self.registers.pc)),
+            InstructionMode::Immediate => {
+                Some(self.bus.read(self.registers.pc))
+            },
             InstructionMode::Relative => unimplemented!("input byte | Relative"),
             InstructionMode::ZeroPage => unimplemented!("input byte | ZeroPage"),
             InstructionMode::ZeroPageX => unimplemented!("input byte | ZeroPageX"),
             InstructionMode::ZeroPageY => unimplemented!("input byte | ZeroPageY"),
-            InstructionMode::Absolute => unimplemented!("input byte | Absolute"),
+            InstructionMode::Absolute => {
+                let address = self.bus.read_u16(self.registers.pc)?;
+                Some(self.bus.read(address))
+            },
             InstructionMode::AbsoluteX => unimplemented!("input byte | AbsoluteX"),
             InstructionMode::AbsoluteY => unimplemented!("input byte | AbsoluteY"),
             InstructionMode::Indirect => unimplemented!("input byte | Indirect"),
             InstructionMode::IndirectX => unimplemented!("input byte | IndirectX"),
             InstructionMode::IndirectY => unimplemented!("input byte | IndirectY"),
-        }
+        };
+
+        Ok(input)
     }
 
     fn run_adc(&mut self, input: u8) {
@@ -151,6 +161,225 @@ impl Cpu {
         self.registers.p.set(StatusFlags::ZERO, a_new == 0);
         self.registers.p.set(StatusFlags::OVERFLOW, has_overflown(a_old, a_new));
         self.registers.p.set(StatusFlags::NEGATIVE, is_negative(a_new));
+    }
+
+    fn run_and(&mut self, input: u8) {
+        unimplemented!("run | and");
+    }
+
+    fn run_asl(&mut self, target: Location) {
+        unimplemented!("run | asl");
+    }
+
+    fn run_bcc(&mut self, target: Address) {
+        unimplemented!("run | bcc");
+    }
+
+    fn run_bcs(&mut self, target: Address) {
+        unimplemented!("run | bcs");
+    }
+
+    fn run_beq(&mut self, target: Address) {
+        unimplemented!("run | beq");
+    }
+
+    fn run_bit(&mut self, target: Address) {
+        unimplemented!("run | bit");
+    }
+
+    fn run_bmi(&mut self, target: Address) {
+        unimplemented!("run | bmi");
+    }
+
+    fn run_bne(&mut self, target: Location) {
+        unimplemented!("run | bne");
+    }
+
+    fn run_bpl(&mut self, target: Location) {
+        unimplemented!("run | bpl");
+    }
+
+    fn run_brk(&mut self) {
+        unimplemented!("run | brk");
+    }
+
+    fn run_bvc(&mut self, target: Address) {
+        unimplemented!("run | bvc");
+    }
+
+    fn run_bvs(&mut self, target: Address) {
+        unimplemented!("run | bvs");
+    }
+
+    fn run_clc(&mut self) {
+        unimplemented!("run | clc");
+    }
+
+    fn run_cld(&mut self) {
+        unimplemented!("run | cld");
+    }
+
+    fn run_cli(&mut self) {
+        unimplemented!("run | cli");
+    }
+
+    fn run_clv(&mut self) {
+        unimplemented!("run | clv");
+    }
+
+    fn run_cmp(&mut self, input: u8) {
+        unimplemented!("run | cmp");
+    }
+
+    fn run_cpx(&mut self, input: u8) {
+        unimplemented!("run | cpx");
+    }
+
+    fn run_cpy(&mut self, input: u8) {
+        unimplemented!("run | cpy");
+    }
+
+    fn run_dec(&mut self, target: Address) {
+        unimplemented!("run | dec");
+    }
+
+    fn run_dex(&mut self) {
+        unimplemented!("run | dex");
+    }
+
+    fn run_dey(&mut self) {
+        unimplemented!("run | dey");
+    }
+
+    fn run_eor(&mut self, input: u8) {
+        unimplemented!("run | eor");
+    }
+
+    fn run_inc(&mut self, target: Address) {
+        unimplemented!("run | inc");
+    }
+
+    fn run_inx(&mut self) {
+        unimplemented!("run | inx");
+    }
+
+    fn run_iny(&mut self) {
+        unimplemented!("run | iny");
+    }
+
+    fn run_jmp(&mut self, target: Address) {
+        unimplemented!("run | jmp");
+    }
+
+    fn run_jsr(&mut self, target: Address) {
+        unimplemented!("run | jsr");
+    }
+
+    fn run_lda(&mut self, input: u8) {
+        self.registers.a = input;
+
+        self.registers.p.set(StatusFlags::ZERO, self.registers.a == 0);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(self.registers.a));
+    }
+
+    fn run_ldx(&mut self, input: u8) {
+        unimplemented!("run | ldx");
+    }
+
+    fn run_ldy(&mut self, input: u8) {
+        unimplemented!("run | ldy");
+    }
+
+    fn run_lsr(&mut self, target: Location) {
+        unimplemented!("run | lsr");
+    }
+
+    fn run_ora(&mut self, input: u8) {
+        unimplemented!("run | ora");
+    }
+
+    fn run_pha(&mut self) {
+        unimplemented!("run | pha");
+    }
+
+    fn run_php(&mut self) {
+        unimplemented!("run | php");
+    }
+
+    fn run_pla(&mut self) {
+        unimplemented!("run | pla");
+    }
+
+    fn run_plp(&mut self) {
+        unimplemented!("run | plp");
+    }
+
+    fn run_rol(&mut self, target: Location) {
+        unimplemented!("run | rol");
+    }
+
+    fn run_ror(&mut self, target: Location) {
+        unimplemented!("run | ror");
+    }
+
+    fn run_rti(&mut self) {
+        unimplemented!("run | rti");
+    }
+
+    fn run_rts(&mut self) {
+        unimplemented!("run | rts");
+    }
+
+    fn run_sbc(&mut self, input: u8) {
+        unimplemented!("run | sbc");
+    }
+
+    fn run_sec(&mut self) {
+        unimplemented!("run | sec");
+    }
+
+    fn run_sed(&mut self) {
+        unimplemented!("run | sed");
+    }
+
+    fn run_sei(&mut self) {
+        unimplemented!("run | sei");
+    }
+
+    fn run_sta(&mut self, target: Address) {
+        unimplemented!("run | sta");
+    }
+
+    fn run_stx(&mut self, target: Address) {
+        unimplemented!("run | stx");
+    }
+
+    fn run_sty(&mut self, target: Address) {
+        unimplemented!("run | sty");
+    }
+
+    fn run_tax(&mut self) {
+        unimplemented!("run | tax");
+    }
+
+    fn run_tay(&mut self) {
+        unimplemented!("run | tay");
+    }
+
+    fn run_tsx(&mut self) {
+        unimplemented!("run | tsx");
+    }
+
+    fn run_txa(&mut self) {
+        unimplemented!("run | txa");
+    }
+
+    fn run_txs(&mut self) {
+        unimplemented!("run | txs");
+    }
+
+    fn run_tya(&mut self) {
+        unimplemented!("run | tya");
     }
 }
 
@@ -232,6 +461,11 @@ enum BreakType {
     Instruction,
 }
 
+enum Location {
+    Accumulator,
+    Address(Address),
+}
+
 struct Instruction {
     opcode: u8,
     operation: InstructionOperation,
@@ -259,7 +493,7 @@ macro_rules! match_opcode {
                 len: $len,
                 cycles_base: $cycles_base,
             },)+
-            _ => unimplemented!("no instruction found for opcode `{}`", $opcode_ident),
+            _ => unimplemented!("no instruction found for opcode `${:02X}`", $opcode_ident),
         }
     };
 }
@@ -271,14 +505,8 @@ impl Instruction {
 
             // opcode => (operation, mode, len, cycles_base)
             0x69 => (Adc, Immediate, 2, 2),
-            0x65 => (Adc, ZeroPage,  2, 3),
-            0x75 => (Adc, ZeroPage,  2, 4),
-            0x6D => (Adc, Absolute,  3, 4),
-            0x00 => (Brk, Implied,   1, 7),
-            0x6C => (Jmp, Indirect,  3, 5),
+            0xAD => (Lda, Absolute,  3, 4),
             0xEA => (Nop, Implied,   1, 2),
-            0x8D => (Sta, Absolute,  3, 4),
-            0x96 => (Stx, ZeroPageY, 2, 4),
         }
     }
 }
@@ -311,6 +539,9 @@ mod tests {
     use super::*;
 
     const ADDRESS_PRG: Address = 0x8000;
+    const ADDRESS_INDIRECT: Address = 0x2000;
+    const ADDRESS_INDIRECT_HIGH: u8 = 0x20;
+    const ADDRESS_INDIRECT_LOW: u8 = 0x00;
 
     fn bus() -> Bus {
         let mut bus = Bus::new();
@@ -322,19 +553,42 @@ mod tests {
         Cpu::new(bus).unwrap()
     }
 
-    fn process_instruction(cpu: &mut Cpu, bytes: &[u8]) {
+    fn write_instruction(cpu: &mut Cpu, bytes: &[u8]) {
         for (i, byte) in bytes.iter().enumerate() {
             cpu.bus.write(cpu.registers.pc + (i as Address), *byte);
         }
+    }
 
+    fn process_instruction(cpu: &mut Cpu, bytes: &[u8]) {
+        write_instruction(cpu, bytes);
         let instruction = cpu.determine_instruction_next().unwrap().unwrap();
         cpu.process_instruction(instruction).unwrap();
     }
 
     #[test]
+    fn determine_input_byte_immediate() {
+        let mut bus = bus();
+        bus.write(ADDRESS_PRG, 0xF4);
+
+        let cpu = cpu(bus);
+        let input = cpu.determine_input_byte(InstructionMode::Immediate).unwrap().unwrap();
+        assert_eq!(input, 0xF4);
+    }
+
+    #[test]
+    fn determine_input_byte_absolute() {
+        let mut bus = bus();
+        bus.write_u16(ADDRESS_PRG, ADDRESS_INDIRECT).unwrap();
+        bus.write(ADDRESS_INDIRECT, 0xF4);
+
+        let cpu = cpu(bus);
+        let input = cpu.determine_input_byte(InstructionMode::Absolute).unwrap().unwrap();
+        assert_eq!(input, 0xF4);
+    }
+
+    #[test]
     fn process_adc() {
-        let bus = bus();
-        let mut cpu = cpu(bus);
+        let mut cpu = cpu(bus());
 
         process_instruction(&mut cpu, &[0x69, 0x10]);
         assert_eq!(cpu.registers.a, 0x10);
@@ -351,5 +605,26 @@ mod tests {
         process_instruction(&mut cpu, &[0x69, 0x10]);
         assert_eq!(cpu.registers.a, 0x11);
         assert_eq!(cpu.registers.p, StatusFlags::empty());
+    }
+
+    #[test]
+    fn process_lda() {
+        let mut bus = bus();
+        bus.write(ADDRESS_INDIRECT, 0x10);
+        bus.write(ADDRESS_INDIRECT + 2, 0x80);
+
+        let mut cpu = cpu(bus);
+
+        process_instruction(&mut cpu, &[0xAD, ADDRESS_INDIRECT_LOW, ADDRESS_INDIRECT_HIGH]);
+        assert_eq!(cpu.registers.a, 0x10);
+        assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+        process_instruction(&mut cpu, &[0xAD, ADDRESS_INDIRECT_LOW + 1, ADDRESS_INDIRECT_HIGH]);
+        assert_eq!(cpu.registers.a, 0x00);
+        assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+        process_instruction(&mut cpu,  &[0xAD, ADDRESS_INDIRECT_LOW + 2, ADDRESS_INDIRECT_HIGH]);
+        assert_eq!(cpu.registers.a, 0x80);
+        assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
     }
 }
