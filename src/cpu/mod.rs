@@ -50,10 +50,6 @@ impl Cpu {
     }
 
     fn process_instruction(&mut self, instruction: Instruction) -> Result {
-        if cfg!(test) {
-            println!("{:#04X} => {:#04X?}", self.registers.pc, instruction);
-        }
-
         // account for opcode
         self.registers.pc += 1;
 
@@ -123,7 +119,7 @@ impl Cpu {
             InstructionOperation::Sta => unimplemented!("execute | Sta"),
             InstructionOperation::Stx => unimplemented!("execute | Stx"),
             InstructionOperation::Sty => unimplemented!("execute | Sty"),
-            InstructionOperation::Tax => unimplemented!("execute | Tax"),
+            InstructionOperation::Tax => self.run_tax(),
             InstructionOperation::Tay => unimplemented!("execute | Tay"),
             InstructionOperation::Tsx => unimplemented!("execute | Tsx"),
             InstructionOperation::Txa => unimplemented!("execute | Txa"),
@@ -367,7 +363,7 @@ impl Cpu {
     }
 
     fn run_tax(&mut self) {
-        unimplemented!("run | tax");
+        self.registers.x = self.registers.a;
     }
 
     fn run_tay(&mut self) {
@@ -403,6 +399,7 @@ fn is_negative(value: u8) -> bool {
     value.is_bit_set(7)
 }
 
+#[derive(Debug, Eq, PartialEq)]
 struct RegisterSet {
     a: u8,
     x: u8,
@@ -491,8 +488,11 @@ mod tests {
     }
 
     fn cpu(bus: Bus) -> Cpu {
+        let mut registers_expected = RegisterSet::new();
+        registers_expected.pc = ADDRESS_PRG;
+
         let cpu = Cpu::new(bus).unwrap();
-        assert_eq!(cpu.registers.p, StatusFlags::empty());
+        assert_eq!(cpu.registers, registers_expected);
         cpu
     }
 
@@ -638,5 +638,13 @@ mod tests {
         let mut cpu = cpu(bus());
         process_instruction(&mut cpu, &[SEI_IMPLIED]);
         assert_eq!(cpu.registers.p, StatusFlags::INTERRUPT_DISABLE);
+    }
+
+    #[test]
+    fn process_tax() {
+        let mut cpu = cpu(bus());
+        process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x40]);
+        process_instruction(&mut cpu, &[TAX_IMPLIED]);
+        assert_eq!(cpu.registers.x, cpu.registers.a);
     }
 }

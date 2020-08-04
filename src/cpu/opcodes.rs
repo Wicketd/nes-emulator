@@ -17,4 +17,5 @@ opcodes! {
     SEC_IMPLIED     = 0x38;
     SED_IMPLIED     = 0xF8;
     SEI_IMPLIED     = 0x78;
+    TAX_IMPLIED     = 0xAA;
 }

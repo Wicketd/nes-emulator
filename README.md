@@ -58,7 +58,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] STA
 - [ ] STX
 - [ ] STY
-- [ ] TAX
+- [x] TAX
 - [ ] TAY
 - [ ] TSX
 - [ ] TXA
