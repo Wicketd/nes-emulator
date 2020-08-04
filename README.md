@@ -11,29 +11,30 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [x] ADC
 - [ ] AND
 - [ ] ASL
-- [ ] BIT
-- [ ] BPL
-- [ ] BMI
-- [ ] BVC
-- [ ] BVS
 - [ ] BCC
 - [ ] BCS
-- [ ] BNE
 - [ ] BEQ
+- [ ] BIT
+- [ ] BMI
+- [ ] BNE
+- [ ] BPL
 - [ ] BRK
+- [ ] BVC
+- [ ] BVS
+- [x] CLC
+- [x] CLD
+- [x] CLI
+- [x] CLV
 - [ ] CMP
 - [ ] CPX
 - [ ] CPY
 - [ ] DEC
+- [ ] DEX
+- [ ] DEY
 - [ ] EOR
-- [x] CLC
-- [x] SEC
-- [x] CLI
-- [x] SEI
-- [x] CLV
-- [x] CLD
-- [x] SED
 - [ ] INC
+- [ ] INX
+- [ ] INY
 - [ ] JMP
 - [ ] JSR
 - [x] LDA
@@ -42,20 +43,27 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] LSR
 - [x] NOP
 - [ ] ORA
+- [ ] PHA
+- [ ] PHP
+- [ ] PLA
+- [ ] PLP
 - [ ] ROL
 - [ ] ROR
 - [ ] RTI
 - [ ] RTS
 - [ ] SBC
+- [x] SEC
+- [x] SED
+- [x] SEI
 - [ ] STA
-- [ ] TXS
-- [ ] TSX
-- [ ] PHA
-- [ ] PLA
-- [ ] PHP
-- [ ] PLP
 - [ ] STX
 - [ ] STY
+- [ ] TAX
+- [ ] TAY
+- [ ] TSX
+- [ ] TXA
+- [ ] TXS
+- [ ] TYA
 
 ## Instruction modes
 - [ ] Byte
