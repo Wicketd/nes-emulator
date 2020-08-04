@@ -116,7 +116,7 @@ impl Cpu {
             InstructionOperation::Rti => unimplemented!("execute | Rti"),
             InstructionOperation::Rts => unimplemented!("execute | Rts"),
             InstructionOperation::Sbc => unimplemented!("execute | Sbc"),
-            InstructionOperation::Sec => unimplemented!("execute | Sec"),
+            InstructionOperation::Sec => self.run_sec(),
             InstructionOperation::Sed => unimplemented!("execute | Sed"),
             InstructionOperation::Sei => unimplemented!("execute | Sei"),
             InstructionOperation::Sta => unimplemented!("execute | Sta"),
@@ -342,7 +342,7 @@ impl Cpu {
     }
 
     fn run_sec(&mut self) {
-        unimplemented!("run | sec");
+        self.registers.p.insert(StatusFlags::CARRY);
     }
 
     fn run_sed(&mut self) {
@@ -516,6 +516,7 @@ impl Instruction {
             CLC_IMPLIED   => (Clc, Implied,   1, 2),
             LDA_ABSOLUTE  => (Lda, Absolute,  3, 4),
             NOP_IMPLIED   => (Nop, Implied,   1, 2),
+            SEC_IMPLIED   => (Sec, Implied,   1, 2),
         }
     }
 }
@@ -650,5 +651,14 @@ mod tests {
         process_instruction(&mut cpu,  &[LDA_ABSOLUTE, ADDRESS_INDIRECT_LOW + 2, ADDRESS_INDIRECT_HIGH]);
         assert_eq!(cpu.registers.a, 0x80);
         assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+    }
+
+    #[test]
+    fn process_sec() {
+        let mut cpu = cpu(bus());
+        assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+        process_instruction(&mut cpu, &[SEC_IMPLIED]);
+        assert_eq!(cpu.registers.p, StatusFlags::CARRY);
     }
 }
