@@ -33,7 +33,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] DEY
 - [ ] EOR
 - [ ] INC
-- [ ] INX
+- [x] INX
 - [ ] INY
 - [ ] JMP
 - [ ] JSR

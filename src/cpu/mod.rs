@@ -92,7 +92,7 @@ impl Cpu {
             InstructionOperation::Dey => unimplemented!("execute | Dey"),
             InstructionOperation::Eor => unimplemented!("execute | Eor"),
             InstructionOperation::Inc => unimplemented!("execute | Inc"),
-            InstructionOperation::Inx => unimplemented!("execute | Inx"),
+            InstructionOperation::Inx => self.run_inx(),
             InstructionOperation::Iny => unimplemented!("execute | Iny"),
             InstructionOperation::Jmp => unimplemented!("execute | Jmp"),
             InstructionOperation::Jsr => unimplemented!("execute | Jsr"),
@@ -264,7 +264,10 @@ impl Cpu {
     }
 
     fn run_inx(&mut self) {
-        unimplemented!("run | inx");
+        self.registers.x = self.registers.x.wrapping_add(1);
+
+        self.registers.p.set(StatusFlags::ZERO, self.registers.x == 0);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(self.registers.x));
     }
 
     fn run_iny(&mut self) {
@@ -477,6 +480,7 @@ mod tests {
     use crate::cpu::opcodes::*;
 
     const ADDRESS_PRG: Address = 0x8000;
+    const ADDRESS_ZERO_PAGE: Address = 0x40;
     const ADDRESS_INDIRECT: Address = 0x2000;
     const ADDRESS_INDIRECT_HIGH: u8 = 0x20;
     const ADDRESS_INDIRECT_LOW: u8 = 0x00;
@@ -596,6 +600,26 @@ mod tests {
 
         process_instruction(&mut cpu, &[CLV_IMPLIED]);
         assert_eq!(cpu.registers.p, StatusFlags::CARRY);
+    }
+
+    #[test]
+    // TODO: set X via instructions
+    fn process_inx() {
+        let mut cpu = cpu(bus());
+        cpu.registers.x = 0x7E;
+
+        process_instruction(&mut cpu, &[INX_IMPLIED]);
+        assert_eq!(cpu.registers.x, 0x7F);
+        assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+        process_instruction(&mut cpu, &[INX_IMPLIED]);
+        assert_eq!(cpu.registers.x, 0x80);
+        assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+
+        cpu.registers.x = 0xFF;
+        process_instruction(&mut cpu, &[INX_IMPLIED]);
+        assert_eq!(cpu.registers.x, 0x00);
+        assert_eq!(cpu.registers.p, StatusFlags::ZERO);
     }
 
     #[test]
