@@ -413,10 +413,16 @@ impl Cpu {
 
     fn run_tax(&mut self) {
         self.registers.x = self.registers.a;
+
+        self.registers.p.set(StatusFlags::ZERO, self.registers.x == 0);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(self.registers.x));
     }
 
     fn run_tay(&mut self) {
         self.registers.y = self.registers.a;
+
+        self.registers.p.set(StatusFlags::ZERO, self.registers.y == 0);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(self.registers.y));
     }
 
     fn run_tsx(&mut self) {
@@ -425,6 +431,9 @@ impl Cpu {
 
     fn run_txa(&mut self) {
         self.registers.a = self.registers.x;
+
+        self.registers.p.set(StatusFlags::ZERO, self.registers.a == 0);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(self.registers.a));
     }
 
     fn run_txs(&mut self) {
@@ -433,6 +442,9 @@ impl Cpu {
 
     fn run_tya(&mut self) {
         self.registers.a = self.registers.y;
+
+        self.registers.p.set(StatusFlags::ZERO, self.registers.a == 0);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(self.registers.a));
     }
 }
 

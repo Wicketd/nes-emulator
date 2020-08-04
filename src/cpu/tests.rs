@@ -267,37 +267,83 @@ fn process_sei() {
 #[test]
 fn process_tax() {
     let mut cpu = cpu(bus());
+
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x40]);
     process_instruction(&mut cpu, &[TAX_IMPLIED]);
     assert_eq!(cpu.registers.x, cpu.registers.a);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x40]);
+    cpu.registers.p = StatusFlags::empty();
+    process_instruction(&mut cpu, &[TAX_IMPLIED]);
+    assert_eq!(cpu.registers.x, cpu.registers.a);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+
+    process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x80]);
+    cpu.registers.p = StatusFlags::empty();
+    process_instruction(&mut cpu, &[TAX_IMPLIED]);
+    assert_eq!(cpu.registers.x, cpu.registers.a);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
 }
 
 #[test]
 fn process_tay() {
     let mut cpu = cpu(bus());
+
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x40]);
     process_instruction(&mut cpu, &[TAY_IMPLIED]);
     assert_eq!(cpu.registers.y, cpu.registers.a);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x40]);
+    cpu.registers.p = StatusFlags::empty();
+    process_instruction(&mut cpu, &[TAY_IMPLIED]);
+    assert_eq!(cpu.registers.y, cpu.registers.a);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+
+    process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x80]);
+    cpu.registers.p = StatusFlags::empty();
+    process_instruction(&mut cpu, &[TAY_IMPLIED]);
+    assert_eq!(cpu.registers.y, cpu.registers.a);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
 }
 
 #[test]
+// TODO: set X with LDX
 fn process_txa() {
     let mut cpu = cpu(bus());
 
-    process_instruction(&mut cpu, &[INX_IMPLIED]);
-    assert_eq!(cpu.registers.x, 0x01);
-
     process_instruction(&mut cpu, &[TXA_IMPLIED]);
     assert_eq!(cpu.registers.a, cpu.registers.x);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    cpu.registers.x = 0x40;
+    process_instruction(&mut cpu, &[TXA_IMPLIED]);
+    assert_eq!(cpu.registers.a, cpu.registers.x);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    cpu.registers.x = 0x80;
+    process_instruction(&mut cpu, &[TXA_IMPLIED]);
+    assert_eq!(cpu.registers.a, cpu.registers.x);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
 
 #[test]
+// TODO: set X with LDY
 fn process_tya() {
     let mut cpu = cpu(bus());
 
-    process_instruction(&mut cpu, &[INY_IMPLIED]);
-    assert_eq!(cpu.registers.y, 0x01);
-
     process_instruction(&mut cpu, &[TYA_IMPLIED]);
     assert_eq!(cpu.registers.a, cpu.registers.y);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    cpu.registers.y = 0x40;
+    process_instruction(&mut cpu, &[TYA_IMPLIED]);
+    assert_eq!(cpu.registers.a, cpu.registers.y);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    cpu.registers.y = 0x80;
+    process_instruction(&mut cpu, &[TYA_IMPLIED]);
+    assert_eq!(cpu.registers.a, cpu.registers.y);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
