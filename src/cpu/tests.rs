@@ -66,7 +66,6 @@ fn determine_input_location_accumulator() {
 }
 
 #[test]
-// TODO: set X with LDX
 fn determine_input_location_zero_page_x() {
     let mut bus = bus();
     bus.write_u16(ADDRESS_PRG, ADDRESS_ZERO_PAGE as Address).unwrap();
@@ -116,15 +115,14 @@ fn process_asl_accumulator() {
 }
 
 #[test]
-// TODO: set X with LDX
-// TODO: is this test necessary?
 fn process_asl_zero_page_x() {
     let mut bus = bus();
     let address = ADDRESS_ZERO_PAGE + (OFFSET_REGISTER_X as Address);
     bus.write(address, 0b0100_0000);
 
     let mut cpu = cpu(bus);
-    cpu.registers.x = OFFSET_REGISTER_X;
+    process_instruction(&mut cpu, &[LDX_IMMEDIATE, OFFSET_REGISTER_X]);
+    assert_eq!(cpu.registers.x, OFFSET_REGISTER_X);
 
     process_instruction(&mut cpu, &[ASL_ZERO_PAGE_X, ADDRESS_ZERO_PAGE as u8]);
     assert_eq!(cpu.bus.read(address), 0b1000_0000);
@@ -184,10 +182,9 @@ fn process_clv() {
 }
 
 #[test]
-// TODO: set X with LDX
 fn process_inx() {
     let mut cpu = cpu(bus());
-    cpu.registers.x = 0x7E;
+    process_instruction(&mut cpu, &[LDX_IMMEDIATE, 0x7E]);
 
     process_instruction(&mut cpu, &[INX_IMPLIED]);
     assert_eq!(cpu.registers.x, 0x7F);
@@ -204,10 +201,9 @@ fn process_inx() {
 }
 
 #[test]
-// TODO: set Y with LDY
 fn process_iny() {
     let mut cpu = cpu(bus());
-    cpu.registers.y = 0x7E;
+    process_instruction(&mut cpu, &[LDY_IMMEDIATE, 0x7E]);
 
     process_instruction(&mut cpu, &[INY_IMPLIED]);
     assert_eq!(cpu.registers.y, 0x7F);
@@ -344,7 +340,6 @@ fn process_tay() {
 }
 
 #[test]
-// TODO: set X with LDX
 fn process_txa() {
     let mut cpu = cpu(bus());
 
@@ -352,19 +347,18 @@ fn process_txa() {
     assert_eq!(cpu.registers.a, cpu.registers.x);
     assert_eq!(cpu.registers.p, StatusFlags::ZERO);
 
-    cpu.registers.x = 0x40;
+    process_instruction(&mut cpu, &[LDX_IMMEDIATE, 0x40]);
     process_instruction(&mut cpu, &[TXA_IMPLIED]);
     assert_eq!(cpu.registers.a, cpu.registers.x);
     assert_eq!(cpu.registers.p, StatusFlags::empty());
 
-    cpu.registers.x = 0x80;
+    process_instruction(&mut cpu, &[LDX_IMMEDIATE, 0x80]);
     process_instruction(&mut cpu, &[TXA_IMPLIED]);
     assert_eq!(cpu.registers.a, cpu.registers.x);
     assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
 
 #[test]
-// TODO: set X with LDY
 fn process_tya() {
     let mut cpu = cpu(bus());
 
@@ -372,12 +366,12 @@ fn process_tya() {
     assert_eq!(cpu.registers.a, cpu.registers.y);
     assert_eq!(cpu.registers.p, StatusFlags::ZERO);
 
-    cpu.registers.y = 0x40;
+    process_instruction(&mut cpu, &[LDY_IMMEDIATE, 0x40]);
     process_instruction(&mut cpu, &[TYA_IMPLIED]);
     assert_eq!(cpu.registers.a, cpu.registers.y);
     assert_eq!(cpu.registers.p, StatusFlags::empty());
 
-    cpu.registers.y = 0x80;
+    process_instruction(&mut cpu, &[LDY_IMMEDIATE, 0x80]);
     process_instruction(&mut cpu, &[TYA_IMPLIED]);
     assert_eq!(cpu.registers.a, cpu.registers.y);
     assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
