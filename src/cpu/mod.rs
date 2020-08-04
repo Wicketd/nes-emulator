@@ -67,7 +67,9 @@ impl Cpu {
                 self.run_adc(self.determine_input_byte(instruction.mode())?.unwrap());
             },
             InstructionOperation::And => unimplemented!("execute | And"),
-            InstructionOperation::Asl => unimplemented!("execute | Asl"),
+            InstructionOperation::Asl => {
+                self.run_asl(self.determine_input_location(instruction.mode())?);
+            },
             InstructionOperation::Bcc => unimplemented!("execute | Bcc"),
             InstructionOperation::Bcs => unimplemented!("execute | Bcs"),
             InstructionOperation::Beq => unimplemented!("execute | Beq"),
@@ -155,6 +157,37 @@ impl Cpu {
         Ok(input)
     }
 
+    fn determine_input_location(&self, instruction_mode: InstructionMode) -> Result<Location> {
+        let input = match instruction_mode {
+            InstructionMode::Implied => unimplemented!("input location | Implied"),
+            InstructionMode::Accumulator => Location::Accumulator,
+            InstructionMode::Immediate => unimplemented!("input location | Immediate"),
+            InstructionMode::Relative => unimplemented!("input location | Relative"),
+            InstructionMode::ZeroPage => unimplemented!("input location | ZeroPage"),
+            InstructionMode::ZeroPageX => {
+                // TODO: check if this would actually wrap around
+                let address = self.bus.read(self.registers.pc);
+                Location::Address(address.wrapping_add(self.registers.x) as Address)
+            },
+            InstructionMode::ZeroPageY => unimplemented!("input location | ZeroPageY"),
+            InstructionMode::Absolute => unimplemented!("input location | Absolute"),
+            InstructionMode::AbsoluteX => unimplemented!("input location | AbsoluteX"),
+            InstructionMode::AbsoluteY => unimplemented!("input location | AbsoluteY"),
+            InstructionMode::Indirect => unimplemented!("input location | Indirect"),
+            InstructionMode::IndirectX => unimplemented!("input location | IndirectX"),
+            InstructionMode::IndirectY => unimplemented!("input location | IndirectY"),
+        };
+
+        Ok(input)
+    }
+
+    fn persist_result(&mut self, result: u8, location: Location) {
+        match location {
+            Location::Accumulator => self.registers.a = result,
+            Location::Address(address) => self.bus.write(address, result),
+        }
+    }
+
     fn run_adc(&mut self, input: u8) {
         let carry = (self.registers.p & StatusFlags::CARRY).bits();
         let a_old = self.registers.a;
@@ -172,7 +205,16 @@ impl Cpu {
     }
 
     fn run_asl(&mut self, target: Location) {
-        unimplemented!("run | asl");
+        let input = match target {
+            Location::Accumulator => self.registers.a,
+            Location::Address(address) => self.bus.read(address),
+        };
+        let result = input.wrapping_shl(1);
+        self.persist_result(result, target);
+
+        self.registers.p.set(StatusFlags::CARRY, is_carry(input, result));
+        self.registers.p.set(StatusFlags::ZERO, self.registers.a == 0);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(result));
     }
 
     fn run_bcc(&mut self, target: Address) {
@@ -472,6 +514,7 @@ enum BreakType {
     Instruction,
 }
 
+#[derive(Debug, Eq, PartialEq)]
 enum Location {
     Accumulator,
     Address(Address),
@@ -483,7 +526,8 @@ mod tests {
     use crate::cpu::opcodes::*;
 
     const ADDRESS_PRG: Address = 0x8000;
-    const ADDRESS_ZERO_PAGE: Address = 0x40;
+    const ADDRESS_ZERO_PAGE: Address = 0x0040;
+    const OFFSET_REGISTER_X: u8 = 0x20;
     const ADDRESS_INDIRECT: Address = 0x2000;
     const ADDRESS_INDIRECT_HIGH: u8 = 0x20;
     const ADDRESS_INDIRECT_LOW: u8 = 0x00;
@@ -537,6 +581,26 @@ mod tests {
     }
 
     #[test]
+    fn determine_input_location_accumulator() {
+        let cpu = cpu(bus());
+        let input = cpu.determine_input_location(InstructionMode::Accumulator).unwrap();
+        assert_eq!(input, Location::Accumulator);
+    }
+
+    #[test]
+    // TODO: set X with LDX
+    fn determine_input_location_zero_page_x() {
+        let mut bus = bus();
+        bus.write_u16(ADDRESS_PRG, ADDRESS_ZERO_PAGE as Address).unwrap();
+
+        let mut cpu = cpu(bus);
+        cpu.registers.x = OFFSET_REGISTER_X;
+
+        let input = cpu.determine_input_location(InstructionMode::ZeroPageX).unwrap();
+        assert_eq!(input, Location::Address(ADDRESS_ZERO_PAGE + OFFSET_REGISTER_X as Address));
+    }
+
+    #[test]
     fn process_adc() {
         let mut cpu = cpu(bus());
 
@@ -555,6 +619,41 @@ mod tests {
         process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x10]);
         assert_eq!(cpu.registers.a, 0x11);
         assert_eq!(cpu.registers.p, StatusFlags::empty());
+    }
+
+    #[test]
+    fn process_asl_accumulator() {
+        let mut cpu = cpu(bus());
+
+        process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0b0100_0000]);
+        assert_eq!(cpu.registers.a, 0b0100_0000);
+
+        process_instruction(&mut cpu, &[ASL_ACCUMULATOR]);
+        assert_eq!(cpu.registers.a, 0b1000_0000);
+        assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+
+        process_instruction(&mut cpu, &[ASL_ACCUMULATOR]);
+        assert_eq!(cpu.registers.a, 0b0000_0000);
+        assert_eq!(cpu.registers.p, StatusFlags::ZERO | StatusFlags::CARRY);
+    }
+
+    #[test]
+    // TODO: set X with LDX
+    fn process_asl_zero_page_x() {
+        let mut bus = bus();
+        let address = ADDRESS_ZERO_PAGE + (OFFSET_REGISTER_X as Address);
+        bus.write(address, 0b0100_0000);
+
+        let mut cpu = cpu(bus);
+        cpu.registers.x = OFFSET_REGISTER_X;
+
+        process_instruction(&mut cpu, &[ASL_ZERO_PAGE_X, ADDRESS_ZERO_PAGE as u8]);
+        assert_eq!(cpu.bus.read(address), 0b1000_0000);
+        assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE | StatusFlags::ZERO);
+
+        process_instruction(&mut cpu, &[ASL_ZERO_PAGE_X, ADDRESS_ZERO_PAGE as u8]);
+        assert_eq!(cpu.bus.read(address), 0b0000_0000);
+        assert_eq!(cpu.registers.p, StatusFlags::ZERO | StatusFlags::CARRY);
     }
 
     #[test]
@@ -606,7 +705,7 @@ mod tests {
     }
 
     #[test]
-    // TODO: set X via instructions
+    // TODO: set X with LDX
     fn process_inx() {
         let mut cpu = cpu(bus());
         cpu.registers.x = 0x7E;
@@ -626,7 +725,7 @@ mod tests {
     }
 
     #[test]
-    // TODO: set Y via instructions
+    // TODO: set Y with LDY
     fn process_iny() {
         let mut cpu = cpu(bus());
         cpu.registers.y = 0x7E;

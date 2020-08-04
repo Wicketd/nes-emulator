@@ -6,8 +6,8 @@ macro_rules! opcodes {
 
 opcodes! {
     ADC_IMMEDIATE   = 0x69;
-    ADC_ZERO_PAGE   = 0x65;
-    ADC_ZERO_PAGE_X = 0x75;
+    ASL_ACCUMULATOR = 0x0A;
+    ASL_ZERO_PAGE_X = 0x16;
     CLC_IMPLIED     = 0x18;
     CLD_IMPLIED     = 0xD8;
     CLI_IMPLIED     = 0x58;

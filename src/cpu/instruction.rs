@@ -40,20 +40,22 @@ impl Instruction {
             use opcode;
 
             // opcode => (operation, mode, len, cycles_base)
-            ADC_IMMEDIATE => (Adc, Immediate, 2, 2),
-            CLC_IMPLIED   => (Clc, Implied,   1, 2),
-            CLD_IMPLIED   => (Cld, Implied,   1, 2),
-            CLI_IMPLIED   => (Cli, Implied,   1, 2),
-            CLV_IMPLIED   => (Clv, Implied,   1, 2),
-            INX_IMPLIED   => (Inx, Implied,   1, 2),
-            INY_IMPLIED   => (Iny, Implied,   1, 2),
-            LDA_ABSOLUTE  => (Lda, Absolute,  3, 4),
-            NOP_IMPLIED   => (Nop, Implied,   1, 2),
-            SEC_IMPLIED   => (Sec, Implied,   1, 2),
-            SED_IMPLIED   => (Sed, Implied,   1, 2),
-            SEI_IMPLIED   => (Sei, Implied,   1, 2),
-            TAX_IMPLIED   => (Tax, Implied,   1, 2),
-            TAY_IMPLIED   => (Tay, Implied,   1, 2),
+            ADC_IMMEDIATE   => (Adc, Immediate,   2, 2),
+            ASL_ACCUMULATOR => (Asl, Accumulator, 1, 2),
+            ASL_ZERO_PAGE_X => (Asl, ZeroPageX,   2, 6),
+            CLC_IMPLIED     => (Clc, Implied,     1, 2),
+            CLD_IMPLIED     => (Cld, Implied,     1, 2),
+            CLI_IMPLIED     => (Cli, Implied,     1, 2),
+            CLV_IMPLIED     => (Clv, Implied,     1, 2),
+            INX_IMPLIED     => (Inx, Implied,     1, 2),
+            INY_IMPLIED     => (Iny, Implied,     1, 2),
+            LDA_ABSOLUTE    => (Lda, Absolute,    3, 4),
+            NOP_IMPLIED     => (Nop, Implied,     1, 2),
+            SEC_IMPLIED     => (Sec, Implied,     1, 2),
+            SED_IMPLIED     => (Sed, Implied,     1, 2),
+            SEI_IMPLIED     => (Sei, Implied,     1, 2),
+            TAX_IMPLIED     => (Tax, Implied,     1, 2),
+            TAY_IMPLIED     => (Tay, Implied,     1, 2),
         }
     }
 }

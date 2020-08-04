@@ -10,7 +10,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 
 - [x] ADC
 - [ ] AND
-- [ ] ASL
+- [x] ASL
 - [ ] BCC
 - [ ] BCS
 - [ ] BEQ
@@ -81,11 +81,11 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
   - [ ] IndirectY
 - [ ] Location
   - [ ] Implied
-  - [ ] Accumulator
+  - [x] Accumulator
   - [ ] Relative
   - [ ] Immediate
   - [ ] ZeroPage
-  - [ ] ZeroPageX
+  - [x] ZeroPageX
   - [ ] Absolute
   - [ ] AbsoluteX
   - [ ] AbsoluteY
