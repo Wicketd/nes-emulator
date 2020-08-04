@@ -46,6 +46,7 @@ impl Instruction {
             CLI_IMPLIED   => (Cli, Implied,   1, 2),
             CLV_IMPLIED   => (Clv, Implied,   1, 2),
             INX_IMPLIED   => (Inx, Implied,   1, 2),
+            INY_IMPLIED   => (Iny, Implied,   1, 2),
             LDA_ABSOLUTE  => (Lda, Absolute,  3, 4),
             NOP_IMPLIED   => (Nop, Implied,   1, 2),
             SEC_IMPLIED   => (Sec, Implied,   1, 2),

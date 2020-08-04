@@ -93,7 +93,7 @@ impl Cpu {
             InstructionOperation::Eor => unimplemented!("execute | Eor"),
             InstructionOperation::Inc => unimplemented!("execute | Inc"),
             InstructionOperation::Inx => self.run_inx(),
-            InstructionOperation::Iny => unimplemented!("execute | Iny"),
+            InstructionOperation::Iny => self.run_iny(),
             InstructionOperation::Jmp => unimplemented!("execute | Jmp"),
             InstructionOperation::Jsr => unimplemented!("execute | Jsr"),
             InstructionOperation::Lda => {
@@ -271,7 +271,10 @@ impl Cpu {
     }
 
     fn run_iny(&mut self) {
-        unimplemented!("run | iny");
+        self.registers.y = self.registers.y.wrapping_add(1);
+
+        self.registers.p.set(StatusFlags::ZERO, self.registers.y == 0);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(self.registers.y));
     }
 
     fn run_jmp(&mut self, target: Address) {
@@ -619,6 +622,26 @@ mod tests {
         cpu.registers.x = 0xFF;
         process_instruction(&mut cpu, &[INX_IMPLIED]);
         assert_eq!(cpu.registers.x, 0x00);
+        assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+    }
+
+    #[test]
+    // TODO: set Y via instructions
+    fn process_iny() {
+        let mut cpu = cpu(bus());
+        cpu.registers.y = 0x7E;
+
+        process_instruction(&mut cpu, &[INY_IMPLIED]);
+        assert_eq!(cpu.registers.y, 0x7F);
+        assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+        process_instruction(&mut cpu, &[INY_IMPLIED]);
+        assert_eq!(cpu.registers.y, 0x80);
+        assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+
+        cpu.registers.y = 0xFF;
+        process_instruction(&mut cpu, &[INY_IMPLIED]);
+        assert_eq!(cpu.registers.y, 0x00);
         assert_eq!(cpu.registers.p, StatusFlags::ZERO);
     }
 

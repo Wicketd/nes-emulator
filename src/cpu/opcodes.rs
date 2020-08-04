@@ -12,7 +12,8 @@ opcodes! {
     CLD_IMPLIED     = 0xD8;
     CLI_IMPLIED     = 0x58;
     CLV_IMPLIED     = 0xB8;
-    INX_IMPLIED     = 0xC8;
+    INX_IMPLIED     = 0xE8;
+    INY_IMPLIED     = 0xC8;
     LDA_ABSOLUTE    = 0xAD;
     NOP_IMPLIED     = 0xEA;
     SEC_IMPLIED     = 0x38;
