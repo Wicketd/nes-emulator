@@ -21,4 +21,5 @@ opcodes! {
     SEI_IMPLIED     = 0x78;
     TAX_IMPLIED     = 0xAA;
     TAY_IMPLIED     = 0xA8;
+    TXA_IMPLIED     = 0x8A;
 }
