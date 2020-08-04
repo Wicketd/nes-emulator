@@ -40,7 +40,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] LDX
 - [ ] LDY
 - [ ] LSR
-- [ ] NOP
+- [x] NOP
 - [ ] ORA
 - [ ] ROL
 - [ ] ROR
