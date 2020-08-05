@@ -89,7 +89,11 @@ impl Cpu {
                 // TODO: overflow check
                 Some(self.bus.read(address + self.registers.x as Address))
             },
-            InstructionMode::AbsoluteY => unimplemented!("input byte | AbsoluteY"),
+            InstructionMode::AbsoluteY => {
+                let address = u16::from_le_bytes([bytes[0], bytes[1]]);
+                // TODO: overflow check
+                Some(self.bus.read(address + self.registers.y as Address))
+            },
             InstructionMode::Indirect => unimplemented!("input byte | Indirect"),
             InstructionMode::IndirectX => unimplemented!("input byte | IndirectX"),
             InstructionMode::IndirectY => unimplemented!("input byte | IndirectY"),
