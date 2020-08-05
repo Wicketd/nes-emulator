@@ -5,6 +5,7 @@ use crate::cpu::opcodes::*;
 
 const ADDRESS_PRG: Address = 0x8000;
 const ADDRESS_INDIRECT: Address = 0x2040;
+const OFFSET_REGISTER_X: u8 = 0x20;
 
 fn bus() -> Bus {
     let mut bus = Bus::new();
@@ -60,6 +61,20 @@ fn determine_input_byte_absolute() {
     assert_eq!(
         Some(0x10),
         cpu.determine_input_byte(InstructionMode::Absolute, &ADDRESS_INDIRECT.to_le_bytes()).unwrap()
+    );
+}
+
+#[test]
+fn determine_input_byte_absolute_x() {
+    let mut bus = bus();
+    bus.write(ADDRESS_INDIRECT + OFFSET_REGISTER_X as Address, 0x10);
+
+    let mut cpu = cpu(bus);
+    cpu.registers.x = OFFSET_REGISTER_X;
+
+    assert_eq!(
+        Some(0x10),
+        cpu.determine_input_byte(InstructionMode::AbsoluteX, &ADDRESS_INDIRECT.to_le_bytes()).unwrap()
     );
 }
 
