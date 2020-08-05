@@ -21,7 +21,7 @@ fn cpu(bus: Bus) -> Cpu {
     registers_expected.pc = ADDRESS_PRG;
 
     let cpu = Cpu::new(bus).unwrap();
-    assert_eq!(cpu.registers, registers_expected);
+    assert_eq_hex!(cpu.registers, registers_expected);
     cpu
 }
 
@@ -44,7 +44,7 @@ fn determine_input_byte_immediate() {
 
     let cpu = cpu(bus);
     let input = cpu.determine_input_byte(InstructionMode::Immediate).unwrap().unwrap();
-    assert_eq!(input, 0xF4);
+    assert_eq_hex!(input, 0xF4);
 }
 
 #[test]
@@ -55,14 +55,14 @@ fn determine_input_byte_absolute() {
 
     let cpu = cpu(bus);
     let input = cpu.determine_input_byte(InstructionMode::Absolute).unwrap().unwrap();
-    assert_eq!(input, 0xF4);
+    assert_eq_hex!(input, 0xF4);
 }
 
 #[test]
 fn determine_input_location_accumulator() {
     let cpu = cpu(bus());
     let input = cpu.determine_input_location(InstructionMode::Accumulator).unwrap();
-    assert_eq!(input, Location::Accumulator);
+    assert_eq_hex!(input, Location::Accumulator);
 }
 
 #[test]
@@ -71,15 +71,15 @@ fn determine_input_location_relative() {
 
     cpu.bus.write(ADDRESS_PRG, 0xF0);
     let input = cpu.determine_input_location(InstructionMode::Relative).unwrap();
-    assert_eq!(input, Location::Address(cpu.registers.pc - 0x10));
+    assert_eq_hex!(input, Location::Address(cpu.registers.pc - 0x10));
 
     cpu.bus.write(ADDRESS_PRG, 0x0F);
     let input = cpu.determine_input_location(InstructionMode::Relative).unwrap();
-    assert_eq!(input, Location::Address(cpu.registers.pc + 0xF));
+    assert_eq_hex!(input, Location::Address(cpu.registers.pc + 0x0F));
 
     cpu.bus.write(ADDRESS_PRG, 0x00);
     let input = cpu.determine_input_location(InstructionMode::Relative).unwrap();
-    assert_eq!(input, Location::Address(cpu.registers.pc));
+    assert_eq_hex!(input, Location::Address(cpu.registers.pc));
 }
 
 #[test]
@@ -91,7 +91,7 @@ fn determine_input_location_zero_page_x() {
     cpu.registers.x = OFFSET_REGISTER_X;
 
     let input = cpu.determine_input_location(InstructionMode::ZeroPageX).unwrap();
-    assert_eq!(input, Location::Address(ADDRESS_ZERO_PAGE + OFFSET_REGISTER_X as Address));
+    assert_eq_hex!(input, Location::Address(ADDRESS_ZERO_PAGE + OFFSET_REGISTER_X as Address));
 }
 
 #[test]
@@ -99,20 +99,20 @@ fn process_adc() {
     let mut cpu = cpu(bus());
 
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x10]);
-    assert_eq!(cpu.registers.a, 0x10);
-    assert_eq!(cpu.registers.p, StatusFlags::empty());
+    assert_eq_hex!(cpu.registers.a, 0x10);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::empty());
 
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x70]);
-    assert_eq!(cpu.registers.a, 0x80);
-    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE | StatusFlags::OVERFLOW);
+    assert_eq_hex!(cpu.registers.a, 0x80);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::NEGATIVE | StatusFlags::OVERFLOW);
 
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x80]);
-    assert_eq!(cpu.registers.a, 0x00);
-    assert_eq!(cpu.registers.p, StatusFlags::OVERFLOW | StatusFlags::ZERO | StatusFlags::CARRY);
+    assert_eq_hex!(cpu.registers.a, 0x00);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::OVERFLOW | StatusFlags::ZERO | StatusFlags::CARRY);
 
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x10]);
-    assert_eq!(cpu.registers.a, 0x11);
-    assert_eq!(cpu.registers.p, StatusFlags::empty());
+    assert_eq_hex!(cpu.registers.a, 0x11);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::empty());
 }
 
 #[test]
@@ -120,15 +120,15 @@ fn process_asl_accumulator() {
     let mut cpu = cpu(bus());
 
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0b0100_0000]);
-    assert_eq!(cpu.registers.a, 0b0100_0000);
+    assert_eq_hex!(cpu.registers.a, 0b0100_0000);
 
     process_instruction(&mut cpu, &[ASL_ACCUMULATOR]);
-    assert_eq!(cpu.registers.a, 0b1000_0000);
-    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+    assert_eq_hex!(cpu.registers.a, 0b1000_0000);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::NEGATIVE);
 
     process_instruction(&mut cpu, &[ASL_ACCUMULATOR]);
-    assert_eq!(cpu.registers.a, 0b0000_0000);
-    assert_eq!(cpu.registers.p, StatusFlags::ZERO | StatusFlags::CARRY);
+    assert_eq_hex!(cpu.registers.a, 0b0000_0000);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::ZERO | StatusFlags::CARRY);
 }
 
 #[test]
@@ -139,15 +139,15 @@ fn process_asl_zero_page_x() {
 
     let mut cpu = cpu(bus);
     process_instruction(&mut cpu, &[LDX_IMMEDIATE, OFFSET_REGISTER_X]);
-    assert_eq!(cpu.registers.x, OFFSET_REGISTER_X);
+    assert_eq_hex!(cpu.registers.x, OFFSET_REGISTER_X);
 
     process_instruction(&mut cpu, &[ASL_ZERO_PAGE_X, ADDRESS_ZERO_PAGE as u8]);
-    assert_eq!(cpu.bus.read(address), 0b1000_0000);
-    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE | StatusFlags::ZERO);
+    assert_eq_hex!(cpu.bus.read(address), 0b1000_0000);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::NEGATIVE | StatusFlags::ZERO);
 
     process_instruction(&mut cpu, &[ASL_ZERO_PAGE_X, ADDRESS_ZERO_PAGE as u8]);
-    assert_eq!(cpu.bus.read(address), 0b0000_0000);
-    assert_eq!(cpu.registers.p, StatusFlags::ZERO | StatusFlags::CARRY);
+    assert_eq_hex!(cpu.bus.read(address), 0b0000_0000);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::ZERO | StatusFlags::CARRY);
 }
 
 #[test]
@@ -156,11 +156,11 @@ fn process_clc() {
 
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0xFF]);
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x02]);
-    assert_eq!(cpu.registers.a, 0x01);
-    assert_eq!(cpu.registers.p, StatusFlags::OVERFLOW | StatusFlags::CARRY);
+    assert_eq_hex!(cpu.registers.a, 0x01);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::OVERFLOW | StatusFlags::CARRY);
 
     process_instruction(&mut cpu, &[CLC_IMPLIED]);
-    assert_eq!(cpu.registers.p, StatusFlags::OVERFLOW);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::OVERFLOW);
 }
 
 #[test]
@@ -168,10 +168,10 @@ fn process_cld() {
     let mut cpu = cpu(bus());
 
     process_instruction(&mut cpu, &[SED_IMPLIED]);
-    assert_eq!(cpu.registers.p, StatusFlags::DECIMAL);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::DECIMAL);
 
     process_instruction(&mut cpu, &[CLD_IMPLIED]);
-    assert_eq!(cpu.registers.p, StatusFlags::empty());
+    assert_eq_hex!(cpu.registers.p, StatusFlags::empty());
 }
 
 #[test]
@@ -179,10 +179,10 @@ fn process_cli() {
     let mut cpu = cpu(bus());
 
     process_instruction(&mut cpu, &[SEI_IMPLIED]);
-    assert_eq!(cpu.registers.p, StatusFlags::INTERRUPT_DISABLE);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::INTERRUPT_DISABLE);
 
     process_instruction(&mut cpu, &[CLI_IMPLIED]);
-    assert_eq!(cpu.registers.p, StatusFlags::empty());
+    assert_eq_hex!(cpu.registers.p, StatusFlags::empty());
 }
 
 #[test]
@@ -191,11 +191,11 @@ fn process_clv() {
 
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0xFF]);
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x02]);
-    assert_eq!(cpu.registers.a, 0x01);
-    assert_eq!(cpu.registers.p, StatusFlags::OVERFLOW | StatusFlags::CARRY);
+    assert_eq_hex!(cpu.registers.a, 0x01);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::OVERFLOW | StatusFlags::CARRY);
 
     process_instruction(&mut cpu, &[CLV_IMPLIED]);
-    assert_eq!(cpu.registers.p, StatusFlags::CARRY);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::CARRY);
 }
 
 #[test]
@@ -204,17 +204,17 @@ fn process_inx() {
     process_instruction(&mut cpu, &[LDX_IMMEDIATE, 0x7E]);
 
     process_instruction(&mut cpu, &[INX_IMPLIED]);
-    assert_eq!(cpu.registers.x, 0x7F);
-    assert_eq!(cpu.registers.p, StatusFlags::empty());
+    assert_eq_hex!(cpu.registers.x, 0x7F);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::empty());
 
     process_instruction(&mut cpu, &[INX_IMPLIED]);
-    assert_eq!(cpu.registers.x, 0x80);
-    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+    assert_eq_hex!(cpu.registers.x, 0x80);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::NEGATIVE);
 
     cpu.registers.x = 0xFF;
     process_instruction(&mut cpu, &[INX_IMPLIED]);
-    assert_eq!(cpu.registers.x, 0x00);
-    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+    assert_eq_hex!(cpu.registers.x, 0x00);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::ZERO);
 }
 
 #[test]
@@ -223,17 +223,17 @@ fn process_iny() {
     process_instruction(&mut cpu, &[LDY_IMMEDIATE, 0x7E]);
 
     process_instruction(&mut cpu, &[INY_IMPLIED]);
-    assert_eq!(cpu.registers.y, 0x7F);
-    assert_eq!(cpu.registers.p, StatusFlags::empty());
+    assert_eq_hex!(cpu.registers.y, 0x7F);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::empty());
 
     process_instruction(&mut cpu, &[INY_IMPLIED]);
-    assert_eq!(cpu.registers.y, 0x80);
-    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+    assert_eq_hex!(cpu.registers.y, 0x80);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::NEGATIVE);
 
     cpu.registers.y = 0xFF;
     process_instruction(&mut cpu, &[INY_IMPLIED]);
-    assert_eq!(cpu.registers.y, 0x00);
-    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+    assert_eq_hex!(cpu.registers.y, 0x00);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::ZERO);
 }
 
 #[test]
@@ -245,16 +245,16 @@ fn process_lda() {
     let mut cpu = cpu(bus);
 
     process_instruction(&mut cpu, &[LDA_ABSOLUTE, ADDRESS_INDIRECT_LOW, ADDRESS_INDIRECT_HIGH]);
-    assert_eq!(cpu.registers.a, 0x10);
-    assert_eq!(cpu.registers.p, StatusFlags::empty());
+    assert_eq_hex!(cpu.registers.a, 0x10);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::empty());
 
     process_instruction(&mut cpu, &[LDA_ABSOLUTE, ADDRESS_INDIRECT_LOW + 1, ADDRESS_INDIRECT_HIGH]);
-    assert_eq!(cpu.registers.a, 0x00);
-    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+    assert_eq_hex!(cpu.registers.a, 0x00);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::ZERO);
 
     process_instruction(&mut cpu,  &[LDA_ABSOLUTE, ADDRESS_INDIRECT_LOW + 2, ADDRESS_INDIRECT_HIGH]);
-    assert_eq!(cpu.registers.a, 0x80);
-    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+    assert_eq_hex!(cpu.registers.a, 0x80);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
 
 #[test]
@@ -262,16 +262,16 @@ fn process_ldx() {
     let mut cpu = cpu(bus());
 
     process_instruction(&mut cpu, &[LDX_IMMEDIATE, 0x10]);
-    assert_eq!(cpu.registers.x, 0x10);
-    assert_eq!(cpu.registers.p, StatusFlags::empty());
+    assert_eq_hex!(cpu.registers.x, 0x10);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::empty());
 
     process_instruction(&mut cpu, &[LDX_IMMEDIATE, 0x00]);
-    assert_eq!(cpu.registers.x, 0x00);
-    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+    assert_eq_hex!(cpu.registers.x, 0x00);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::ZERO);
 
     process_instruction(&mut cpu, &[LDX_IMMEDIATE, 0xFF]);
-    assert_eq!(cpu.registers.x, 0xFF);
-    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+    assert_eq_hex!(cpu.registers.x, 0xFF);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
 
 #[test]
@@ -279,37 +279,37 @@ fn process_ldy() {
     let mut cpu = cpu(bus());
 
     process_instruction(&mut cpu, &[LDY_IMMEDIATE, 0x10]);
-    assert_eq!(cpu.registers.y, 0x10);
-    assert_eq!(cpu.registers.p, StatusFlags::empty());
+    assert_eq_hex!(cpu.registers.y, 0x10);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::empty());
 
     process_instruction(&mut cpu, &[LDY_IMMEDIATE, 0x00]);
-    assert_eq!(cpu.registers.y, 0x00);
-    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+    assert_eq_hex!(cpu.registers.y, 0x00);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::ZERO);
 
     process_instruction(&mut cpu, &[LDY_IMMEDIATE, 0xFF]);
-    assert_eq!(cpu.registers.y, 0xFF);
-    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+    assert_eq_hex!(cpu.registers.y, 0xFF);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
 
 #[test]
 fn process_sec() {
     let mut cpu = cpu(bus());
     process_instruction(&mut cpu, &[SEC_IMPLIED]);
-    assert_eq!(cpu.registers.p, StatusFlags::CARRY);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::CARRY);
 }
 
 #[test]
 fn process_sed() {
     let mut cpu = cpu(bus());
     process_instruction(&mut cpu, &[SED_IMPLIED]);
-    assert_eq!(cpu.registers.p, StatusFlags::DECIMAL);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::DECIMAL);
 }
 
 #[test]
 fn process_sei() {
     let mut cpu = cpu(bus());
     process_instruction(&mut cpu, &[SEI_IMPLIED]);
-    assert_eq!(cpu.registers.p, StatusFlags::INTERRUPT_DISABLE);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::INTERRUPT_DISABLE);
 }
 
 #[test]
@@ -318,20 +318,20 @@ fn process_tax() {
 
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x40]);
     process_instruction(&mut cpu, &[TAX_IMPLIED]);
-    assert_eq!(cpu.registers.x, cpu.registers.a);
-    assert_eq!(cpu.registers.p, StatusFlags::empty());
+    assert_eq_hex!(cpu.registers.x, cpu.registers.a);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::empty());
 
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x40]);
     cpu.registers.p = StatusFlags::empty();
     process_instruction(&mut cpu, &[TAX_IMPLIED]);
-    assert_eq!(cpu.registers.x, cpu.registers.a);
-    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+    assert_eq_hex!(cpu.registers.x, cpu.registers.a);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::NEGATIVE);
 
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x80]);
     cpu.registers.p = StatusFlags::empty();
     process_instruction(&mut cpu, &[TAX_IMPLIED]);
-    assert_eq!(cpu.registers.x, cpu.registers.a);
-    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+    assert_eq_hex!(cpu.registers.x, cpu.registers.a);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::ZERO);
 }
 
 #[test]
@@ -340,20 +340,20 @@ fn process_tay() {
 
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x40]);
     process_instruction(&mut cpu, &[TAY_IMPLIED]);
-    assert_eq!(cpu.registers.y, cpu.registers.a);
-    assert_eq!(cpu.registers.p, StatusFlags::empty());
+    assert_eq_hex!(cpu.registers.y, cpu.registers.a);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::empty());
 
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x40]);
     cpu.registers.p = StatusFlags::empty();
     process_instruction(&mut cpu, &[TAY_IMPLIED]);
-    assert_eq!(cpu.registers.y, cpu.registers.a);
-    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+    assert_eq_hex!(cpu.registers.y, cpu.registers.a);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::NEGATIVE);
 
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x80]);
     cpu.registers.p = StatusFlags::empty();
     process_instruction(&mut cpu, &[TAY_IMPLIED]);
-    assert_eq!(cpu.registers.y, cpu.registers.a);
-    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+    assert_eq_hex!(cpu.registers.y, cpu.registers.a);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::ZERO);
 }
 
 #[test]
@@ -361,18 +361,18 @@ fn process_txa() {
     let mut cpu = cpu(bus());
 
     process_instruction(&mut cpu, &[TXA_IMPLIED]);
-    assert_eq!(cpu.registers.a, cpu.registers.x);
-    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+    assert_eq_hex!(cpu.registers.a, cpu.registers.x);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::ZERO);
 
     process_instruction(&mut cpu, &[LDX_IMMEDIATE, 0x40]);
     process_instruction(&mut cpu, &[TXA_IMPLIED]);
-    assert_eq!(cpu.registers.a, cpu.registers.x);
-    assert_eq!(cpu.registers.p, StatusFlags::empty());
+    assert_eq_hex!(cpu.registers.a, cpu.registers.x);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::empty());
 
     process_instruction(&mut cpu, &[LDX_IMMEDIATE, 0x80]);
     process_instruction(&mut cpu, &[TXA_IMPLIED]);
-    assert_eq!(cpu.registers.a, cpu.registers.x);
-    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+    assert_eq_hex!(cpu.registers.a, cpu.registers.x);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
 
 #[test]
@@ -380,16 +380,16 @@ fn process_tya() {
     let mut cpu = cpu(bus());
 
     process_instruction(&mut cpu, &[TYA_IMPLIED]);
-    assert_eq!(cpu.registers.a, cpu.registers.y);
-    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+    assert_eq_hex!(cpu.registers.a, cpu.registers.y);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::ZERO);
 
     process_instruction(&mut cpu, &[LDY_IMMEDIATE, 0x40]);
     process_instruction(&mut cpu, &[TYA_IMPLIED]);
-    assert_eq!(cpu.registers.a, cpu.registers.y);
-    assert_eq!(cpu.registers.p, StatusFlags::empty());
+    assert_eq_hex!(cpu.registers.a, cpu.registers.y);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::empty());
 
     process_instruction(&mut cpu, &[LDY_IMMEDIATE, 0x80]);
     process_instruction(&mut cpu, &[TYA_IMPLIED]);
-    assert_eq!(cpu.registers.a, cpu.registers.y);
-    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+    assert_eq_hex!(cpu.registers.a, cpu.registers.y);
+    assert_eq_hex!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
