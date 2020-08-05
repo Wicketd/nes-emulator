@@ -5,8 +5,6 @@ extern crate bitflags;
 #[macro_use]
 extern crate getset;
 
-#[rustfmt::skip]
-mod macros;
 mod types;
 mod bus;
 mod cpu;
