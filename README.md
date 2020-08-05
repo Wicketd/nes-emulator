@@ -10,7 +10,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 
 - [x] ADC
 - [ ] AND
-- [x] ASL
+- [ ] ASL
 - [ ] BCC
 - [ ] BCS
 - [ ] BEQ
@@ -21,10 +21,10 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] BRK
 - [ ] BVC
 - [ ] BVS
-- [x] CLC
-- [x] CLD
-- [x] CLI
-- [x] CLV
+- [ ] CLC
+- [ ] CLD
+- [ ] CLI
+- [ ] CLV
 - [ ] CMP
 - [ ] CPX
 - [ ] CPY
@@ -33,15 +33,15 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] DEY
 - [ ] EOR
 - [ ] INC
-- [x] INX
-- [x] INY
+- [ ] INX
+- [ ] INY
 - [ ] JMP
 - [ ] JSR
-- [x] LDA
-- [x] LDX
-- [x] LDY
+- [ ] LDA
+- [ ] LDX
+- [ ] LDY
 - [ ] LSR
-- [x] NOP
+- [ ] NOP
 - [ ] ORA
 - [ ] PHA
 - [ ] PHP
@@ -52,18 +52,18 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] RTI
 - [ ] RTS
 - [ ] SBC
-- [x] SEC
-- [x] SED
-- [x] SEI
+- [ ] SEC
+- [ ] SED
+- [ ] SEI
 - [ ] STA
 - [ ] STX
 - [ ] STY
-- [x] TAX
-- [x] TAY
+- [ ] TAX
+- [ ] TAY
 - [ ] TSX
-- [x] TXA
+- [ ] TXA
 - [ ] TXS
-- [x] TYA
+- [ ] TYA
 
 ## Instruction modes
 - [ ] Byte
@@ -74,18 +74,18 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
   - [ ] ZeroPage
   - [ ] ZeroPageX
   - [x] Absolute
-  - [ ] AbsoluteX
-  - [ ] AbsoluteY
+  - [x] AbsoluteX
+  - [x] AbsoluteY
   - [ ] Indirect
   - [ ] IndirectX
   - [ ] IndirectY
 - [ ] Location
   - [ ] Implied
-  - [x] Accumulator
-  - [x] Relative
+  - [ ] Accumulator
+  - [ ] Relative
   - [ ] Immediate
   - [ ] ZeroPage
-  - [x] ZeroPageX
+  - [ ] ZeroPageX
   - [ ] Absolute
   - [ ] AbsoluteX
   - [ ] AbsoluteY
