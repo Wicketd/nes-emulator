@@ -24,7 +24,7 @@ macro_rules! match_opcode {
     };
 }
 
-#[derive(CopyGetters)]
+#[derive(Debug, CopyGetters)]
 #[getset(get_copy = "pub")]
 pub struct Instruction {
     opcode: u8,

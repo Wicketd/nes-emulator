@@ -24,6 +24,16 @@ impl Bus {
         }
     }
 
+    pub fn read_n(&self, address: Address, n: u16) -> Vec<u8> {
+        let mut bytes = Vec::new();
+
+        for i in 0..n {
+            bytes.push(self.read(address + i));
+        }
+
+        bytes
+    }
+
     pub fn write(&mut self, address: Address, value: u8) {
         self.bytes[address as usize] = value;
     }
