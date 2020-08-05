@@ -82,7 +82,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] Location
   - [ ] Implied
   - [x] Accumulator
-  - [ ] Relative
+  - [x] Relative
   - [ ] Immediate
   - [ ] ZeroPage
   - [x] ZeroPageX

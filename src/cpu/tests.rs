@@ -66,6 +66,23 @@ fn determine_input_location_accumulator() {
 }
 
 #[test]
+fn determine_input_location_relative() {
+    let mut cpu = cpu(bus());
+
+    cpu.bus.write(ADDRESS_PRG, 0xF0);
+    let input = cpu.determine_input_location(InstructionMode::Relative).unwrap();
+    assert_eq!(input, Location::Address(cpu.registers.pc - 0x10));
+
+    cpu.bus.write(ADDRESS_PRG, 0x0F);
+    let input = cpu.determine_input_location(InstructionMode::Relative).unwrap();
+    assert_eq!(input, Location::Address(cpu.registers.pc + 0xF));
+
+    cpu.bus.write(ADDRESS_PRG, 0x00);
+    let input = cpu.determine_input_location(InstructionMode::Relative).unwrap();
+    assert_eq!(input, Location::Address(cpu.registers.pc));
+}
+
+#[test]
 fn determine_input_location_zero_page_x() {
     let mut bus = bus();
     bus.write_u16(ADDRESS_PRG, ADDRESS_ZERO_PAGE as Address).unwrap();

@@ -167,7 +167,12 @@ impl Cpu {
             InstructionMode::Implied => unimplemented!("input location | Implied"),
             InstructionMode::Accumulator => Location::Accumulator,
             InstructionMode::Immediate => unimplemented!("input location | Immediate"),
-            InstructionMode::Relative => unimplemented!("input location | Relative"),
+            InstructionMode::Relative => {
+                // TODO: how to handle overflow?
+                let offset = i32::from(self.bus.read(self.registers.pc) as i8);
+                let address = (self.registers.pc as i32).wrapping_add(offset) as Address;
+                Location::Address(address)
+            },
             InstructionMode::ZeroPage => unimplemented!("input location | ZeroPage"),
             InstructionMode::ZeroPageX => {
                 // TODO: check if this would actually wrap around
