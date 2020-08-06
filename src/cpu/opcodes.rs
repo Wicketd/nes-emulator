@@ -15,5 +15,12 @@ opcodes! {
     ADC_INDIRECT_Y  = 0x71;
     JMP_ABSOLUTE    = 0x4C;
     JMP_INDIRECT    = 0x6C;
+    LDA_IMMEDIATE   = 0xA9;
+    LDA_ZERO_PAGE   = 0xA5;
+    LDA_ZERO_PAGE_X = 0xB5;
     LDA_ABSOLUTE    = 0xAD;
+    LDA_ABSOLUTE_X  = 0xBD;
+    LDA_ABSOLUTE_Y  = 0xB9;
+    LDA_INDIRECT_X  = 0xA1;
+    LDA_INDIRECT_Y  = 0xB1;
 }
