@@ -138,6 +138,8 @@ impl Cpu {
             InstructionOperation::Sec => self.run_sec(),
             InstructionOperation::Sed => self.run_sed(),
             InstructionOperation::Sei => self.run_sei(),
+            InstructionOperation::Tax => self.run_tax(),
+            InstructionOperation::Tay => self.run_tay(),
             _ => unimplemented!(),
         }
 
@@ -312,6 +314,20 @@ impl Cpu {
 
     fn run_sei(&mut self) {
         self.registers.p |= StatusFlags::INTERRUPT_DISABLE;
+    }
+
+    fn run_tax(&mut self) {
+        self.registers.x = self.registers.a;
+
+        self.registers.p.set(StatusFlags::ZERO, self.registers.x == 0);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(self.registers.x));
+    }
+
+    fn run_tay(&mut self) {
+        self.registers.y = self.registers.a;
+
+        self.registers.p.set(StatusFlags::ZERO, self.registers.y == 0);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(self.registers.y));
     }
 }
 

@@ -55,6 +55,8 @@ opcodes! {
     SEC_IMPLIED     = 0x38;
     SED_IMPLIED     = 0xF8;
     SEI_IMPLIED     = 0x78;
+    TAX_IMPLIED     = 0xAA;
+    TAY_IMPLIED     = 0xA8;
 }
 
 macro_rules! match_opcode {
@@ -143,6 +145,8 @@ impl Instruction {
             SEC_IMPLIED     => (Sec, Implied,     1, 2),
             SED_IMPLIED     => (Sed, Implied,     1, 2),
             SEI_IMPLIED     => (Sei, Implied,     1, 2),
+            TAX_IMPLIED     => (Tax, Implied,     1, 2),
+            TAY_IMPLIED     => (Tay, Implied,     1, 2),
         }
     }
 }
