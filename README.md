@@ -13,14 +13,14 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [x] ASL
 - [x] BCC
 - [x] BCS
-- [ ] BEQ
+- [x] BEQ
 - [ ] BIT
-- [ ] BMI
-- [ ] BNE
-- [ ] BPL
+- [x] BMI
+- [x] BNE
+- [x] BPL
 - [ ] BRK
-- [ ] BVC
-- [ ] BVS
+- [x] BVC
+- [x] BVS
 - [x] CLC
 - [x] CLD
 - [x] CLI
