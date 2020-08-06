@@ -91,6 +91,10 @@ impl Cpu {
                     self.run_branch(target);
                 }
             },
+            InstructionOperation::Bit => {
+                let input = self.determine_input_byte(instruction.mode(), bytes)?.unwrap();
+                self.run_bit(input);
+            },
             InstructionOperation::Bmi => {
                 if self.registers.p.contains(StatusFlags::NEGATIVE) {
                     let target = self.resolve_address_by_mode(instruction.mode(), bytes)?;
@@ -283,6 +287,14 @@ impl Cpu {
         self.registers.pc = target;
 
         // TODO: cycle calculation
+    }
+
+    fn run_bit(&mut self, input: u8) {
+        let result = self.registers.a & input;
+
+        self.registers.p.set(StatusFlags::ZERO, result == 0);
+        self.registers.p.set(StatusFlags::OVERFLOW, result.is_bit_set(6));
+        self.registers.p.set(StatusFlags::NEGATIVE, result.is_bit_set(7));
     }
 
     fn run_clc(&mut self) {

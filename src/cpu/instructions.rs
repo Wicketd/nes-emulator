@@ -33,6 +33,8 @@ opcodes! {
     BCC_RELATIVE    = 0x90;
     BCS_RELATIVE    = 0xB0;
     BEQ_RELATIVE    = 0xF0;
+    BIT_ZERO_PAGE   = 0x24;
+    BIT_ABSOLUTE    = 0x2C;
     BMI_RELATIVE    = 0x30;
     BNE_RELATIVE    = 0xD0;
     BPL_RELATIVE    = 0x10;
@@ -124,6 +126,8 @@ impl Instruction {
             ASL_ZERO_PAGE_X => (Asl, ZeroPageX,   2, 6),
             ASL_ABSOLUTE    => (Asl, Absolute,    3, 6),
             ASL_ABSOLUTE_X  => (Asl, AbsoluteX,   3, 7),
+            BIT_ZERO_PAGE   => (Bit, ZeroPage,    2, 3),
+            BIT_ABSOLUTE    => (Bit, Absolute,    3, 4),
             BCC_RELATIVE    => (Bcc, Relative,    2, 2),
             BCS_RELATIVE    => (Bcs, Relative,    2, 2),
             BEQ_RELATIVE    => (Beq, Relative,    2, 2),
