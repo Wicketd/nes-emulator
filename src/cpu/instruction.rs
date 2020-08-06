@@ -42,6 +42,7 @@ impl Instruction {
             // opcode => (operation, mode, len, cycles_base)
             ADC_IMMEDIATE   => (Adc, Immediate,   2, 2),
             JMP_INDIRECT    => (Jmp, Indirect,    3, 5),
+            LDA_ABSOLUTE    => (Lda, Absolute,    3, 4),
         }
     }
 }

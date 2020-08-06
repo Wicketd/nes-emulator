@@ -68,6 +68,10 @@ impl Cpu {
                 let address = self.resolve_address_by_mode(instruction.mode(), bytes)?;
                 self.run_jmp(address);
             }
+            InstructionOperation::Lda => {
+                let input = self.determine_input_byte(instruction.mode(), bytes)?.unwrap();
+                self.run_lda(input);
+            },
             _ => unimplemented!(),
         }
 
@@ -174,6 +178,13 @@ impl Cpu {
 
     fn run_jmp(&mut self, address: Address) {
         self.registers.pc = address;
+    }
+
+    fn run_lda(&mut self, input: u8) {
+        self.registers.a = input;
+
+        self.registers.p.set(StatusFlags::ZERO, self.registers.a == 0);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(self.registers.a));
     }
 }
 

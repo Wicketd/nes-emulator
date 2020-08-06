@@ -37,7 +37,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] INY
 - [x] JMP
 - [ ] JSR
-- [ ] LDA
+- [x] LDA
 - [ ] LDX
 - [ ] LDY
 - [ ] LSR

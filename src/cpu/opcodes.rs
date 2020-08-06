@@ -7,4 +7,5 @@ macro_rules! opcodes {
 opcodes! {
     ADC_IMMEDIATE   = 0x69;
     JMP_INDIRECT    = 0x6C;
+    LDA_ABSOLUTE    = 0xAD;
 }

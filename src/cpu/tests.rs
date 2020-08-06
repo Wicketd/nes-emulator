@@ -6,6 +6,8 @@ use crate::cpu::opcodes::*;
 const ADDRESS_PRG: Address = 0x8000;
 // TODO: confusing because of indirect addressing; rename
 const ADDRESS_INDIRECT: Address = 0x2040;
+const ADDRESS_INDIRECT_HIGH: u8 = 0x20;
+const ADDRESS_INDIRECT_LOW: u8 = 0x40;
 const ADDRESS_INDIRECT_2: Address = 0x4080;
 const ADDRESS_ZERO_PAGE: u8 = 0x30;
 const OFFSET_REGISTER_X: u8 = 0x12;
@@ -202,13 +204,32 @@ fn process_adc() {
 }
 
 #[test]
+fn process_lda() {
+    let mut bus = bus();
+    bus.write(ADDRESS_INDIRECT, 0x10);
+    bus.write(ADDRESS_INDIRECT + 2, 0x80);
+
+    let mut cpu = cpu(bus);
+
+    process_instruction(&mut cpu, &[LDA_ABSOLUTE, ADDRESS_INDIRECT_LOW, ADDRESS_INDIRECT_HIGH]);
+    assert_eq!(cpu.registers.a, 0x10);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    process_instruction(&mut cpu, &[LDA_ABSOLUTE, ADDRESS_INDIRECT_LOW + 1, ADDRESS_INDIRECT_HIGH]);
+    assert_eq!(cpu.registers.a, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    process_instruction(&mut cpu,  &[LDA_ABSOLUTE, ADDRESS_INDIRECT_LOW + 2, ADDRESS_INDIRECT_HIGH]);
+    assert_eq!(cpu.registers.a, 0x80);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
+
+#[test]
 fn process_jmp() {
     let mut bus = bus();
     bus.write_u16(ADDRESS_INDIRECT, ADDRESS_INDIRECT_2).unwrap();
 
     let mut cpu = cpu(bus);
-
-    let address_bytes = ADDRESS_INDIRECT.to_le_bytes();
-    process_instruction(&mut cpu, &[JMP_INDIRECT, address_bytes[0], address_bytes[1]]);
+    process_instruction(&mut cpu, &[JMP_INDIRECT, ADDRESS_INDIRECT_LOW, ADDRESS_INDIRECT_HIGH]);
     assert_eq!(cpu.registers.pc, ADDRESS_INDIRECT_2);
 }
