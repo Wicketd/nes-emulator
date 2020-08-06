@@ -48,6 +48,7 @@ impl Instruction {
             ADC_ABSOLUTE_Y  => (Adc, AbsoluteY,   3, 4),
             ADC_INDIRECT_X  => (Adc, IndirectX,   2, 6),
             ADC_INDIRECT_Y  => (Adc, IndirectY,   2, 5),
+            JMP_ABSOLUTE    => (Jmp, Absolute,    3, 3),
             JMP_INDIRECT    => (Jmp, Indirect,    3, 5),
             LDA_ABSOLUTE    => (Lda, Absolute,    3, 4),
         }

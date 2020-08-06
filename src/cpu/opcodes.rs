@@ -13,6 +13,7 @@ opcodes! {
     ADC_ABSOLUTE_Y  = 0x79;
     ADC_INDIRECT_X  = 0x61;
     ADC_INDIRECT_Y  = 0x71;
+    JMP_ABSOLUTE    = 0x4C;
     JMP_INDIRECT    = 0x6C;
     LDA_ABSOLUTE    = 0xAD;
 }
