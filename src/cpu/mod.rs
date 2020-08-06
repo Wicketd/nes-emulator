@@ -71,13 +71,13 @@ impl Cpu {
                 let target = self.resolve_location_by_mode(instruction.mode(), bytes)?.unwrap();
                 self.run_asl(target);
             }
+            InstructionOperation::Bcc | InstructionOperation::Jmp => {
+                let target = self.resolve_address_by_mode(instruction.mode(), bytes)?;
+                self.run_branch(target);
+            }
             InstructionOperation::Clc => self.run_clc(),
             InstructionOperation::Cld => self.run_cld(),
             InstructionOperation::Cli => self.run_cli(),
-            InstructionOperation::Jmp => {
-                let address = self.resolve_address_by_mode(instruction.mode(), bytes)?;
-                self.run_jmp(address);
-            }
             InstructionOperation::Lda => {
                 let input = self.determine_input_byte(instruction.mode(), bytes)?.unwrap();
                 self.run_lda(input);
@@ -141,6 +141,8 @@ impl Cpu {
             InstructionMode::Relative => {
                 let offset = i32::from(self.bus.read(self.registers.pc) as i8);
                 let address = (self.registers.pc as i32).wrapping_add(offset) as Address;
+                // account for reading the offset itself
+                let address = address.wrapping_add(1);
                 Some(Location::Address(address))
             },
             InstructionMode::ZeroPage => Some(Location::Address(bytes[0].into())),
@@ -221,6 +223,10 @@ impl Cpu {
         self.registers.p.set(StatusFlags::NEGATIVE, is_negative(result));
     }
 
+    fn run_branch(&mut self, target: Address) {
+        self.registers.pc = target;
+    }
+
     fn run_clc(&mut self) {
         self.registers.p.remove(StatusFlags::CARRY);
     }
@@ -231,10 +237,6 @@ impl Cpu {
 
     fn run_cli(&mut self) {
         self.registers.p.remove(StatusFlags::INTERRUPT_DISABLE);
-    }
-
-    fn run_jmp(&mut self, address: Address) {
-        self.registers.pc = address;
     }
 
     fn run_lda(&mut self, input: u8) {

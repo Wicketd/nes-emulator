@@ -12,6 +12,8 @@ const ADDRESS_INDIRECT_2: Address = 0x4080;
 const ADDRESS_ZERO_PAGE: u8 = 0x30;
 const OFFSET_REGISTER_X: u8 = 0x12;
 const OFFSET_REGISTER_Y: u8 = 0x24;
+const BRANCH_OFFSET: u8 = 0x20;
+const BRANCH_TARGET: Address = ADDRESS_PRG + (BRANCH_OFFSET as Address) + 2;
 const INPUT_BYTE: u8 = 0x10;
 
 fn bus() -> Bus {
@@ -188,20 +190,26 @@ fn determine_input_byte_indirect_y() {
 }
 
 #[test]
-fn resolve_location_relative() {
+fn resolve_location_relative_negative() {
     let mut cpu = cpu(bus());
-
     cpu.bus.write(ADDRESS_PRG, 0xF0);
     let address = cpu.resolve_address_by_mode(InstructionMode::Relative, &[0xF0]).unwrap();
-    assert_eq!(address, cpu.registers.pc - 0x10);
+    assert_eq!(address, cpu.registers.pc - 0xF);
+}
 
+#[test]
+fn resolve_location_relative_positive() {
+    let mut cpu = cpu(bus());
     cpu.bus.write(ADDRESS_PRG, 0x0F);
     let address = cpu.resolve_address_by_mode(InstructionMode::Relative, &[0xF0]).unwrap();
-    assert_eq!(address, cpu.registers.pc + 0xF);
+    assert_eq!(address, cpu.registers.pc + 0x10);
+}
 
-    cpu.bus.write(ADDRESS_PRG, 0x00);
+#[test]
+fn resolve_location_relative_zero() {
+    let mut cpu = cpu(bus());
     let address = cpu.resolve_address_by_mode(InstructionMode::Relative, &[0xF0]).unwrap();
-    assert_eq!(address, cpu.registers.pc);
+    assert_eq!(address, cpu.registers.pc + 1);
 }
 
 #[test]
@@ -259,6 +267,13 @@ fn process_asl() {
     process_instruction(&mut cpu, &[ASL_ACCUMULATOR]);
     assert_eq!(cpu.registers.a, 0b0000_0000);
     assert_eq!(cpu.registers.p, StatusFlags::ZERO | StatusFlags::CARRY);
+}
+
+#[test]
+fn process_bcc() {
+    let mut cpu = cpu(bus());
+    process_instruction(&mut cpu, &[BCC_RELATIVE, BRANCH_OFFSET]);
+    assert_eq!(BRANCH_TARGET, cpu.registers.pc);
 }
 
 #[test]

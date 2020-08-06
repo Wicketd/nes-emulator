@@ -11,7 +11,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [x] ADC
 - [x] AND
 - [x] ASL
-- [ ] BCC
+- [x] BCC
 - [ ] BCS
 - [ ] BEQ
 - [ ] BIT
