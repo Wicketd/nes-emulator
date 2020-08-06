@@ -250,3 +250,24 @@ fn process_jmp() {
     process_instruction(&mut cpu, &[JMP_INDIRECT, ADDRESS_INDIRECT_LOW, ADDRESS_INDIRECT_HIGH]);
     assert_eq!(cpu.registers.pc, ADDRESS_INDIRECT_2);
 }
+
+#[test]
+fn process_sec() {
+    let mut cpu = cpu(bus());
+    process_instruction(&mut cpu, &[SEC_IMPLIED]);
+    assert_eq!(cpu.registers.p, StatusFlags::CARRY);
+}
+
+#[test]
+fn process_sed() {
+    let mut cpu = cpu(bus());
+    process_instruction(&mut cpu, &[SED_IMPLIED]);
+    assert_eq!(cpu.registers.p, StatusFlags::DECIMAL);
+}
+
+#[test]
+fn process_sei() {
+    let mut cpu = cpu(bus());
+    process_instruction(&mut cpu, &[SEI_IMPLIED]);
+    assert_eq!(cpu.registers.p, StatusFlags::INTERRUPT_DISABLE);
+}

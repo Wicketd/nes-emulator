@@ -52,9 +52,9 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] RTI
 - [ ] RTS
 - [ ] SBC
-- [ ] SEC
-- [ ] SED
-- [ ] SEI
+- [X] SEC
+- [X] SED
+- [X] SEI
 - [ ] STA
 - [ ] STX
 - [ ] STY

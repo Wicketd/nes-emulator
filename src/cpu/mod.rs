@@ -72,6 +72,9 @@ impl Cpu {
                 let input = self.determine_input_byte(instruction.mode(), bytes)?.unwrap();
                 self.run_lda(input);
             },
+            InstructionOperation::Sec => self.run_sec(),
+            InstructionOperation::Sed => self.run_sed(),
+            InstructionOperation::Sei => self.run_sei(),
             _ => unimplemented!(),
         }
 
@@ -189,6 +192,18 @@ impl Cpu {
 
         self.registers.p.set(StatusFlags::ZERO, self.registers.a == 0);
         self.registers.p.set(StatusFlags::NEGATIVE, is_negative(self.registers.a));
+    }
+
+    fn run_sec(&mut self) {
+        self.registers.p |= StatusFlags::CARRY;
+    }
+
+    fn run_sed(&mut self) {
+        self.registers.p |= StatusFlags::DECIMAL;
+    }
+
+    fn run_sei(&mut self) {
+        self.registers.p |= StatusFlags::INTERRUPT_DISABLE;
     }
 }
 

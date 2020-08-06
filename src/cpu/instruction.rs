@@ -58,6 +58,9 @@ impl Instruction {
             LDA_ABSOLUTE_Y  => (Lda, AbsoluteY,   3, 4),
             LDA_INDIRECT_X  => (Lda, IndirectX,   2, 6),
             LDA_INDIRECT_Y  => (Lda, IndirectY,   2, 5),
+            SEC_IMPLIED     => (Sec, Implied,     1, 2),
+            SED_IMPLIED     => (Sed, Implied,     1, 2),
+            SEI_IMPLIED     => (Sei, Implied,     1, 2),
         }
     }
 }
