@@ -64,6 +64,10 @@ opcodes! {
     DEC_ABSOLUTE_X  = 0xDE;
     DEX_IMPLIED     = 0xCA;
     DEY_IMPLIED     = 0x88;
+    INC_ZERO_PAGE   = 0xE6;
+    INC_ZERO_PAGE_X = 0xF6;
+    INC_ABSOLUTE    = 0xEE;
+    INC_ABSOLUTE_X  = 0xFE;
     JMP_ABSOLUTE    = 0x4C;
     JMP_INDIRECT    = 0x6C;
     LDA_IMMEDIATE   = 0xA9;
@@ -181,6 +185,10 @@ impl Instruction {
             DEC_ABSOLUTE_X  => (Dec, AbsoluteX,   3, 7),
             DEX_IMPLIED     => (Dex, Implied,     1, 2),
             DEY_IMPLIED     => (Dey, Implied,     1, 2),
+            INC_ZERO_PAGE   => (Inc, ZeroPage, 2, 5),
+            INC_ZERO_PAGE_X => (Inc, ZeroPageX, 2, 6),
+            INC_ABSOLUTE    => (Inc, Absolute, 3, 6),
+            INC_ABSOLUTE_X  => (Inc, AbsoluteX, 3, 7),
             JMP_ABSOLUTE    => (Jmp, Absolute,    3, 3),
             JMP_INDIRECT    => (Jmp, Indirect,    3, 5),
             LDA_IMMEDIATE   => (Lda, Immediate,   2, 2),
