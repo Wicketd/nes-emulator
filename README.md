@@ -25,9 +25,9 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [x] CLD
 - [x] CLI
 - [x] CLV
-- [ ] CMP
-- [ ] CPX
-- [ ] CPY
+- [x] CMP
+- [x] CPX
+- [x] CPY
 - [ ] DEC
 - [ ] DEX
 - [ ] DEY

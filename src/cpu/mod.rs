@@ -129,6 +129,18 @@ impl Cpu {
             InstructionOperation::Cld => self.run_cld(),
             InstructionOperation::Cli => self.run_cli(),
             InstructionOperation::Clv => self.run_clv(),
+            InstructionOperation::Cmp => {
+                let input = self.determine_input_byte(instruction.mode(), bytes)?.unwrap();
+                self.run_cmp(input);
+            },
+            InstructionOperation::Cpx => {
+                let input = self.determine_input_byte(instruction.mode(), bytes)?.unwrap();
+                self.run_cpx(input);
+            },
+            InstructionOperation::Cpy => {
+                let input = self.determine_input_byte(instruction.mode(), bytes)?.unwrap();
+                self.run_cpy(input);
+            },
             InstructionOperation::Jmp => {
                 let target = self.resolve_address_by_mode(instruction.mode(), bytes)?;
                 // TODO: hacky
@@ -312,6 +324,33 @@ impl Cpu {
 
     fn run_clv(&mut self) {
         self.registers.p.remove(StatusFlags::OVERFLOW);
+    }
+
+    fn run_cmp(&mut self, input: u8) {
+        // TODO: overflow?
+        let result = self.registers.a.wrapping_sub(input);
+
+        self.registers.p.set(StatusFlags::CARRY, self.registers.a >= input);
+        self.registers.p.set(StatusFlags::ZERO, self.registers.a == input);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(result));
+    }
+
+    fn run_cpx(&mut self, input: u8) {
+        // TODO: overflow?
+        let result = self.registers.x.wrapping_sub(input);
+
+        self.registers.p.set(StatusFlags::CARRY, self.registers.x >= input);
+        self.registers.p.set(StatusFlags::ZERO, self.registers.x == input);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(result));
+    }
+
+    fn run_cpy(&mut self, input: u8) {
+        // TODO: overflow?
+        let result = self.registers.y.wrapping_sub(input);
+
+        self.registers.p.set(StatusFlags::CARRY, self.registers.y >= input);
+        self.registers.p.set(StatusFlags::ZERO, self.registers.y == input);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(result));
     }
 
     fn run_jmp(&mut self, target: Address) {
