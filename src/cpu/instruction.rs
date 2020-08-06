@@ -50,14 +50,14 @@ impl Instruction {
             ADC_INDIRECT_Y  => (Adc, IndirectY,   2, 5),
             JMP_ABSOLUTE    => (Jmp, Absolute,    3, 3),
             JMP_INDIRECT    => (Jmp, Indirect,    3, 5),
-            LDA_IMMEDIATE   => (Lda, Immediate, 2, 2),
-            LDA_ZERO_PAGE   => (Lda, ZeroPage, 2, 3),
-            LDA_ZERO_PAGE_X => (Lda, ZeroPageX, 2, 4),
+            LDA_IMMEDIATE   => (Lda, Immediate,   2, 2),
+            LDA_ZERO_PAGE   => (Lda, ZeroPage,    2, 3),
+            LDA_ZERO_PAGE_X => (Lda, ZeroPageX,   2, 4),
             LDA_ABSOLUTE    => (Lda, Absolute,    3, 4),
-            LDA_ABSOLUTE_X  => (Lda, AbsoluteX, 3, 4),
-            LDA_ABSOLUTE_Y  => (Lda, AbsoluteY, 3, 4),
-            LDA_INDIRECT_X  => (Lda, IndirectX, 2, 6),
-            LDA_INDIRECT_Y  => (Lda, IndirectY, 2, 5),
+            LDA_ABSOLUTE_X  => (Lda, AbsoluteX,   3, 4),
+            LDA_ABSOLUTE_Y  => (Lda, AbsoluteY,   3, 4),
+            LDA_INDIRECT_X  => (Lda, IndirectX,   2, 6),
+            LDA_INDIRECT_Y  => (Lda, IndirectY,   2, 5),
         }
     }
 }
