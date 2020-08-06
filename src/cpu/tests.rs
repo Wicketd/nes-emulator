@@ -45,6 +45,11 @@ fn assert_input_byte_eq(mode: InstructionMode, expected: Option<u8>, bytes: &[u8
     assert_eq!(expected, cpu.determine_input_byte(mode, bytes).unwrap());
 }
 
+fn lda_no_flags(cpu: &mut Cpu, value: u8) {
+    process_instruction(cpu, &[LDA_IMMEDIATE, value]);
+    cpu.registers.p = StatusFlags::empty();
+}
+
 #[test]
 fn determine_input_byte_implied() {
     let cpu = cpu(bus());
@@ -218,6 +223,26 @@ fn process_adc() {
     process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0x10]);
     assert_eq!(cpu.registers.a, 0x11);
     assert_eq!(cpu.registers.p, StatusFlags::empty());
+}
+
+#[test]
+fn process_and() {
+    let mut cpu = cpu(bus());
+
+    lda_no_flags(&mut cpu, 0xFF);
+    process_instruction(&mut cpu, &[AND_IMMEDIATE, 0x08]);
+    assert_eq!(cpu.registers.a, 0x08);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    lda_no_flags(&mut cpu, 0xFF);
+    process_instruction(&mut cpu, &[AND_IMMEDIATE, 0x00]);
+    assert_eq!(cpu.registers.a, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    lda_no_flags(&mut cpu, 0xFF);
+    process_instruction(&mut cpu, &[AND_IMMEDIATE, 0x80]);
+    assert_eq!(cpu.registers.a, 0x80);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
 
 #[test]

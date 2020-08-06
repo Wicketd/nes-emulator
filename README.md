@@ -9,7 +9,7 @@ This README really only functions as my personal to-do list. Why are you here?
 Note: Partial mode coverage, implement full mode coverage after the instructions themselves.
 
 - [x] ADC
-- [ ] AND
+- [x] AND
 - [ ] ASL
 - [ ] BCC
 - [ ] BCS

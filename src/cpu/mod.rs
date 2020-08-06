@@ -63,6 +63,10 @@ impl Cpu {
                 let input = self.determine_input_byte(instruction.mode(), bytes)?.unwrap();
                 self.run_adc(input);
             },
+            InstructionOperation::And => {
+                let input = self.determine_input_byte(instruction.mode(), bytes)?.unwrap();
+                self.run_and(input);
+            },
             InstructionOperation::Clc => self.run_clc(),
             InstructionOperation::Cld => self.run_cld(),
             InstructionOperation::Cli => self.run_cli(),
@@ -184,6 +188,13 @@ impl Cpu {
         self.registers.p.set(StatusFlags::ZERO, a_new == 0);
         self.registers.p.set(StatusFlags::OVERFLOW, has_overflown(a_old, a_new));
         self.registers.p.set(StatusFlags::NEGATIVE, is_negative(a_new));
+    }
+
+    fn run_and(&mut self, input: u8) {
+        self.registers.a &= input;
+
+        self.registers.p.set(StatusFlags::ZERO, self.registers.a == 0);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(self.registers.a));
     }
 
     fn run_clc(&mut self) {
