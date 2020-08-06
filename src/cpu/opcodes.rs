@@ -13,6 +13,9 @@ opcodes! {
     ADC_ABSOLUTE_Y  = 0x79;
     ADC_INDIRECT_X  = 0x61;
     ADC_INDIRECT_Y  = 0x71;
+    CLC_IMPLIED     = 0x18;
+    CLD_IMPLIED     = 0xD8;
+    CLI_IMPLIED     = 0x58;
     JMP_ABSOLUTE    = 0x4C;
     JMP_INDIRECT    = 0x6C;
     LDA_IMMEDIATE   = 0xA9;

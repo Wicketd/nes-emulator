@@ -221,6 +221,39 @@ fn process_adc() {
 }
 
 #[test]
+fn process_clc() {
+    let mut cpu = cpu(bus());
+
+    process_instruction(&mut cpu, &[SEC_IMPLIED]);
+    assert_eq!(cpu.registers.p, StatusFlags::CARRY);
+
+    process_instruction(&mut cpu, &[CLC_IMPLIED]);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+}
+
+#[test]
+fn process_cld() {
+    let mut cpu = cpu(bus());
+
+    process_instruction(&mut cpu, &[SED_IMPLIED]);
+    assert_eq!(cpu.registers.p, StatusFlags::DECIMAL);
+
+    process_instruction(&mut cpu, &[CLD_IMPLIED]);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+}
+
+#[test]
+fn process_cli() {
+    let mut cpu = cpu(bus());
+
+    process_instruction(&mut cpu, &[SEI_IMPLIED]);
+    assert_eq!(cpu.registers.p, StatusFlags::INTERRUPT_DISABLE);
+
+    process_instruction(&mut cpu, &[CLI_IMPLIED]);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+}
+
+#[test]
 fn process_lda() {
     let mut bus = bus();
     bus.write(ADDRESS_INDIRECT, 0x10);

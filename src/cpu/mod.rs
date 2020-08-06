@@ -64,6 +64,9 @@ impl Cpu {
                 let input = self.determine_input_byte(instruction.mode(), bytes)?.unwrap();
                 self.run_adc(input);
             },
+            InstructionOperation::Clc => self.run_clc(),
+            InstructionOperation::Cld => self.run_cld(),
+            InstructionOperation::Cli => self.run_cli(),
             InstructionOperation::Jmp => {
                 let address = self.resolve_address_by_mode(instruction.mode(), bytes)?;
                 self.run_jmp(address);
@@ -181,6 +184,18 @@ impl Cpu {
         self.registers.p.set(StatusFlags::ZERO, a_new == 0);
         self.registers.p.set(StatusFlags::OVERFLOW, has_overflown(a_old, a_new));
         self.registers.p.set(StatusFlags::NEGATIVE, is_negative(a_new));
+    }
+
+    fn run_clc(&mut self) {
+        self.registers.p.remove(StatusFlags::CARRY);
+    }
+
+    fn run_cld(&mut self) {
+        self.registers.p.remove(StatusFlags::DECIMAL);
+    }
+
+    fn run_cli(&mut self) {
+        self.registers.p.remove(StatusFlags::INTERRUPT_DISABLE);
     }
 
     fn run_jmp(&mut self, address: Address) {

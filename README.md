@@ -21,9 +21,9 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] BRK
 - [ ] BVC
 - [ ] BVS
-- [ ] CLC
-- [ ] CLD
-- [ ] CLI
+- [x] CLC
+- [x] CLD
+- [x] CLI
 - [ ] CLV
 - [ ] CMP
 - [ ] CPX
