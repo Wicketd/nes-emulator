@@ -183,6 +183,23 @@ fn determine_input_byte_indirect_y() {
 }
 
 #[test]
+fn resolve_location_relative() {
+    let mut cpu = cpu(bus());
+
+    cpu.bus.write(ADDRESS_PRG, 0xF0);
+    let address = cpu.resolve_address_by_mode(InstructionMode::Relative, &[0xF0]).unwrap();
+    assert_eq!(address, cpu.registers.pc - 0x10);
+
+    cpu.bus.write(ADDRESS_PRG, 0x0F);
+    let address = cpu.resolve_address_by_mode(InstructionMode::Relative, &[0xF0]).unwrap();
+    assert_eq!(address, cpu.registers.pc + 0xF);
+
+    cpu.bus.write(ADDRESS_PRG, 0x00);
+    let address = cpu.resolve_address_by_mode(InstructionMode::Relative, &[0xF0]).unwrap();
+    assert_eq!(address, cpu.registers.pc);
+}
+
+#[test]
 fn process_adc() {
     let mut cpu = cpu(bus());
 

@@ -117,7 +117,11 @@ impl Cpu {
             InstructionMode::Implied => None,
             InstructionMode::Accumulator => Some(Location::Accumulator),
             InstructionMode::Immediate => None,
-            InstructionMode::Relative => unimplemented!("determine location | Relative"),
+            InstructionMode::Relative => {
+                let offset = i32::from(self.bus.read(self.registers.pc) as i8);
+                let address = (self.registers.pc as i32).wrapping_add(offset) as Address;
+                Some(Location::Address(address))
+            },
             InstructionMode::ZeroPage => Some(Location::Address(bytes[0].into())),
             InstructionMode::ZeroPageX => {
                 let address = (bytes[0] + self.registers.x) as Address;
