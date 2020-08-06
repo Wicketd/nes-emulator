@@ -140,6 +140,10 @@ impl Cpu {
             InstructionOperation::Sei => self.run_sei(),
             InstructionOperation::Tax => self.run_tax(),
             InstructionOperation::Tay => self.run_tay(),
+            InstructionOperation::Tsx => self.run_tsx(),
+            InstructionOperation::Txa => self.run_txa(),
+            InstructionOperation::Txs => self.run_txs(),
+            InstructionOperation::Tya => self.run_tya(),
             _ => unimplemented!(),
         }
 
