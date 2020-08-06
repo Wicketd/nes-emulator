@@ -43,6 +43,7 @@ opcodes! {
     CLC_IMPLIED     = 0x18;
     CLD_IMPLIED     = 0xD8;
     CLI_IMPLIED     = 0x58;
+    CLV_IMPLIED     = 0xB8;
     JMP_ABSOLUTE    = 0x4C;
     JMP_INDIRECT    = 0x6C;
     LDA_IMMEDIATE   = 0xA9;
@@ -139,6 +140,7 @@ impl Instruction {
             CLC_IMPLIED     => (Clc, Implied,     1, 2),
             CLD_IMPLIED     => (Cld, Implied,     1, 2),
             CLI_IMPLIED     => (Cli, Implied,     1, 2),
+            CLV_IMPLIED     => (Clv, Implied,     1, 2),
             JMP_ABSOLUTE    => (Jmp, Absolute,    3, 3),
             JMP_INDIRECT    => (Jmp, Indirect,    3, 5),
             LDA_IMMEDIATE   => (Lda, Immediate,   2, 2),
