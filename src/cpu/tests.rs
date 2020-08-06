@@ -272,8 +272,14 @@ fn process_asl() {
 #[test]
 fn process_bcc() {
     let mut cpu = cpu(bus());
+
     process_instruction(&mut cpu, &[BCC_RELATIVE, BRANCH_OFFSET]);
     assert_eq!(BRANCH_TARGET, cpu.registers.pc);
+
+    let pc_old = cpu.registers.pc;
+    process_instruction(&mut cpu, &[SEC_IMPLIED]);
+    process_instruction(&mut cpu, &[BCC_RELATIVE, BRANCH_OFFSET]);
+    assert_eq!(pc_old, cpu.registers.pc - 2);
 }
 
 #[test]
