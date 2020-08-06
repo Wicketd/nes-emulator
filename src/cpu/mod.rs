@@ -77,9 +77,15 @@ impl Cpu {
             InstructionMode::Accumulator => unimplemented!("input byte | Accumulator"),
             InstructionMode::Immediate => Some(bytes[0]),
             InstructionMode::Relative => unimplemented!("input byte | Relative"),
-            InstructionMode::ZeroPage => unimplemented!("input byte | ZeroPage"),
-            InstructionMode::ZeroPageX => unimplemented!("input byte | ZeroPageX"),
-            InstructionMode::ZeroPageY => unimplemented!("input byte | ZeroPageY"),
+            InstructionMode::ZeroPage => {
+                Some(self.bus.read_zp(bytes[0]))
+            },
+            InstructionMode::ZeroPageX => {
+                Some(self.bus.read_zp(bytes[0] + self.registers.x))
+            },
+            InstructionMode::ZeroPageY => {
+                Some(self.bus.read_zp(bytes[0] + self.registers.y))
+            },
             InstructionMode::Absolute => {
                 let address = u16::from_le_bytes([bytes[0], bytes[1]]);
                 Some(self.bus.read(address))

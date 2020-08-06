@@ -16,6 +16,10 @@ impl Bus {
         self.bytes[address as usize]
     }
 
+    pub fn read_zp(&self, address: u8) -> u8 {
+        self.read(address.into())
+    }
+
     pub fn read_u16(&self, address: Address) -> Result<u16> {
         if address as usize + 1 >= Self::WIDTH {
             Err(anyhow!("reading 2 bytes from `${:04X}` would exceed max bus address `${:04X}`", address, Self::WIDTH - 1))
@@ -36,6 +40,10 @@ impl Bus {
 
     pub fn write(&mut self, address: Address, value: u8) {
         self.bytes[address as usize] = value;
+    }
+
+    pub fn write_zp(&mut self, address: u8, value: u8) {
+        self.write(address as Address, value);
     }
 
     pub fn write_u16(&mut self, address: Address, value: u16) -> Result {

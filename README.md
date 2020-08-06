@@ -71,8 +71,9 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
   - [ ] Accumulator
   - [ ] Relative
   - [x] Immediate
-  - [ ] ZeroPage
-  - [ ] ZeroPageX
+  - [x] ZeroPage
+  - [x] ZeroPageX
+  - [x] ZeroPageY
   - [x] Absolute
   - [x] AbsoluteX
   - [x] AbsoluteY
