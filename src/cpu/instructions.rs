@@ -58,6 +58,10 @@ opcodes! {
     CPY_IMMEDIATE   = 0xC0;
     CPY_ZERO_PAGE   = 0xC4;
     CPY_ABSOLUTE    = 0xCC;
+    DEC_ZERO_PAGE   = 0xC6;
+    DEC_ZERO_PAGE_X = 0xD6;
+    DEC_ABSOLUTE    = 0xCE;
+    DEC_ABSOLUTE_X  = 0xDE;
     JMP_ABSOLUTE    = 0x4C;
     JMP_INDIRECT    = 0x6C;
     LDA_IMMEDIATE   = 0xA9;
@@ -169,6 +173,10 @@ impl Instruction {
             CPY_IMMEDIATE   => (Cpy, Immediate,   2, 2),
             CPY_ZERO_PAGE   => (Cpy, ZeroPage,    2, 3),
             CPY_ABSOLUTE    => (Cpy, Absolute,    3, 4),
+            DEC_ZERO_PAGE   => (Dec, ZeroPage,    2, 5),
+            DEC_ZERO_PAGE_X => (Dec, ZeroPageX,   2, 6),
+            DEC_ABSOLUTE    => (Dec, Absolute,    3, 6),
+            DEC_ABSOLUTE_X  => (Dec, AbsoluteX,   3, 7),
             JMP_ABSOLUTE    => (Jmp, Absolute,    3, 3),
             JMP_INDIRECT    => (Jmp, Indirect,    3, 5),
             LDA_IMMEDIATE   => (Lda, Immediate,   2, 2),

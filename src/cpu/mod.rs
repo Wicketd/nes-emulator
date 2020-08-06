@@ -141,6 +141,10 @@ impl Cpu {
                 let input = self.determine_input_byte(instruction.mode(), bytes)?.unwrap();
                 self.run_cpy(input);
             },
+            InstructionOperation::Dec => {
+                let target = self.resolve_address_by_mode(instruction.mode(), bytes)?;
+                self.run_dec(target);
+            },
             InstructionOperation::Jmp => {
                 let target = self.resolve_address_by_mode(instruction.mode(), bytes)?;
                 // TODO: hacky
@@ -350,6 +354,15 @@ impl Cpu {
 
         self.registers.p.set(StatusFlags::CARRY, self.registers.y >= input);
         self.registers.p.set(StatusFlags::ZERO, self.registers.y == input);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(result));
+    }
+
+    fn run_dec(&mut self, target: Address) {
+        // TODO: overflow?
+        let result = self.bus.read(target).wrapping_sub(1);
+        self.bus.write(target, result);
+
+        self.registers.p.set(StatusFlags::ZERO, result == 0);
         self.registers.p.set(StatusFlags::NEGATIVE, is_negative(result));
     }
 
