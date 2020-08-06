@@ -70,13 +70,12 @@ impl Cpu {
         Ok(())
     }
 
-    // TODO: clear error messages
     fn determine_input_byte(&self, mode: InstructionMode, bytes: &[u8]) -> Result<Option<u8>> {
         let input = match mode {
             InstructionMode::Implied => None,
-            InstructionMode::Accumulator => return Err(anyhow!("invalid input/mode combination for mode `Accumulator`")),
+            InstructionMode::Accumulator => return Err(anyhow!("invalid input byte mode: `Accumulator`")),
             InstructionMode::Immediate => Some(bytes[0]),
-            InstructionMode::Relative => unimplemented!("input byte | Relative"),
+            InstructionMode::Relative => return Err(anyhow!("invalid input byte mode: `Relative`")),
             InstructionMode::ZeroPage => {
                 Some(self.bus.read_zp(bytes[0]))
             },

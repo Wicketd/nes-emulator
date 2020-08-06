@@ -69,7 +69,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] Byte
   - [x] Implied
   - [x] Accumulator
-  - [ ] Relative
+  - [x] Relative
   - [x] Immediate
   - [x] ZeroPage
   - [x] ZeroPageX
