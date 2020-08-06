@@ -26,6 +26,7 @@ opcodes! {
     LDA_ABSOLUTE_Y  = 0xB9;
     LDA_INDIRECT_X  = 0xA1;
     LDA_INDIRECT_Y  = 0xB1;
+    NOP_IMPLIED     = 0xEA;
     SEC_IMPLIED     = 0x38;
     SED_IMPLIED     = 0xF8;
     SEI_IMPLIED     = 0x78;

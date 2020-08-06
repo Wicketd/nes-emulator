@@ -75,6 +75,7 @@ impl Cpu {
                 let input = self.determine_input_byte(instruction.mode(), bytes)?.unwrap();
                 self.run_lda(input);
             },
+            InstructionOperation::Nop => {},
             InstructionOperation::Sec => self.run_sec(),
             InstructionOperation::Sed => self.run_sed(),
             InstructionOperation::Sei => self.run_sei(),
