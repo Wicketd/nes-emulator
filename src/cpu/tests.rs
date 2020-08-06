@@ -13,7 +13,6 @@ const ADDRESS_ZERO_PAGE: u8 = 0x30;
 const OFFSET_REGISTER_X: u8 = 0x12;
 const OFFSET_REGISTER_Y: u8 = 0x24;
 const BRANCH_OFFSET: u8 = 0x20;
-const BRANCH_TARGET: Address = ADDRESS_PRG + (BRANCH_OFFSET as Address) + 2;
 const INPUT_BYTE: u8 = 0x10;
 
 fn bus() -> Bus {
@@ -192,24 +191,22 @@ fn determine_input_byte_indirect_y() {
 #[test]
 fn resolve_location_relative_negative() {
     let mut cpu = cpu(bus());
-    cpu.bus.write(ADDRESS_PRG, 0xF0);
     let address = cpu.resolve_address_by_mode(InstructionMode::Relative, &[0xF0]).unwrap();
-    assert_eq!(address, cpu.registers.pc - 0xF);
+    assert_eq!(address, cpu.registers.pc - 0x10);
 }
 
 #[test]
 fn resolve_location_relative_positive() {
     let mut cpu = cpu(bus());
-    cpu.bus.write(ADDRESS_PRG, 0x0F);
-    let address = cpu.resolve_address_by_mode(InstructionMode::Relative, &[0xF0]).unwrap();
-    assert_eq!(address, cpu.registers.pc + 0x10);
+    let address = cpu.resolve_address_by_mode(InstructionMode::Relative, &[0x0F]).unwrap();
+    assert_eq!(address, cpu.registers.pc + 0x0F);
 }
 
 #[test]
 fn resolve_location_relative_zero() {
     let mut cpu = cpu(bus());
-    let address = cpu.resolve_address_by_mode(InstructionMode::Relative, &[0xF0]).unwrap();
-    assert_eq!(address, cpu.registers.pc + 1);
+    let address = cpu.resolve_address_by_mode(InstructionMode::Relative, &[0x00]).unwrap();
+    assert_eq!(address, cpu.registers.pc);
 }
 
 #[test]
@@ -273,13 +270,14 @@ fn process_asl() {
 fn process_bcc() {
     let mut cpu = cpu(bus());
 
-    process_instruction(&mut cpu, &[BCC_RELATIVE, BRANCH_OFFSET]);
-    assert_eq!(BRANCH_TARGET, cpu.registers.pc);
-
     let pc_old = cpu.registers.pc;
-    process_instruction(&mut cpu, &[SEC_IMPLIED]);
     process_instruction(&mut cpu, &[BCC_RELATIVE, BRANCH_OFFSET]);
-    assert_eq!(pc_old, cpu.registers.pc - 2);
+    assert_eq!(cpu.registers.pc, pc_old + (BRANCH_OFFSET as Address) + 2);
+
+    process_instruction(&mut cpu, &[SEC_IMPLIED]);
+    let pc_old = cpu.registers.pc;
+    process_instruction(&mut cpu, &[BCC_RELATIVE, BRANCH_OFFSET]);
+    assert_eq!(cpu.registers.pc, pc_old + 2);
 }
 
 #[test]

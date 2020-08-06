@@ -50,11 +50,11 @@ impl Cpu {
     }
 
     fn process_instruction(&mut self, instruction: Instruction) -> Result {
-        // account for opcode
-        self.registers.pc += 1;
-        let bytes = self.bus.read_n(self.registers.pc, instruction.len() as u16 - 1);
-
-        Ok(self.run_instruction(instruction, &bytes)?)
+        let bytes = self.bus.read_n(self.registers.pc, instruction.len() as u16);
+        let len = instruction.len();
+        self.run_instruction(instruction, &bytes[1..])?;
+        self.registers.pc += len as Address;
+        Ok(())
     }
 
     // TODO: no calls to unwrap()
@@ -84,6 +84,8 @@ impl Cpu {
             InstructionOperation::Cli => self.run_cli(),
             InstructionOperation::Jmp => {
                 let target = self.resolve_address_by_mode(instruction.mode(), bytes)?;
+                // TODO: hacky
+                let target = target.wrapping_sub(instruction.len() as Address);
                 self.run_jmp(target);
             }
             InstructionOperation::Lda => {
@@ -134,23 +136,14 @@ impl Cpu {
         }
     }
 
-    fn persist_result(&mut self, result: u8, location: Location) {
-        match location {
-            Location::Accumulator => self.registers.a = result,
-            Location::Address(address) => self.bus.write(address, result),
-        }
-    }
-
     fn resolve_location_by_mode(&self, mode: InstructionMode, bytes: &[u8]) -> Result<Option<Location>> {
         let location = match mode {
             InstructionMode::Implied => None,
             InstructionMode::Accumulator => Some(Location::Accumulator),
             InstructionMode::Immediate => None,
             InstructionMode::Relative => {
-                let offset = i32::from(self.bus.read(self.registers.pc) as i8);
+                let offset = i32::from(bytes[0] as i8);
                 let address = (self.registers.pc as i32).wrapping_add(offset) as Address;
-                // account for reading the offset itself
-                let address = address.wrapping_add(1);
                 Some(Location::Address(address))
             },
             InstructionMode::ZeroPage => Some(Location::Address(bytes[0].into())),
@@ -197,6 +190,13 @@ impl Cpu {
         };
 
         Ok(location)
+    }
+
+    fn persist_result(&mut self, result: u8, location: Location) {
+        match location {
+            Location::Accumulator => self.registers.a = result,
+            Location::Address(address) => self.bus.write(address, result),
+        }
     }
 
     fn run_adc(&mut self, input: u8) {
