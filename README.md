@@ -35,7 +35,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] INC
 - [ ] INX
 - [ ] INY
-- [ ] JMP
+- [x] JMP
 - [ ] JSR
 - [ ] LDA
 - [ ] LDX
@@ -66,37 +66,21 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] TYA
 
 ## Instruction modes
-- [ ] Byte
-  - [x] Implied
-  - [x] Accumulator
-  - [x] Relative
-  - [x] Immediate
-  - [x] ZeroPage
-  - [x] ZeroPageX
-  - [x] ZeroPageY
-  - [x] Absolute
-  - [x] AbsoluteX
-  - [x] AbsoluteY
-  - [x] Indirect
-  - [x] IndirectX
-  - [x] IndirectY
-  - [ ] Carries
-  - [ ] Overflows
-- [ ] Location
-  - [ ] Implied
-  - [ ] Accumulator
-  - [ ] Relative
-  - [ ] Immediate
-  - [ ] ZeroPage
-  - [ ] ZeroPageX
-  - [ ] Absolute
-  - [ ] AbsoluteX
-  - [ ] AbsoluteY
-  - [ ] Indirect
-  - [ ] IndirectX
-  - [ ] IndirectY
-  - [ ] Carries
-  - [ ] Overflows
+- [x] Implied
+- [x] Accumulator
+- [x] Relative
+- [x] Immediate
+- [x] ZeroPage
+- [x] ZeroPageX
+- [x] ZeroPageY
+- [x] Absolute
+- [x] AbsoluteX
+- [x] AbsoluteY
+- [x] Indirect
+- [x] IndirectX
+- [x] IndirectY
+- [ ] Carries
+- [ ] Overflows
 
 ## Miscellaneous
 - [ ] Implement CPU wrapping + page boundary error (check opcode list @ 6502.org)

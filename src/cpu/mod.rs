@@ -64,6 +64,10 @@ impl Cpu {
                 let input = self.determine_input_byte(instruction.mode(), bytes)?.unwrap();
                 self.run_adc(input);
             },
+            InstructionOperation::Jmp => {
+                let address = self.resolve_address_by_mode(instruction.mode(), bytes)?;
+                self.run_jmp(address);
+            }
             _ => unimplemented!(),
         }
 
@@ -91,9 +95,13 @@ impl Cpu {
     }
 
     fn determine_input_byte_from_address(&self, mode: InstructionMode, bytes: &[u8]) -> Result<u8> {
+        Ok(self.bus.read(self.resolve_address_by_mode(mode, bytes)?))
+    }
+
+    fn resolve_address_by_mode(&self, mode: InstructionMode, bytes: &[u8]) -> Result<Address> {
         match self.resolve_location_by_mode(mode, bytes)? {
             Some(location) => match location {
-                Location::Address(address) => Ok(self.bus.read(address)),
+                Location::Address(address) => Ok(address),
                 _ => Err(anyhow!("no address found in input location")),
             },
             None => Err(anyhow!("no input location found")),
@@ -162,6 +170,10 @@ impl Cpu {
         self.registers.p.set(StatusFlags::ZERO, a_new == 0);
         self.registers.p.set(StatusFlags::OVERFLOW, has_overflown(a_old, a_new));
         self.registers.p.set(StatusFlags::NEGATIVE, is_negative(a_new));
+    }
+
+    fn run_jmp(&mut self, address: Address) {
+        self.registers.pc = address;
     }
 }
 

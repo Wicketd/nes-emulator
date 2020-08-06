@@ -200,3 +200,15 @@ fn process_adc() {
     assert_eq!(cpu.registers.a, 0x11);
     assert_eq!(cpu.registers.p, StatusFlags::empty());
 }
+
+#[test]
+fn process_jmp() {
+    let mut bus = bus();
+    bus.write_u16(ADDRESS_INDIRECT, ADDRESS_INDIRECT_2).unwrap();
+
+    let mut cpu = cpu(bus);
+
+    let address_bytes = ADDRESS_INDIRECT.to_le_bytes();
+    process_instruction(&mut cpu, &[JMP_INDIRECT, address_bytes[0], address_bytes[1]]);
+    assert_eq!(cpu.registers.pc, ADDRESS_INDIRECT_2);
+}
