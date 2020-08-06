@@ -1,8 +1,7 @@
-mod opcodes;
-mod instruction;
+mod instructions;
 mod tests;
 
-use self::instruction::{Instruction, InstructionOperation, InstructionMode};
+use self::instructions::{Instruction, InstructionOperation, InstructionMode};
 use crate::bus::Bus;
 use crate::types::{Address, Result, BitRead};
 

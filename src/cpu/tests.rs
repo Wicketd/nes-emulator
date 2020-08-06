@@ -1,7 +1,7 @@
 #![cfg(test)]
 
 use super::*;
-use crate::cpu::opcodes::*;
+use crate::cpu::instructions::opcodes::*;
 
 const ADDRESS_PRG: Address = 0x8000;
 // TODO: confusing because of indirect addressing; rename
