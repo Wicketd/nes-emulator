@@ -60,10 +60,10 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [ ] STY
 - [x] TAX
 - [x] TAY
-- [ ] TSX
-- [ ] TXA
-- [ ] TXS
-- [ ] TYA
+- [x] TSX
+- [x] TXA
+- [x] TXS
+- [x] TYA
 
 ## Instruction modes
 - [x] Implied

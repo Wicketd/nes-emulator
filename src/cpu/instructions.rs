@@ -57,6 +57,10 @@ opcodes! {
     SEI_IMPLIED     = 0x78;
     TAX_IMPLIED     = 0xAA;
     TAY_IMPLIED     = 0xA8;
+    TSX_IMPLIED     = 0xBA;
+    TXA_IMPLIED     = 0x8A;
+    TXS_IMPLIED     = 0x9A;
+    TYA_IMPLIED     = 0x98;
 }
 
 macro_rules! match_opcode {
@@ -147,6 +151,10 @@ impl Instruction {
             SEI_IMPLIED     => (Sei, Implied,     1, 2),
             TAX_IMPLIED     => (Tax, Implied,     1, 2),
             TAY_IMPLIED     => (Tay, Implied,     1, 2),
+            TSX_IMPLIED     => (Tsx, Implied,     1, 2),
+            TXA_IMPLIED     => (Txa, Implied,     1, 2),
+            TXS_IMPLIED     => (Txs, Implied,     1, 2),
+            TYA_IMPLIED     => (Tya, Implied,     1, 2),
         }
     }
 }
