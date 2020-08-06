@@ -67,6 +67,10 @@ impl Cpu {
                 let input = self.determine_input_byte(instruction.mode(), bytes)?.unwrap();
                 self.run_and(input);
             },
+            InstructionOperation::Asl => {
+                let target = self.resolve_location_by_mode(instruction.mode(), bytes)?.unwrap();
+                self.run_asl(target);
+            }
             InstructionOperation::Clc => self.run_clc(),
             InstructionOperation::Cld => self.run_cld(),
             InstructionOperation::Cli => self.run_cli(),
@@ -119,6 +123,13 @@ impl Cpu {
                 _ => Err(anyhow!("no address found in input location")),
             },
             None => Err(anyhow!("no input location found")),
+        }
+    }
+
+    fn persist_result(&mut self, result: u8, location: Location) {
+        match location {
+            Location::Accumulator => self.registers.a = result,
+            Location::Address(address) => self.bus.write(address, result),
         }
     }
 
@@ -195,6 +206,19 @@ impl Cpu {
 
         self.registers.p.set(StatusFlags::ZERO, self.registers.a == 0);
         self.registers.p.set(StatusFlags::NEGATIVE, is_negative(self.registers.a));
+    }
+
+    fn run_asl(&mut self, target: Location) {
+        let input = match target {
+            Location::Accumulator => self.registers.a,
+            Location::Address(address) => self.bus.read(address),
+        };
+        let result = input.wrapping_shl(1);
+        self.persist_result(result, target);
+
+        self.registers.p.set(StatusFlags::CARRY, is_carry(input, result));
+        self.registers.p.set(StatusFlags::ZERO, self.registers.a == 0);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(result));
     }
 
     fn run_clc(&mut self) {

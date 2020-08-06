@@ -25,6 +25,11 @@ opcodes! {
     AND_ABSOLUTE_Y  = 0x39;
     AND_INDIRECT_X  = 0x21;
     AND_INDIRECT_Y  = 0x32;
+    ASL_ACCUMULATOR = 0x0A;
+    ASL_ZERO_PAGE   = 0x06;
+    ASL_ZERO_PAGE_X = 0x16;
+    ASL_ABSOLUTE    = 0x0E;
+    ASL_ABSOLUTE_X  = 0x1E;
     CLC_IMPLIED     = 0x18;
     CLD_IMPLIED     = 0xD8;
     CLI_IMPLIED     = 0x58;
@@ -100,6 +105,11 @@ impl Instruction {
             AND_ABSOLUTE_Y  => (And, AbsoluteY,   3, 4),
             AND_INDIRECT_X  => (And, IndirectX,   2, 6),
             AND_INDIRECT_Y  => (And, IndirectY,   2, 5),
+            ASL_ACCUMULATOR => (Asl, Accumulator, 1, 2),
+            ASL_ZERO_PAGE   => (Asl, ZeroPage,    2, 5),
+            ASL_ZERO_PAGE_X => (Asl, ZeroPageX,   2, 6),
+            ASL_ABSOLUTE    => (Asl, Absolute,    3, 6),
+            ASL_ABSOLUTE_X  => (Asl, AbsoluteX,   3, 7),
             CLC_IMPLIED     => (Clc, Implied,     1, 2),
             CLD_IMPLIED     => (Cld, Implied,     1, 2),
             CLI_IMPLIED     => (Cli, Implied,     1, 2),

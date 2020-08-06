@@ -246,6 +246,22 @@ fn process_and() {
 }
 
 #[test]
+fn process_asl() {
+    let mut cpu = cpu(bus());
+
+    process_instruction(&mut cpu, &[ADC_IMMEDIATE, 0b0100_0000]);
+    assert_eq!(cpu.registers.a, 0b0100_0000);
+
+    process_instruction(&mut cpu, &[ASL_ACCUMULATOR]);
+    assert_eq!(cpu.registers.a, 0b1000_0000);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+
+    process_instruction(&mut cpu, &[ASL_ACCUMULATOR]);
+    assert_eq!(cpu.registers.a, 0b0000_0000);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO | StatusFlags::CARRY);
+}
+
+#[test]
 fn process_clc() {
     let mut cpu = cpu(bus());
 
