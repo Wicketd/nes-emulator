@@ -80,6 +80,8 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
   - [ ] Indirect
   - [ ] IndirectX
   - [ ] IndirectY
+  - [ ] Carries
+  - [ ] Overflows
 - [ ] Location
   - [ ] Implied
   - [ ] Accumulator
@@ -93,6 +95,8 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
   - [ ] Indirect
   - [ ] IndirectX
   - [ ] IndirectY
+  - [ ] Carries
+  - [ ] Overflows
 
 ## Miscellaneous
 - [ ] Implement CPU wrapping + page boundary error (check opcode list @ 6502.org)

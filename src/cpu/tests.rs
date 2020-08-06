@@ -4,7 +4,9 @@ use super::*;
 use crate::cpu::opcodes::*;
 
 const ADDRESS_PRG: Address = 0x8000;
+// TODO: confusing because of indirect addressing; rename
 const ADDRESS_INDIRECT: Address = 0x2040;
+const ADDRESS_INDIRECT_2: Address = 0x4080;
 const ADDRESS_ZERO_PAGE: u8 = 0x30;
 const OFFSET_REGISTER_X: u8 = 0x12;
 const OFFSET_REGISTER_Y: u8 = 0x24;
@@ -125,6 +127,21 @@ fn determine_input_byte_zero_page() {
         InstructionMode::ZeroPageY,
         Some(INPUT_BYTE),
         &[ADDRESS_ZERO_PAGE],
+        &cpu
+    );
+}
+
+#[test]
+fn determine_input_byte_indirect() {
+    let mut bus = bus();
+    bus.write_u16(ADDRESS_INDIRECT, ADDRESS_INDIRECT_2).unwrap();
+    bus.write(ADDRESS_INDIRECT_2, INPUT_BYTE);
+
+    let cpu = cpu(bus);
+    assert_input_byte_eq(
+        InstructionMode::Indirect,
+        Some(INPUT_BYTE),
+        &ADDRESS_INDIRECT.to_le_bytes(),
         &cpu
     );
 }
