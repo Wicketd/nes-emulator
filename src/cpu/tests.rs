@@ -147,6 +147,40 @@ fn determine_input_byte_indirect() {
 }
 
 #[test]
+fn determine_input_byte_indirect_x() {
+    let mut bus = bus();
+    bus.write_zp_u16(ADDRESS_ZERO_PAGE + OFFSET_REGISTER_X, ADDRESS_INDIRECT).unwrap();
+    bus.write(ADDRESS_INDIRECT, INPUT_BYTE);
+
+    let mut cpu = cpu(bus);
+    cpu.registers.x = OFFSET_REGISTER_X;
+
+    assert_input_byte_eq(
+        InstructionMode::IndirectX,
+        Some(INPUT_BYTE),
+        &[ADDRESS_ZERO_PAGE],
+        &cpu
+    );
+}
+
+#[test]
+fn determine_input_byte_indirect_y() {
+    let mut bus = bus();
+    bus.write_zp_u16(ADDRESS_ZERO_PAGE, ADDRESS_INDIRECT).unwrap();
+    bus.write(ADDRESS_INDIRECT + OFFSET_REGISTER_Y as Address, INPUT_BYTE);
+
+    let mut cpu = cpu(bus);
+    cpu.registers.y = OFFSET_REGISTER_Y;
+
+    assert_input_byte_eq(
+        InstructionMode::IndirectY,
+        Some(INPUT_BYTE),
+        &[ADDRESS_ZERO_PAGE],
+        &cpu
+    );
+}
+
+#[test]
 fn process_adc() {
     let mut cpu = cpu(bus());
 

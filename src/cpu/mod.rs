@@ -104,8 +104,17 @@ impl Cpu {
                 let address_second = self.bus.read_u16(address_first)?;
                 Some(self.bus.read(address_second))
             },
-            InstructionMode::IndirectX => unimplemented!("input byte | IndirectX"),
-            InstructionMode::IndirectY => unimplemented!("input byte | IndirectY"),
+            InstructionMode::IndirectX => {
+                let address_first = bytes[0].wrapping_add(self.registers.x);
+                let address_second = self.bus.read_zp_u16(address_first)?;
+                Some(self.bus.read(address_second))
+            },
+            InstructionMode::IndirectY => {
+                let address_first = self.bus.read_zp_u16(bytes[0])?;
+                // TODO: overflow check
+                let address_second = address_first + self.registers.y as Address;
+                Some(self.bus.read(address_second))
+            },
         };
 
         Ok(input)

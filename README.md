@@ -77,9 +77,9 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
   - [x] Absolute
   - [x] AbsoluteX
   - [x] AbsoluteY
-  - [ ] Indirect
-  - [ ] IndirectX
-  - [ ] IndirectY
+  - [x] Indirect
+  - [x] IndirectX
+  - [x] IndirectY
   - [ ] Carries
   - [ ] Overflows
 - [ ] Location
