@@ -29,8 +29,8 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [x] CPX
 - [x] CPY
 - [x] DEC
-- [ ] DEX
-- [ ] DEY
+- [x] DEX
+- [x] DEY
 - [ ] EOR
 - [ ] INC
 - [ ] INX

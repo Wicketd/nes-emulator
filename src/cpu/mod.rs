@@ -145,6 +145,8 @@ impl Cpu {
                 let target = self.resolve_address_by_mode(instruction.mode(), bytes)?;
                 self.run_dec(target);
             },
+            InstructionOperation::Dex => self.run_dex(),
+            InstructionOperation::Dey => self.run_dey(),
             InstructionOperation::Jmp => {
                 let target = self.resolve_address_by_mode(instruction.mode(), bytes)?;
                 // TODO: hacky
@@ -364,6 +366,22 @@ impl Cpu {
 
         self.registers.p.set(StatusFlags::ZERO, result == 0);
         self.registers.p.set(StatusFlags::NEGATIVE, is_negative(result));
+    }
+
+    fn run_dex(&mut self) {
+        // TOOD: overflow?
+        self.registers.x = self.registers.x.wrapping_sub(1);
+
+        self.registers.p.set(StatusFlags::ZERO, self.registers.x == 0);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(self.registers.x));
+    }
+
+    fn run_dey(&mut self) {
+        // TOOD: overflow?
+        self.registers.y = self.registers.y.wrapping_sub(1);
+
+        self.registers.p.set(StatusFlags::ZERO, self.registers.y == 0);
+        self.registers.p.set(StatusFlags::NEGATIVE, is_negative(self.registers.y));
     }
 
     fn run_jmp(&mut self, target: Address) {
