@@ -74,7 +74,7 @@ impl Cpu {
     fn determine_input_byte(&self, mode: InstructionMode, bytes: &[u8]) -> Result<Option<u8>> {
         let input = match mode {
             InstructionMode::Implied => None,
-            InstructionMode::Accumulator => unimplemented!("input byte | Accumulator"),
+            InstructionMode::Accumulator => return Err(anyhow!("invalid input/mode combination for mode `Accumulator`")),
             InstructionMode::Immediate => Some(bytes[0]),
             InstructionMode::Relative => unimplemented!("input byte | Relative"),
             InstructionMode::ZeroPage => {

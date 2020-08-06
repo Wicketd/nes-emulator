@@ -68,7 +68,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 ## Instruction modes
 - [ ] Byte
   - [x] Implied
-  - [ ] Accumulator
+  - [x] Accumulator
   - [ ] Relative
   - [x] Immediate
   - [x] ZeroPage
