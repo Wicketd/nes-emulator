@@ -41,6 +41,13 @@ impl Instruction {
 
             // opcode => (operation, mode, len, cycles_base)
             ADC_IMMEDIATE   => (Adc, Immediate,   2, 2),
+            ADC_ZERO_PAGE   => (Adc, ZeroPage,    2, 3),
+            ADC_ZERO_PAGE_X => (Adc, ZeroPageX,   2, 4),
+            ADC_ABSOLUTE    => (Adc, Absolute,    3, 4),
+            ADC_ABSOLUTE_X  => (Adc, AbsoluteX,   3, 4),
+            ADC_ABSOLUTE_Y  => (Adc, AbsoluteY,   3, 4),
+            ADC_INDIRECT_X  => (Adc, IndirectX,   2, 6),
+            ADC_INDIRECT_Y  => (Adc, IndirectY,   2, 5),
             JMP_INDIRECT    => (Jmp, Indirect,    3, 5),
             LDA_ABSOLUTE    => (Lda, Absolute,    3, 4),
         }
