@@ -76,48 +76,80 @@ impl Cpu {
             InstructionMode::Accumulator => return Err(anyhow!("invalid input byte mode: `Accumulator`")),
             InstructionMode::Immediate => Some(bytes[0]),
             InstructionMode::Relative => return Err(anyhow!("invalid input byte mode: `Relative`")),
-            InstructionMode::ZeroPage => {
-                Some(self.bus.read_zp(bytes[0]))
+            InstructionMode::ZeroPage => Some(self.determine_input_byte_from_address(mode, bytes)?),
+            InstructionMode::ZeroPageX => Some(self.determine_input_byte_from_address(mode, bytes)?),
+            InstructionMode::ZeroPageY => Some(self.determine_input_byte_from_address(mode, bytes)?),
+            InstructionMode::Absolute => Some(self.determine_input_byte_from_address(mode, bytes)?),
+            InstructionMode::AbsoluteX => Some(self.determine_input_byte_from_address(mode, bytes)?),
+            InstructionMode::AbsoluteY => Some(self.determine_input_byte_from_address(mode, bytes)?),
+            InstructionMode::Indirect => Some(self.determine_input_byte_from_address(mode, bytes)?),
+            InstructionMode::IndirectX => Some(self.determine_input_byte_from_address(mode, bytes)?),
+            InstructionMode::IndirectY => Some(self.determine_input_byte_from_address(mode, bytes)?),
+        };
+
+        Ok(input)
+    }
+
+    fn determine_input_byte_from_address(&self, mode: InstructionMode, bytes: &[u8]) -> Result<u8> {
+        match self.resolve_location_by_mode(mode, bytes)? {
+            Some(location) => match location {
+                Location::Address(address) => Ok(self.bus.read(address)),
+                _ => Err(anyhow!("no address found in input location")),
             },
+            None => Err(anyhow!("no input location found")),
+        }
+    }
+
+    fn resolve_location_by_mode(&self, mode: InstructionMode, bytes: &[u8]) -> Result<Option<Location>> {
+        let location = match mode {
+            InstructionMode::Implied => None,
+            InstructionMode::Accumulator => Some(Location::Accumulator),
+            InstructionMode::Immediate => None,
+            InstructionMode::Relative => unimplemented!("determine location | Relative"),
+            InstructionMode::ZeroPage => Some(Location::Address(bytes[0].into())),
             InstructionMode::ZeroPageX => {
-                Some(self.bus.read_zp(bytes[0] + self.registers.x))
+                let address = (bytes[0] + self.registers.x) as Address;
+                Some(Location::Address(address))
             },
             InstructionMode::ZeroPageY => {
-                Some(self.bus.read_zp(bytes[0] + self.registers.y))
+                let address = (bytes[0] + self.registers.y) as Address;
+                Some(Location::Address(address))
             },
             InstructionMode::Absolute => {
                 let address = u16::from_le_bytes([bytes[0], bytes[1]]);
-                Some(self.bus.read(address))
+                Some(Location::Address(address))
             },
             InstructionMode::AbsoluteX => {
-                let address = u16::from_le_bytes([bytes[0], bytes[1]]);
                 // TODO: overflow check
-                Some(self.bus.read(address + self.registers.x as Address))
+                let address = u16::from_le_bytes([bytes[0], bytes[1]]);
+                let address = address + self.registers.x as Address;
+                Some(Location::Address(address))
             },
             InstructionMode::AbsoluteY => {
-                let address = u16::from_le_bytes([bytes[0], bytes[1]]);
                 // TODO: overflow check
-                Some(self.bus.read(address + self.registers.y as Address))
+                let address = u16::from_le_bytes([bytes[0], bytes[1]]);
+                let address = address + self.registers.y as Address;
+                Some(Location::Address(address))
             },
             InstructionMode::Indirect => {
                 let address_first = u16::from_le_bytes([bytes[0], bytes[1]]);
                 let address_second = self.bus.read_u16(address_first)?;
-                Some(self.bus.read(address_second))
+                Some(Location::Address(address_second))
             },
             InstructionMode::IndirectX => {
                 let address_first = bytes[0].wrapping_add(self.registers.x);
                 let address_second = self.bus.read_zp_u16(address_first)?;
-                Some(self.bus.read(address_second))
+                Some(Location::Address(address_second))
             },
             InstructionMode::IndirectY => {
-                let address_first = self.bus.read_zp_u16(bytes[0])?;
                 // TODO: overflow check
+                let address_first = self.bus.read_zp_u16(bytes[0])?;
                 let address_second = address_first + self.registers.y as Address;
-                Some(self.bus.read(address_second))
+                Some(Location::Address(address_second))
             },
         };
 
-        Ok(input)
+        Ok(location)
     }
 
     fn run_adc(&mut self, input: u8) {
