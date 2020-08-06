@@ -32,6 +32,12 @@ opcodes! {
     ASL_ABSOLUTE_X  = 0x1E;
     BCC_RELATIVE    = 0x90;
     BCS_RELATIVE    = 0xB0;
+    BEQ_RELATIVE    = 0xF0;
+    BMI_RELATIVE    = 0x30;
+    BNE_RELATIVE    = 0xD0;
+    BPL_RELATIVE    = 0x10;
+    BVC_RELATIVE    = 0x50;
+    BVS_RELATIVE    = 0x70;
     CLC_IMPLIED     = 0x18;
     CLD_IMPLIED     = 0xD8;
     CLI_IMPLIED     = 0x58;
@@ -114,6 +120,12 @@ impl Instruction {
             ASL_ABSOLUTE_X  => (Asl, AbsoluteX,   3, 7),
             BCC_RELATIVE    => (Bcc, Relative,    2, 2),
             BCS_RELATIVE    => (Bcs, Relative,    2, 2),
+            BEQ_RELATIVE    => (Beq, Relative,    2, 2),
+            BMI_RELATIVE    => (Bmi, Relative,    2, 2),
+            BNE_RELATIVE    => (Bne, Relative,    2, 2),
+            BPL_RELATIVE    => (Bpl, Relative,    2, 2),
+            BVC_RELATIVE    => (Bvc, Relative,    2, 2),
+            BVS_RELATIVE    => (Bvs, Relative,    2, 2),
             CLC_IMPLIED     => (Clc, Implied,     1, 2),
             CLD_IMPLIED     => (Cld, Implied,     1, 2),
             CLI_IMPLIED     => (Cli, Implied,     1, 2),

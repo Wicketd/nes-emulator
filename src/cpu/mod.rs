@@ -85,6 +85,42 @@ impl Cpu {
                     self.run_branch(target);
                 }
             },
+            InstructionOperation::Beq => {
+                if self.registers.p.contains(StatusFlags::ZERO) {
+                    let target = self.resolve_address_by_mode(instruction.mode(), bytes)?;
+                    self.run_branch(target);
+                }
+            },
+            InstructionOperation::Bmi => {
+                if self.registers.p.contains(StatusFlags::NEGATIVE) {
+                    let target = self.resolve_address_by_mode(instruction.mode(), bytes)?;
+                    self.run_branch(target);
+                }
+            },
+            InstructionOperation::Bne => {
+                if !self.registers.p.contains(StatusFlags::ZERO) {
+                    let target = self.resolve_address_by_mode(instruction.mode(), bytes)?;
+                    self.run_branch(target);
+                }
+            },
+            InstructionOperation::Bpl => {
+                if !self.registers.p.contains(StatusFlags::NEGATIVE) {
+                    let target = self.resolve_address_by_mode(instruction.mode(), bytes)?;
+                    self.run_branch(target);
+                }
+            },
+            InstructionOperation::Bvc => {
+                if !self.registers.p.contains(StatusFlags::OVERFLOW) {
+                    let target = self.resolve_address_by_mode(instruction.mode(), bytes)?;
+                    self.run_branch(target);
+                }
+            },
+            InstructionOperation::Bvs => {
+                if self.registers.p.contains(StatusFlags::OVERFLOW) {
+                    let target = self.resolve_address_by_mode(instruction.mode(), bytes)?;
+                    self.run_branch(target);
+                }
+            },
             InstructionOperation::Clc => self.run_clc(),
             InstructionOperation::Cld => self.run_cld(),
             InstructionOperation::Cli => self.run_cli(),
