@@ -31,6 +31,7 @@ opcodes! {
     ASL_ABSOLUTE    = 0x0E;
     ASL_ABSOLUTE_X  = 0x1E;
     BCC_RELATIVE    = 0x90;
+    BCS_RELATIVE    = 0xB0;
     CLC_IMPLIED     = 0x18;
     CLD_IMPLIED     = 0xD8;
     CLI_IMPLIED     = 0x58;
@@ -112,6 +113,7 @@ impl Instruction {
             ASL_ABSOLUTE    => (Asl, Absolute,    3, 6),
             ASL_ABSOLUTE_X  => (Asl, AbsoluteX,   3, 7),
             BCC_RELATIVE    => (Bcc, Relative,    2, 2),
+            BCS_RELATIVE    => (Bcs, Relative,    2, 2),
             CLC_IMPLIED     => (Clc, Implied,     1, 2),
             CLD_IMPLIED     => (Cld, Implied,     1, 2),
             CLI_IMPLIED     => (Cli, Implied,     1, 2),

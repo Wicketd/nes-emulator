@@ -267,7 +267,7 @@ fn process_asl() {
 }
 
 #[test]
-fn process_bcc() {
+fn process_branch() {
     let mut cpu = cpu(bus());
 
     let pc_old = cpu.registers.pc;

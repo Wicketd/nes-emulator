@@ -72,13 +72,19 @@ impl Cpu {
             InstructionOperation::Asl => {
                 let target = self.resolve_location_by_mode(instruction.mode(), bytes)?.unwrap();
                 self.run_asl(target);
-            }
+            },
             InstructionOperation::Bcc => {
                 if !self.registers.p.contains(StatusFlags::CARRY) {
                     let target = self.resolve_address_by_mode(instruction.mode(), bytes)?;
-                    self.run_branch(target)
+                    self.run_branch(target);
                 }
-            }
+            },
+            InstructionOperation::Bcs => {
+                if self.registers.p.contains(StatusFlags::CARRY) {
+                    let target = self.resolve_address_by_mode(instruction.mode(), bytes)?;
+                    self.run_branch(target);
+                }
+            },
             InstructionOperation::Clc => self.run_clc(),
             InstructionOperation::Cld => self.run_cld(),
             InstructionOperation::Cli => self.run_cli(),

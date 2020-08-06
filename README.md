@@ -12,7 +12,7 @@ Note: Partial mode coverage, implement full mode coverage after the instructions
 - [x] AND
 - [x] ASL
 - [x] BCC
-- [ ] BCS
+- [x] BCS
 - [ ] BEQ
 - [ ] BIT
 - [ ] BMI
