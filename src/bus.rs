@@ -17,9 +17,24 @@ impl Bus {
     }
 
     pub fn read_u16(&self, address: u16) -> Result<u16> {
-        if let Some(_) = address.checked_add(1) {
+        if address.checked_add(1).is_some() {
             let bytes = [self.read(address), self.read(address + 1)];
             Ok(u16::from_le_bytes(bytes))
+        } else {
+            Err(anyhow!("address out of bounds"))
+        }
+    }
+
+    pub fn write(&mut self, address: u16, value: u8) {
+        self.bytes[address as usize] = value;
+    }
+
+    pub fn write_u16(&mut self, address: u16, value: u16) -> Result {
+        if address.checked_add(1).is_some() {
+            let bytes = value.to_le_bytes();
+            self.write(address, bytes[0]);
+            self.write(address, bytes[1]);
+            Ok(())
         } else {
             Err(anyhow!("address out of bounds"))
         }

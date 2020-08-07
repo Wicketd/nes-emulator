@@ -29,6 +29,23 @@ impl Cpu {
 
         Ok(())
     }
+
+    fn stack_push(&mut self, value: u8) {
+        self.bus.write(self.stack_determine_address(), value);
+        self.registers.s = self.registers.s.wrapping_sub(1);
+    }
+
+    fn stack_pull(&mut self) -> u8 {
+        let address = self.stack_determine_address().wrapping_add(1);
+        let value = self.bus.read(address);
+        self.bus.write(address, 0);
+        self.registers.s = self.registers.s.wrapping_add(1);
+        value
+    }
+
+    fn stack_determine_address(&self) -> u16 {
+        0x0100 + self.registers.s as u16
+    }
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -75,5 +92,56 @@ bitflags! {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
 
+    const ADDRESS_PRG: u16 = 0x8000;
+
+    fn bus() -> Bus {
+        let mut bus = Bus::new();
+        bus.write_u16(ADDRESS_RESET, ADDRESS_PRG);
+        bus
+    }
+
+    fn cpu(bus: Bus) -> Cpu {
+        Cpu::new(bus).unwrap()
+    }
+
+    #[test]
+    fn stack_push_pull() {
+        let mut cpu = cpu(bus());
+
+        cpu.stack_push(0x10);
+        cpu.stack_push(0x20);
+        cpu.stack_push(0x30);
+        assert_eq!(cpu.bus.read(0x01FD), 0x30);
+        assert_eq!(cpu.registers.s, 0xFC);
+
+        assert_eq!(cpu.stack_pull(), 0x30);
+        assert_eq!(cpu.stack_pull(), 0x20);
+        assert_eq!(cpu.bus.read(0x01FF), 0x10);
+        assert_eq!(cpu.stack_pull(), 0x10);
+        assert_eq!(cpu.bus.read(0x01FF), 0);
+        assert_eq!(cpu.registers.s, 0xFF);
+    }
+
+    #[test]
+    fn stack_overflow() {
+        let mut cpu = cpu(bus());
+
+        for i in (0..0xFF).rev() {
+            cpu.stack_push(0x10);
+            assert_eq!(cpu.registers.s, i);
+        }
+
+        cpu.stack_push(0x10);
+        assert_eq!(cpu.registers.s, 0xFF);
+    }
+
+    #[test]
+    fn stack_underflow() {
+        let mut cpu = cpu(bus());
+        assert_eq!(cpu.registers.s, 0xFF);
+        cpu.stack_pull();
+        assert_eq!(cpu.registers.s, 0x00);
+    }
 }
