@@ -1,3 +1,6 @@
+mod clock;
+
+use self::clock::{Clock, ClockMode};
 use crate::bus::Bus;
 use crate::types::Result;
 
@@ -9,6 +12,7 @@ pub struct Cpu {
     bus: Bus,
     registers: RegisterSet,
     vectors: VectorSet,
+    clock: Clock,
 }
 
 impl Cpu {
@@ -22,7 +26,10 @@ impl Cpu {
         let mut registers = RegisterSet::new();
         registers.pc = vectors.reset;
 
-        Ok(Self { bus, registers, vectors })
+        // TODO: hard-coded
+        let clock = Clock::new(ClockMode::Ntsc);
+
+        Ok(Self { bus, registers, vectors, clock })
     }
 
     pub fn start(&mut self) -> Result {
@@ -98,7 +105,7 @@ mod tests {
 
     fn bus() -> Bus {
         let mut bus = Bus::new();
-        bus.write_u16(ADDRESS_RESET, ADDRESS_PRG);
+        bus.write_u16(ADDRESS_RESET, ADDRESS_PRG).unwrap();
         bus
     }
 
