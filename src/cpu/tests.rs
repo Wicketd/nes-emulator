@@ -4,7 +4,7 @@ use super::*;
 
 const ADDRESS_PRG: u16 = 0x8000;
 const INPUT_OPCODE: u8 = 0xFF;
-const INPUT_VALUE: u8 = 0x4F;
+const INPUT_BYTE: u8 = 0x4F;
 const INPUT_ADDRESS_ZP: u16 = 0x0040;
 const INPUT_ADDRESS: u16 = 0x4020;
 const INPUT_ADDRESS_LOW: u8 = INPUT_ADDRESS.to_le_bytes()[0];
@@ -23,6 +23,13 @@ fn bus() -> Bus {
 
 fn cpu(bus: Bus) -> Cpu {
     Cpu::new(bus).unwrap()
+}
+
+fn process_instruction(cpu: &mut Cpu, opcode: u8, args: &[u8]) {
+    cpu.bus.write(cpu.registers.pc, opcode);
+    cpu.bus.write_n(cpu.registers.pc + 1, args);
+    let instruction = cpu.determine_instruction_next().unwrap();
+    cpu.process_instruction(instruction).unwrap();
 }
 
 #[test]
@@ -145,9 +152,9 @@ fn determine_input_immediate() {
     let cpu = cpu(bus());
     let input = cpu.determine_input(
         InstructionMode::Immediate,
-        &[INPUT_OPCODE, INPUT_VALUE],
+        &[INPUT_OPCODE, INPUT_BYTE],
     ).unwrap();
-    assert_eq!(input, InstructionInput::Byte(INPUT_VALUE));
+    assert_eq!(input, InstructionInput::Byte(INPUT_BYTE));
 }
 
 #[test]
@@ -225,4 +232,21 @@ fn determine_input_indirect_y() {
         &[INPUT_OPCODE, INPUT_ADDRESS_ZP as u8],
     ).unwrap();
     assert_eq!(input, InstructionInput::Address(INPUT_ADDRESS));
+}
+
+#[test]
+fn process_lda_immediate() {
+    let mut cpu = cpu(bus());
+
+    process_instruction(&mut cpu, 0xA9, &[0x10]);
+    assert_eq!(cpu.registers.a, 0x10);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    process_instruction(&mut cpu, 0xA9, &[0x00]);
+    assert_eq!(cpu.registers.a, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    process_instruction(&mut cpu, 0xA9, &[0xF0]);
+    assert_eq!(cpu.registers.a, 0xF0);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }

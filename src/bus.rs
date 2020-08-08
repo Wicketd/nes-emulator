@@ -53,4 +53,16 @@ impl Bus {
             Err(anyhow!("address out of bounds"))
         }
     }
+
+    pub fn write_n(&mut self, address: u16, bytes: &[u8]) -> Result {
+        if address.checked_add(bytes.len() as u16).is_some() {
+            for i in 0..bytes.len() {
+                self.write(address + i as u16, bytes[i]);
+            }
+
+            Ok(())
+        } else {
+            Err(anyhow!("address + byte array length out of bounds"))
+        }
+    }
 }
