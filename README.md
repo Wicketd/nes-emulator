@@ -13,7 +13,7 @@
 - [x] BVC
 - [x] BVS
 - [x] CLC
-- [ ] CLD
+- [x] CLD
 - [ ] CLI
 - [ ] CLV
 - [ ] CMP
