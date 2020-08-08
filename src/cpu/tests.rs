@@ -342,6 +342,15 @@ fn process_bit_absolute() {
 }
 
 #[test]
+fn process_bmi_relative() {
+    let mut cpu = cpu(bus());
+    cpu.registers.p.insert(StatusFlags::NEGATIVE);
+
+    process_instruction(&mut cpu, &[0x30, 0x0F]);
+    assert_eq!(cpu.registers.pc, 0x8011);
+}
+
+#[test]
 fn process_lda_immediate() {
     let mut cpu = cpu(bus());
 

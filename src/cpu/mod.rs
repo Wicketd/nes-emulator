@@ -83,7 +83,7 @@ impl Cpu {
             InstructionOperation::Bcs => self.run_bcs(input.unwrap_address()?),
             InstructionOperation::Beq => self.run_beq(input.unwrap_address()?),
             InstructionOperation::Bit => self.run_bit(self.resolve_input_byte(input)?),
-            InstructionOperation::Bmi => unimplemented!("call | Bmi"),
+            InstructionOperation::Bmi => self.run_bmi(input.unwrap_address()?),
             InstructionOperation::Bne => unimplemented!("call | Bne"),
             InstructionOperation::Bpl => unimplemented!("call | Bpl"),
             InstructionOperation::Brk => self.run_brk(),
@@ -278,6 +278,12 @@ impl Cpu {
 
     fn run_brk(&self) {
         // TODO: implement
+    }
+
+    fn run_bmi(&mut self, target: u16) {
+        if self.registers.p.contains(StatusFlags::NEGATIVE) {
+            self.registers.pc = target;
+        }
     }
 
     fn run_lda(&mut self, input: u8) {
