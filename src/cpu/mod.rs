@@ -73,7 +73,10 @@ impl Cpu {
 
     fn call_instruction(&mut self, instruction: Instruction, bytes: &[u8]) -> Result {
         match instruction.operation() {
-            InstructionOperation::Adc => unimplemented!("call | Adc"),
+            InstructionOperation::Adc => {
+                let input = self.determine_input(instruction.mode(), bytes)?;
+                self.run_adc(self.resolve_input_byte(input)?);
+            },
             InstructionOperation::And => unimplemented!("call | And"),
             InstructionOperation::Asl => unimplemented!("call | Asl"),
             InstructionOperation::Bcc => unimplemented!("call | Bcc"),
@@ -104,7 +107,7 @@ impl Cpu {
             InstructionOperation::Jsr => unimplemented!("call | Jsr"),
             InstructionOperation::Lda => {
                 let input = self.determine_input(instruction.mode(), bytes)?;
-                self.run_lda(input.unwrap_byte()?);
+                self.run_lda(self.resolve_input_byte(input)?);
             },
             InstructionOperation::Ldx => unimplemented!("call | Ldx"),
             InstructionOperation::Ldy => unimplemented!("call | Ldy"),
@@ -203,8 +206,29 @@ impl Cpu {
         Ok(input)
     }
 
+    fn resolve_input_byte(&self, input: InstructionInput) -> Result<u8> {
+        let value = match input {
+            InstructionInput::Byte(value) => value,
+            InstructionInput::Address(address) => self.bus.read(address),
+            _ => return Err(anyhow!("cannot resolve input byte for the current variant")),
+        };
+
+        Ok(value)
+    }
+
     fn assert_input_len(len_expected: usize, bytes: &[u8]) {
         assert!(len_expected == bytes.len(), "expected args to have length `{}`, received `{}`", len_expected, bytes.len());
+    }
+
+    fn run_adc(&mut self, input: u8) {
+        let a_old = self.registers.a;
+        let carry = (self.registers.p & StatusFlags::CARRY).bits();
+        let result = self.registers.a.wrapping_add(input).wrapping_add(carry);
+        self.registers.a = result;
+        self.set_status_flag_carry(input, result);
+        self.set_status_flag_zero(result);
+        self.set_status_flag_overflow(a_old, result);
+        self.set_status_flag_negative(result);
     }
 
     fn run_brk(&self) {
@@ -217,8 +241,16 @@ impl Cpu {
         self.set_status_flag_negative(input);
     }
 
+    fn set_status_flag_carry(&mut self, input: u8, result: u8) {
+        self.registers.p.set(StatusFlags::CARRY, result < input);
+    }
+
     fn set_status_flag_zero(&mut self, value: u8) {
         self.registers.p.set(StatusFlags::ZERO, value == 0);
+    }
+
+    fn set_status_flag_overflow(&mut self, value_old: u8, value_new: u8) {
+        self.registers.p.set(StatusFlags::OVERFLOW, value_old.read_bit(7) != value_new.read_bit(7));
     }
 
     fn set_status_flag_negative(&mut self, value: u8) {

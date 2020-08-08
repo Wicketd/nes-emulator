@@ -235,6 +235,31 @@ fn determine_input_indirect_y() {
 }
 
 #[test]
+fn process_adc_absolute() {
+    let mut cpu = cpu(bus());
+
+    cpu.bus.write(INPUT_ADDRESS, 0x10);
+    process_instruction(&mut cpu, 0x6D, &[INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.registers.a, 0x10);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    cpu.bus.write(INPUT_ADDRESS, 0x70);
+    process_instruction(&mut cpu, 0x6D, &[INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.registers.a, 0x80);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE | StatusFlags::OVERFLOW);
+
+    cpu.bus.write(INPUT_ADDRESS, 0x80);
+    process_instruction(&mut cpu, 0x6D, &[INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.registers.a, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::OVERFLOW | StatusFlags::ZERO | StatusFlags::CARRY);
+
+    cpu.bus.write(INPUT_ADDRESS, 0x10);
+    process_instruction(&mut cpu, 0x6D, &[INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.registers.a, 0x11);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+}
+
+#[test]
 fn process_lda_immediate() {
     let mut cpu = cpu(bus());
 

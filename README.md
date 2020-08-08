@@ -1,5 +1,5 @@
 ## Instructions
-- [ ] ADC
+- [x] ADC
 - [ ] AND
 - [ ] ASL
 - [ ] BCC

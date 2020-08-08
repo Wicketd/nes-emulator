@@ -104,13 +104,6 @@ pub enum InstructionInput {
 }
 
 impl InstructionInput {
-    pub fn unwrap_byte(self) -> Result<u8> {
-        match self {
-            InstructionInput::Byte(value) => Ok(value),
-            _ => Err(anyhow!("`InstructionInput` is not of variant `Byte`")),
-        }
-    }
-
     pub fn unwrap_address(self) -> Result<u16> {
         match self {
             InstructionInput::Address(value) => Ok(value),
