@@ -90,7 +90,7 @@ impl Cpu {
             InstructionOperation::Brk => self.run_brk(),
             InstructionOperation::Bvc => self.run_bvc(input.unwrap_address()?),
             InstructionOperation::Bvs => self.run_bvs(input.unwrap_address()?),
-            InstructionOperation::Clc => unimplemented!("call | Clc"),
+            InstructionOperation::Clc => self.run_clc(),
             InstructionOperation::Cld => unimplemented!("call | Cld"),
             InstructionOperation::Cli => unimplemented!("call | Cli"),
             InstructionOperation::Clv => unimplemented!("call | Clv"),
@@ -314,6 +314,10 @@ impl Cpu {
         if self.registers.p.contains(StatusFlags::OVERFLOW) {
             self.registers.pc = target;
         }
+    }
+
+    fn run_clc(&mut self) {
+        self.registers.p.remove(StatusFlags::CARRY);
     }
 
     fn run_lda(&mut self, input: u8) {

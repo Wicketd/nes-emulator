@@ -434,6 +434,15 @@ fn process_bvs_relative() {
 }
 
 #[test]
+fn process_clc_implied() {
+    let mut cpu = cpu(bus());
+    cpu.registers.p.insert(StatusFlags::CARRY);
+
+    process_instruction(&mut cpu, &[0x18]);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+}
+
+#[test]
 fn process_lda_immediate() {
     let mut cpu = cpu(bus());
 

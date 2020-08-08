@@ -12,7 +12,7 @@
 - [x] BRK
 - [x] BVC
 - [x] BVS
-- [ ] CLC
+- [x] CLC
 - [ ] CLD
 - [ ] CLI
 - [ ] CLV
