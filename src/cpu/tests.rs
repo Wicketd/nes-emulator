@@ -288,12 +288,8 @@ fn process_and_immediate() {
 #[test]
 fn process_asl_accumulator() {
     let mut cpu = cpu(bus());
+    cpu.run_adc(0b0100_0000);
 
-    // Adc, Immediate
-    process_instruction(&mut cpu, &[0x69, 0b0100_0000]);
-    assert_eq!(cpu.registers.a, 0b0100_0000);
-
-    // Asl, Accumulator
     process_instruction(&mut cpu, &[0x0A]);
     assert_eq!(cpu.registers.a, 0b1000_0000);
     assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
@@ -331,7 +327,7 @@ fn process_beq_relative() {
 #[test]
 fn process_bit_absolute() {
     let mut cpu = cpu(bus());
-    cpu.registers.a = 0xFF;
+    cpu.run_lda(0xFF);
 
     process_instruction(&mut cpu, &[0x2C, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
     assert_eq!(cpu.registers.p, StatusFlags::ZERO);
@@ -365,8 +361,18 @@ fn process_lda_immediate() {
 #[test]
 fn process_pha_implied() {
     let mut cpu = cpu(bus());
-    cpu.registers.a = 0xF4;
+    cpu.run_lda(0xF4);
 
     process_instruction(&mut cpu, &[0x48]);
     assert_eq!(cpu.stack_pull(), 0xF4);
+}
+
+#[test]
+fn process_php_implied() {
+    let mut cpu = cpu(bus());
+    let flags = StatusFlags::INTERRUPT_DISABLE | StatusFlags::ZERO;
+    cpu.registers.p = flags;
+
+    process_instruction(&mut cpu, &[0x08]);
+    assert_eq!(cpu.stack_pull(), flags.bits());
 }

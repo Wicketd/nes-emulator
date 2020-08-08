@@ -35,7 +35,7 @@
 - [x] NOP
 - [ ] ORA
 - [x] PHA
-- [ ] PHP
+- [x] PHP
 - [ ] PLA
 - [ ] PLP
 - [ ] ROL
