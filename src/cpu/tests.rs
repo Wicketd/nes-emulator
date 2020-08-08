@@ -335,3 +335,12 @@ fn process_bcs_relative() {
     process_instruction(&mut cpu, &[0xB0, 0x0F]);
     assert_eq!(cpu.registers.pc, 0x8011);
 }
+
+#[test]
+fn process_beq_relative() {
+    let mut cpu = cpu(bus());
+    cpu.registers.p.insert(StatusFlags::ZERO);
+
+    process_instruction(&mut cpu, &[0xF0, 0x0F]);
+    assert_eq!(cpu.registers.pc, 0x8011);
+}

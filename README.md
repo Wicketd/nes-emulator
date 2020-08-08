@@ -4,7 +4,7 @@
 - [x] ASL
 - [x] BCC
 - [x] BCS
-- [ ] BEQ
+- [x] BEQ
 - [ ] BIT
 - [ ] BMI
 - [ ] BNE
