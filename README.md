@@ -8,7 +8,7 @@
 - [x] BIT
 - [x] BMI
 - [x] BNE
-- [ ] BPL
+- [x] BPL
 - [ ] BRK
 - [ ] BVC
 - [ ] BVS

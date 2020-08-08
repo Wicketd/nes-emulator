@@ -85,7 +85,7 @@ impl Cpu {
             InstructionOperation::Bit => self.run_bit(self.resolve_input_byte(input)?),
             InstructionOperation::Bmi => self.run_bmi(input.unwrap_address()?),
             InstructionOperation::Bne => self.run_bne(input.unwrap_address()?),
-            InstructionOperation::Bpl => unimplemented!("call | Bpl"),
+            InstructionOperation::Bpl => self.run_bpl(input.unwrap_address()?),
             InstructionOperation::Brk => self.run_brk(),
             InstructionOperation::Bvc => unimplemented!("call | Bvc"),
             InstructionOperation::Bvs => unimplemented!("call | Bvs"),
@@ -288,6 +288,12 @@ impl Cpu {
 
     fn run_bne(&mut self, target: u16) {
         if !self.registers.p.contains(StatusFlags::ZERO) {
+            self.registers.pc = target;
+        }
+    }
+
+    fn run_bpl(&mut self, target: u16) {
+        if !self.registers.p.contains(StatusFlags::NEGATIVE) {
             self.registers.pc = target;
         }
     }

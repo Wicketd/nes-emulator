@@ -363,6 +363,18 @@ fn process_bne_relative() {
 }
 
 #[test]
+fn process_bpl_relative() {
+    let mut cpu = cpu(bus());
+
+    process_instruction(&mut cpu, &[0x10, 0x0F]);
+    assert_eq!(cpu.registers.pc, 0x8011);
+
+    cpu.registers.p.insert(StatusFlags::NEGATIVE);
+    process_instruction(&mut cpu,&[0x10, 0x0F]);
+    assert_eq!(cpu.registers.pc, 0x8013);
+}
+
+#[test]
 fn process_lda_immediate() {
     let mut cpu = cpu(bus());
 
