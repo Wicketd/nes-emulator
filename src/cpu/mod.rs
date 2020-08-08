@@ -8,6 +8,7 @@ use self::instruction::{
     InstructionOperation,
     InstructionMode,
     InstructionInput,
+    InstructionInputLocation,
 };
 use crate::bus::Bus;
 use crate::types::{Result, BitRead};
@@ -81,7 +82,10 @@ impl Cpu {
                 let input = self.determine_input(instruction.mode(), bytes)?;
                 self.run_and(self.resolve_input_byte(input)?);
             },
-            InstructionOperation::Asl => unimplemented!("call | Asl"),
+            InstructionOperation::Asl => {
+                let input = self.determine_input(instruction.mode(), bytes)?;
+                self.run_asl(input.unwrap_location()?);
+            },
             InstructionOperation::Bcc => unimplemented!("call | Bcc"),
             InstructionOperation::Bcs => unimplemented!("call | Bcs"),
             InstructionOperation::Beq => unimplemented!("call | Beq"),
@@ -146,7 +150,9 @@ impl Cpu {
     fn determine_input(&self, mode: InstructionMode, bytes: &[u8]) -> Result<InstructionInput> {
         let input = match mode {
             InstructionMode::Implied => InstructionInput::Implied,
-            InstructionMode::Accumulator => InstructionInput::Accumulator,
+            InstructionMode::Accumulator => {
+                InstructionInput::Location(InstructionInputLocation::Accumulator)
+            },
             InstructionMode::Immediate => {
                 Self::assert_input_len(2, bytes);
                 InstructionInput::Byte(bytes[1])
@@ -155,54 +161,54 @@ impl Cpu {
                 Self::assert_input_len(2, bytes);
                 let offset = i32::from(bytes[1] as i8);
                 let address = (self.registers.pc as i32).wrapping_add(offset) as u16;
-                InstructionInput::Address(address)
+                InstructionInput::from_address(address)
             },
             InstructionMode::ZeroPage => {
                 Self::assert_input_len(2, bytes);
-                InstructionInput::Address(bytes[1] as u16)
+                InstructionInput::from_address(bytes[1] as u16)
             },
             InstructionMode::ZeroPageX => {
                 Self::assert_input_len(2, bytes);
                 let address = bytes[1].wrapping_add(self.registers.x) as u16;
-                InstructionInput::Address(address)
+                InstructionInput::from_address(address)
             },
             InstructionMode::ZeroPageY => {
                 Self::assert_input_len(2, bytes);
                 let address = bytes[1].wrapping_add(self.registers.y) as u16;
-                InstructionInput::Address(address)
+                InstructionInput::from_address(address)
             },
             InstructionMode::Absolute => {
                 Self::assert_input_len(3, bytes);
                 let address = u16::from_le_bytes([bytes[1], bytes[2]]);
-                InstructionInput::Address(address)
+                InstructionInput::from_address(address)
             },
             InstructionMode::AbsoluteX => {
                 let input = self.determine_input(InstructionMode::Absolute, bytes)?;
                 let address = input.unwrap_address()?.wrapping_add(self.registers.x as u16);
-                InstructionInput::Address(address)
+                InstructionInput::from_address(address)
             },
             InstructionMode::AbsoluteY => {
                 let input = self.determine_input(InstructionMode::Absolute, bytes)?;
                 let address = input.unwrap_address()?.wrapping_add(self.registers.y as u16);
-                InstructionInput::Address(address)
+                InstructionInput::from_address(address)
             },
             InstructionMode::Indirect => {
                 Self::assert_input_len(3, bytes);
                 let address_indirect = u16::from_le_bytes([bytes[1], bytes[2]]);
                 let address = self.bus.read_u16(address_indirect)?;
-                InstructionInput::Address(address)
+                InstructionInput::from_address(address)
             },
             InstructionMode::IndirectX => {
                 Self::assert_input_len(2, bytes);
                 let address_indirect = bytes[1].wrapping_add(self.registers.x) as u16;
                 let address = self.bus.read_u16(address_indirect)?;
-                InstructionInput::Address(address)
+                InstructionInput::from_address(address)
             },
             InstructionMode::IndirectY => {
                 Self::assert_input_len(2, bytes);
                 let address_indirect = bytes[1].wrapping_add(self.registers.y) as u16;
                 let address = self.bus.read_u16(address_indirect)?;
-                InstructionInput::Address(address)
+                InstructionInput::from_address(address)
             },
         };
 
@@ -212,7 +218,10 @@ impl Cpu {
     fn resolve_input_byte(&self, input: InstructionInput) -> Result<u8> {
         let value = match input {
             InstructionInput::Byte(value) => value,
-            InstructionInput::Address(address) => self.bus.read(address),
+            InstructionInput::Location(location) => match location {
+                InstructionInputLocation::Address(address) => self.bus.read(address),
+                _ => return Err(anyhow!("cannot resolve input byte for the current variant")),
+            },
             _ => return Err(anyhow!("cannot resolve input byte for the current variant")),
         };
 
@@ -240,6 +249,19 @@ impl Cpu {
         self.set_status_flag_negative(self.registers.a);
     }
 
+    fn run_asl(&mut self, target: InstructionInputLocation) {
+        let input = match target {
+            InstructionInputLocation::Accumulator => self.registers.a,
+            InstructionInputLocation::Address(address) => self.bus.read(address),
+        };
+        let result = input.wrapping_shl(1);
+        self.persist_result(result, target);
+
+        self.set_status_flag_carry(input, result);
+        self.set_status_flag_zero(result);
+        self.set_status_flag_negative(result);
+    }
+
     fn run_brk(&self) {
         // TODO: implement
     }
@@ -264,6 +286,13 @@ impl Cpu {
 
     fn set_status_flag_negative(&mut self, value: u8) {
         self.registers.p.set(StatusFlags::NEGATIVE, value.is_bit_set(7));
+    }
+
+    fn persist_result(&mut self, result: u8, target: InstructionInputLocation) {
+        match target {
+            InstructionInputLocation::Accumulator => self.registers.a = result,
+            InstructionInputLocation::Address(address) => self.bus.write(address, result),
+        }
     }
 
     fn stack_push(&mut self, value: u8) {

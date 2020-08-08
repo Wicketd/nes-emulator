@@ -1,7 +1,7 @@
 ## Instructions
 - [x] ADC
 - [x] AND
-- [ ] ASL
+- [x] ASL
 - [ ] BCC
 - [ ] BCS
 - [ ] BEQ

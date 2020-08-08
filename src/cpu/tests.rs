@@ -92,7 +92,7 @@ fn determine_input_accumulator() {
         InstructionMode::Accumulator,
         &[INPUT_OPCODE],
     ).unwrap();
-    assert_eq!(input, InstructionInput::Accumulator);
+    assert_eq!(input, InstructionInput::Location(InstructionInputLocation::Accumulator));
 }
 
 // TODO: constants
@@ -103,7 +103,7 @@ fn determine_input_relative_positive() {
         InstructionMode::Relative,
         &[INPUT_OPCODE, 0x0F],
     ).unwrap();
-    assert_eq!(input, InstructionInput::Address(0x800F));
+    assert_eq!(input, InstructionInput::from_address(0x800F));
 }
 
 #[test]
@@ -113,7 +113,7 @@ fn determine_input_zero_page() {
         InstructionMode::ZeroPage,
         &[INPUT_OPCODE, INPUT_ADDRESS_ZP as u8],
     ).unwrap();
-    assert_eq!(input, InstructionInput::Address(INPUT_ADDRESS_ZP));
+    assert_eq!(input, InstructionInput::from_address(INPUT_ADDRESS_ZP));
 }
 
 #[test]
@@ -125,7 +125,7 @@ fn determine_input_zero_page_x() {
         InstructionMode::ZeroPageX,
         &[INPUT_OPCODE, INPUT_ADDRESS_ZP as u8],
     ).unwrap();
-    assert_eq!(input, InstructionInput::Address(INPUT_ADDRESS_ZP + OFFSET_REGISTER_X as u16));
+    assert_eq!(input, InstructionInput::from_address(INPUT_ADDRESS_ZP + OFFSET_REGISTER_X as u16));
 }
 
 #[test]
@@ -137,7 +137,7 @@ fn determine_input_zero_page_y() {
         InstructionMode::ZeroPageY,
         &[INPUT_OPCODE, INPUT_ADDRESS_ZP as u8],
     ).unwrap();
-    assert_eq!(input, InstructionInput::Address(INPUT_ADDRESS_ZP + OFFSET_REGISTER_Y as u16));
+    assert_eq!(input, InstructionInput::from_address(INPUT_ADDRESS_ZP + OFFSET_REGISTER_Y as u16));
 }
 
 // TODO: constants
@@ -148,7 +148,7 @@ fn determine_input_relative_negative() {
         InstructionMode::Relative,
         &[INPUT_OPCODE, 0xF0],
     ).unwrap();
-    assert_eq!(input, InstructionInput::Address(0x7FF0));
+    assert_eq!(input, InstructionInput::from_address(0x7FF0));
 }
 
 #[test]
@@ -168,7 +168,7 @@ fn determine_input_absolute() {
         InstructionMode::Absolute,
         &[INPUT_OPCODE, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH],
     ).unwrap();
-    assert_eq!(input, InstructionInput::Address(INPUT_ADDRESS));
+    assert_eq!(input, InstructionInput::from_address(INPUT_ADDRESS));
 }
 
 #[test]
@@ -180,7 +180,7 @@ fn determine_input_absolute_x() {
         InstructionMode::AbsoluteX,
         &[INPUT_OPCODE, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH],
     ).unwrap();
-    assert_eq!(input, InstructionInput::Address(INPUT_ADDRESS + OFFSET_REGISTER_X as u16));
+    assert_eq!(input, InstructionInput::from_address(INPUT_ADDRESS + OFFSET_REGISTER_X as u16));
 }
 
 #[test]
@@ -192,7 +192,7 @@ fn determine_input_absolute_y() {
         InstructionMode::AbsoluteY,
         &[INPUT_OPCODE, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH],
     ).unwrap();
-    assert_eq!(input, InstructionInput::Address(INPUT_ADDRESS + OFFSET_REGISTER_Y as u16));
+    assert_eq!(input, InstructionInput::from_address(INPUT_ADDRESS + OFFSET_REGISTER_Y as u16));
 }
 
 #[test]
@@ -205,7 +205,7 @@ fn determine_input_indirect() {
         InstructionMode::Indirect,
         &[INPUT_OPCODE, INPUT_ADDRESS_INDIRECT_LOW, INPUT_ADDRESS_INDIRECT_HIGH],
     ).unwrap();
-    assert_eq!(input, InstructionInput::Address(INPUT_ADDRESS));
+    assert_eq!(input, InstructionInput::from_address(INPUT_ADDRESS));
 }
 
 #[test]
@@ -220,7 +220,7 @@ fn determine_input_indirect_x() {
         InstructionMode::IndirectX,
         &[INPUT_OPCODE, INPUT_ADDRESS_ZP as u8],
     ).unwrap();
-    assert_eq!(input, InstructionInput::Address(INPUT_ADDRESS));
+    assert_eq!(input, InstructionInput::from_address(INPUT_ADDRESS));
 }
 
 #[test]
@@ -235,7 +235,7 @@ fn determine_input_indirect_y() {
         InstructionMode::IndirectY,
         &[INPUT_OPCODE, INPUT_ADDRESS_ZP as u8],
     ).unwrap();
-    assert_eq!(input, InstructionInput::Address(INPUT_ADDRESS));
+    assert_eq!(input, InstructionInput::from_address(INPUT_ADDRESS));
 }
 
 #[test]
@@ -281,6 +281,24 @@ fn process_and_immediate() {
     process_instruction(&mut cpu, &[0x29, 0x80]);
     assert_eq!(cpu.registers.a, 0x80);
     assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
+
+#[test]
+fn process_asl_accumulator() {
+    let mut cpu = cpu(bus());
+
+    // Adc, Immediate
+    process_instruction(&mut cpu, &[0x69, 0b0100_0000]);
+    assert_eq!(cpu.registers.a, 0b0100_0000);
+
+    // Asl, Accumulator
+    process_instruction(&mut cpu, &[0x0A]);
+    assert_eq!(cpu.registers.a, 0b1000_0000);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+
+    process_instruction(&mut cpu, &[0x0A]);
+    assert_eq!(cpu.registers.a, 0b0000_0000);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO | StatusFlags::CARRY);
 }
 
 #[test]
