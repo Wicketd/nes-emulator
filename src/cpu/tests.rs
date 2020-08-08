@@ -420,8 +420,17 @@ fn process_bvc_relative() {
     assert_eq!(cpu.registers.pc, 0x8011);
 
     cpu.registers.p.insert(StatusFlags::OVERFLOW);
-    process_instruction(&mut cpu,&[0x50, 0x0F]);
+    process_instruction(&mut cpu, &[0x50, 0x0F]);
     assert_eq!(cpu.registers.pc, 0x8013);
+}
+
+#[test]
+fn process_bvs_relative() {
+    let mut cpu = cpu(bus());
+    cpu.registers.p.insert(StatusFlags::OVERFLOW);
+
+    process_instruction(&mut cpu, &[0x70, 0x0F]);
+    assert_eq!(cpu.registers.pc, 0x8011);
 }
 
 #[test]

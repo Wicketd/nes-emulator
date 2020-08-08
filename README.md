@@ -11,7 +11,7 @@
 - [x] BPL
 - [x] BRK
 - [x] BVC
-- [ ] BVS
+- [x] BVS
 - [ ] CLC
 - [ ] CLD
 - [ ] CLI

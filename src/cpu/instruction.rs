@@ -57,6 +57,7 @@ impl Instruction {
             0x10 => instruction!(Bpl, Relative,    2),
             0x00 => instruction!(Brk, Implied,     7),
             0x50 => instruction!(Bvc, Relative,    2),
+            0x70 => instruction!(Bvs, Relative,    2),
             0xA9 => instruction!(Lda, Immediate,   2),
             0xA5 => instruction!(Lda, ZeroPage,    3),
             0xB5 => instruction!(Lda, ZeroPageX,   4),

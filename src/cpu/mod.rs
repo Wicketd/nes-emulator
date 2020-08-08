@@ -89,7 +89,7 @@ impl Cpu {
             InstructionOperation::Bpl => self.run_bpl(input.unwrap_address()?),
             InstructionOperation::Brk => self.run_brk(),
             InstructionOperation::Bvc => self.run_bvc(input.unwrap_address()?),
-            InstructionOperation::Bvs => unimplemented!("call | Bvs"),
+            InstructionOperation::Bvs => self.run_bvs(input.unwrap_address()?),
             InstructionOperation::Clc => unimplemented!("call | Clc"),
             InstructionOperation::Cld => unimplemented!("call | Cld"),
             InstructionOperation::Cli => unimplemented!("call | Cli"),
@@ -306,6 +306,12 @@ impl Cpu {
 
     fn run_bvc(&mut self, target: u16) {
         if !self.registers.p.contains(StatusFlags::OVERFLOW) {
+            self.registers.pc = target;
+        }
+    }
+
+    fn run_bvs(&mut self, target: u16) {
+        if self.registers.p.contains(StatusFlags::OVERFLOW) {
             self.registers.pc = target;
         }
     }
