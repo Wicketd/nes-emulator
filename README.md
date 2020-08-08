@@ -14,7 +14,7 @@
 - [x] BVS
 - [x] CLC
 - [x] CLD
-- [ ] CLI
+- [x] CLI
 - [ ] CLV
 - [ ] CMP
 - [ ] CPX

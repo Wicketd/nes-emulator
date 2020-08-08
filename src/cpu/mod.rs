@@ -92,7 +92,7 @@ impl Cpu {
             InstructionOperation::Bvs => self.run_bvs(input.unwrap_address()?),
             InstructionOperation::Clc => self.run_clc(),
             InstructionOperation::Cld => self.run_cld(),
-            InstructionOperation::Cli => unimplemented!("call | Cli"),
+            InstructionOperation::Cli => self.run_cli(),
             InstructionOperation::Clv => unimplemented!("call | Clv"),
             InstructionOperation::Cmp => unimplemented!("call | Cmp"),
             InstructionOperation::Cpx => unimplemented!("call | Cpx"),
@@ -322,6 +322,10 @@ impl Cpu {
 
     fn run_cld(&mut self) {
         self.registers.p.remove(StatusFlags::DECIMAL);
+    }
+
+    fn run_cli(&mut self) {
+        self.registers.p.remove(StatusFlags::INTERRUPT_DISABLE);
     }
 
     fn run_lda(&mut self, input: u8) {

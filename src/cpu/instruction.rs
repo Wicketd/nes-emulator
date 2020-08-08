@@ -60,6 +60,7 @@ impl Instruction {
             0x70 => instruction!(Bvs, Relative,    2),
             0x18 => instruction!(Clc, Implied,     1),
             0xD8 => instruction!(Cld, Implied,     1),
+            0x58 => instruction!(Cli, Implied,     1),
             0xA9 => instruction!(Lda, Immediate,   2),
             0xA5 => instruction!(Lda, ZeroPage,    3),
             0xB5 => instruction!(Lda, ZeroPageX,   4),
