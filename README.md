@@ -5,7 +5,7 @@
 - [x] BCC
 - [x] BCS
 - [x] BEQ
-- [ ] BIT
+- [x] BIT
 - [ ] BMI
 - [ ] BNE
 - [ ] BPL

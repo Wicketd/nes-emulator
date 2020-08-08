@@ -304,23 +304,6 @@ fn process_asl_accumulator() {
 }
 
 #[test]
-fn process_lda_immediate() {
-    let mut cpu = cpu(bus());
-
-    process_instruction(&mut cpu, &[0xA9, 0x10]);
-    assert_eq!(cpu.registers.a, 0x10);
-    assert_eq!(cpu.registers.p, StatusFlags::empty());
-
-    process_instruction(&mut cpu, &[0xA9, 0x00]);
-    assert_eq!(cpu.registers.a, 0x00);
-    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
-
-    process_instruction(&mut cpu, &[0xA9, 0xF0]);
-    assert_eq!(cpu.registers.a, 0xF0);
-    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
-}
-
-#[test]
 fn process_bcc_relative() {
     let mut cpu = cpu(bus());
     process_instruction(&mut cpu, &[0x90, 0xF0]);
@@ -343,4 +326,38 @@ fn process_beq_relative() {
 
     process_instruction(&mut cpu, &[0xF0, 0x0F]);
     assert_eq!(cpu.registers.pc, 0x8011);
+}
+
+#[test]
+fn process_bit_absolute() {
+    let mut cpu = cpu(bus());
+    cpu.registers.a = 0xFF;
+
+    process_instruction(&mut cpu, &[0x2C, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    cpu.bus.write(INPUT_ADDRESS, 0b0100_0000);
+    process_instruction(&mut cpu, &[0x2C, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.registers.p, StatusFlags::OVERFLOW);
+
+    cpu.bus.write(INPUT_ADDRESS, 0b1000_0000);
+    process_instruction(&mut cpu, &[0x2C, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
+
+#[test]
+fn process_lda_immediate() {
+    let mut cpu = cpu(bus());
+
+    process_instruction(&mut cpu, &[0xA9, 0x10]);
+    assert_eq!(cpu.registers.a, 0x10);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    process_instruction(&mut cpu, &[0xA9, 0x00]);
+    assert_eq!(cpu.registers.a, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    process_instruction(&mut cpu, &[0xA9, 0xF0]);
+    assert_eq!(cpu.registers.a, 0xF0);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }

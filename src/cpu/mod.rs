@@ -82,7 +82,7 @@ impl Cpu {
             InstructionOperation::Bcc => self.run_bcc(input.unwrap_address()?),
             InstructionOperation::Bcs => self.run_bcs(input.unwrap_address()?),
             InstructionOperation::Beq => self.run_beq(input.unwrap_address()?),
-            InstructionOperation::Bit => unimplemented!("call | Bit"),
+            InstructionOperation::Bit => self.run_bit(self.resolve_input_byte(input)?),
             InstructionOperation::Bmi => unimplemented!("call | Bmi"),
             InstructionOperation::Bne => unimplemented!("call | Bne"),
             InstructionOperation::Bpl => unimplemented!("call | Bpl"),
@@ -268,6 +268,12 @@ impl Cpu {
         if self.registers.p.contains(StatusFlags::ZERO) {
             self.registers.pc = target;
         }
+    }
+
+    fn run_bit(&mut self, input: u8) {
+        self.set_status_flag_zero(self.registers.a & input);
+        self.registers.p.set(StatusFlags::OVERFLOW, input.is_bit_set(6));
+        self.registers.p.set(StatusFlags::NEGATIVE, input.is_bit_set(7));
     }
 
     fn run_brk(&self) {
