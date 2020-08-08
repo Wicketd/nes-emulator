@@ -1,3 +1,5 @@
+#[derive(CopyGetters)]
+#[getset(get_copy = "pub")]
 pub struct Clock {
     speed: u32,
     cycles: u64,
@@ -11,8 +13,8 @@ impl Clock {
         }
     }
 
-    pub fn tick(&mut self) {
-        self.cycles += 1;
+    pub fn tick(&mut self, cycles: u8) {
+        self.cycles += cycles as u64;
     }
 
     fn determine_speed(mode: ClockMode) -> u32 {

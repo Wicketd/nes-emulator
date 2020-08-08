@@ -25,6 +25,20 @@ impl Bus {
         }
     }
 
+    pub fn read_n(&self, address: u16, n: u16) -> Result<Vec<u8>> {
+        if address.checked_add(n).is_some() {
+            let mut bytes = vec![];
+
+            for i in 0..n {
+                bytes.push(self.read(address + i));
+            }
+
+            Ok(bytes)
+        } else {
+            Err(anyhow!("address + n out of bounds"))
+        }
+    }
+
     pub fn write(&mut self, address: u16, value: u8) {
         self.bytes[address as usize] = value;
     }
@@ -33,7 +47,7 @@ impl Bus {
         if address.checked_add(1).is_some() {
             let bytes = value.to_le_bytes();
             self.write(address, bytes[0]);
-            self.write(address, bytes[1]);
+            self.write(address + 1, bytes[1]);
             Ok(())
         } else {
             Err(anyhow!("address out of bounds"))
