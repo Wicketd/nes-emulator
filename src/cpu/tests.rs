@@ -461,6 +461,15 @@ fn process_cli_implied() {
 }
 
 #[test]
+fn process_clv_implied() {
+    let mut cpu = cpu(bus());
+    cpu.registers.p.insert(StatusFlags::OVERFLOW);
+
+    process_instruction(&mut cpu, &[0xB8]);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+}
+
+#[test]
 fn process_lda_immediate() {
     let mut cpu = cpu(bus());
 

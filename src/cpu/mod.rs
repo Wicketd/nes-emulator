@@ -93,7 +93,7 @@ impl Cpu {
             InstructionOperation::Clc => self.run_clc(),
             InstructionOperation::Cld => self.run_cld(),
             InstructionOperation::Cli => self.run_cli(),
-            InstructionOperation::Clv => unimplemented!("call | Clv"),
+            InstructionOperation::Clv => self.run_clv(),
             InstructionOperation::Cmp => unimplemented!("call | Cmp"),
             InstructionOperation::Cpx => unimplemented!("call | Cpx"),
             InstructionOperation::Cpy => unimplemented!("call | Cpy"),
@@ -326,6 +326,10 @@ impl Cpu {
 
     fn run_cli(&mut self) {
         self.registers.p.remove(StatusFlags::INTERRUPT_DISABLE);
+    }
+
+    fn run_clv(&mut self) {
+        self.registers.p.remove(StatusFlags::OVERFLOW);
     }
 
     fn run_lda(&mut self, input: u8) {

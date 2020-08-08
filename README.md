@@ -15,7 +15,7 @@
 - [x] CLC
 - [x] CLD
 - [x] CLI
-- [ ] CLV
+- [x] CLV
 - [ ] CMP
 - [ ] CPX
 - [ ] CPY
