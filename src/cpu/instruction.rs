@@ -73,6 +73,7 @@ impl Instruction {
             0xEA => instruction!(Nop, Implied,     2),
             0x48 => instruction!(Pha, Implied,     3),
             0x08 => instruction!(Php, Implied,     3),
+            0x68 => instruction!(Pla, Implied,     4),
             _ => unimplemented!("no instruction found for opcode `${:02X}`", opcode),
         }
     }

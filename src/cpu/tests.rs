@@ -504,3 +504,23 @@ fn process_php_implied() {
     process_instruction(&mut cpu, &[0x08]);
     assert_eq!(cpu.stack_pull(), flags.bits());
 }
+
+#[test]
+fn process_pla_implied() {
+    let mut cpu = cpu(bus());
+    cpu.stack_push(0x80);
+    cpu.stack_push(0x00);
+    cpu.stack_push(0x10);
+
+    process_instruction(&mut cpu, &[0x68]);
+    assert_eq!(cpu.registers.a, 0x10);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    process_instruction(&mut cpu, &[0x68]);
+    assert_eq!(cpu.registers.a, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    process_instruction(&mut cpu, &[0x68]);
+    assert_eq!(cpu.registers.a, 0x80);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
