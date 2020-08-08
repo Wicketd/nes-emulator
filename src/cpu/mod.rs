@@ -88,7 +88,7 @@ impl Cpu {
             InstructionOperation::Bne => self.run_bne(input.unwrap_address()?),
             InstructionOperation::Bpl => self.run_bpl(input.unwrap_address()?),
             InstructionOperation::Brk => self.run_brk(),
-            InstructionOperation::Bvc => unimplemented!("call | Bvc"),
+            InstructionOperation::Bvc => self.run_bvc(input.unwrap_address()?),
             InstructionOperation::Bvs => unimplemented!("call | Bvs"),
             InstructionOperation::Clc => unimplemented!("call | Clc"),
             InstructionOperation::Cld => unimplemented!("call | Cld"),
@@ -277,15 +277,6 @@ impl Cpu {
         self.registers.p.set(StatusFlags::NEGATIVE, input.is_bit_set(7));
     }
 
-    fn run_brk(&mut self) {
-        if !self.registers.p.contains(StatusFlags::INTERRUPT_DISABLE) {
-            self.generate_interrupt(BreakType::Program);
-
-            // TODO: hacky, find better way to account for instruction length being added
-            self.registers.pc -= 1;
-        }
-    }
-
     fn run_bmi(&mut self, target: u16) {
         if self.registers.p.contains(StatusFlags::NEGATIVE) {
             self.registers.pc = target;
@@ -300,6 +291,21 @@ impl Cpu {
 
     fn run_bpl(&mut self, target: u16) {
         if !self.registers.p.contains(StatusFlags::NEGATIVE) {
+            self.registers.pc = target;
+        }
+    }
+
+    fn run_brk(&mut self) {
+        if !self.registers.p.contains(StatusFlags::INTERRUPT_DISABLE) {
+            self.generate_interrupt(BreakType::Program);
+
+            // TODO: hacky, find better way to account for instruction length being added
+            self.registers.pc -= 1;
+        }
+    }
+
+    fn run_bvc(&mut self, target: u16) {
+        if !self.registers.p.contains(StatusFlags::OVERFLOW) {
             self.registers.pc = target;
         }
     }

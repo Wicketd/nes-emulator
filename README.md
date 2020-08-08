@@ -10,7 +10,7 @@
 - [x] BNE
 - [x] BPL
 - [x] BRK
-- [ ] BVC
+- [x] BVC
 - [ ] BVS
 - [ ] CLC
 - [ ] CLD
