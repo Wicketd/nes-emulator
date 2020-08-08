@@ -109,7 +109,7 @@ impl Cpu {
             InstructionOperation::Ldx => unimplemented!("call | Ldx"),
             InstructionOperation::Ldy => unimplemented!("call | Ldy"),
             InstructionOperation::Lsr => unimplemented!("call | Lsr"),
-            InstructionOperation::Nop => unimplemented!("call | Nop"),
+            InstructionOperation::Nop => {},
             InstructionOperation::Ora => unimplemented!("call | Ora"),
             InstructionOperation::Pha => unimplemented!("call | Pha"),
             InstructionOperation::Php => unimplemented!("call | Php"),

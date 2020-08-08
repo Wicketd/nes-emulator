@@ -43,6 +43,7 @@ impl Instruction {
             0xB9 => instruction!(Lda, AbsoluteY, 4),
             0xA1 => instruction!(Lda, IndirectX, 6),
             0xB1 => instruction!(Lda, IndirectY, 5),
+            0xEA => instruction!(Nop, Implied,   2),
             _ => unimplemented!("no instruction found for opcode `${:02X}`", opcode),
         }
     }

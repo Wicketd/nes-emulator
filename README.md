@@ -32,7 +32,7 @@
 - [ ] LDX
 - [ ] LDY
 - [ ] LSR
-- [ ] NOP
+- [x] NOP
 - [ ] ORA
 - [ ] PHA
 - [ ] PHP
