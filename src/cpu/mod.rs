@@ -80,7 +80,7 @@ impl Cpu {
             InstructionOperation::And => self.run_and(self.resolve_input_byte(input)?),
             InstructionOperation::Asl => self.run_asl(input.unwrap_location()?),
             InstructionOperation::Bcc => self.run_bcc(input.unwrap_address()?),
-            InstructionOperation::Bcs => unimplemented!("call | Bcs"),
+            InstructionOperation::Bcs => self.run_bcs(input.unwrap_address()?),
             InstructionOperation::Beq => unimplemented!("call | Beq"),
             InstructionOperation::Bit => unimplemented!("call | Bit"),
             InstructionOperation::Bmi => unimplemented!("call | Bmi"),
@@ -254,6 +254,12 @@ impl Cpu {
 
     fn run_bcc(&mut self, target: u16) {
         if !self.registers.p.contains(StatusFlags::CARRY) {
+            self.registers.pc = target;
+        }
+    }
+
+    fn run_bcs(&mut self, target: u16) {
+        if self.registers.p.contains(StatusFlags::CARRY) {
             self.registers.pc = target;
         }
     }

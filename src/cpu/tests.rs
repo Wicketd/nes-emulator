@@ -1,3 +1,5 @@
+// TODO: add constants for opcodes
+
 #![cfg(test)]
 
 use super::*;
@@ -323,4 +325,13 @@ fn process_bcc_relative() {
     let mut cpu = cpu(bus());
     process_instruction(&mut cpu, &[0x90, 0xF0]);
     assert_eq!(cpu.registers.pc, 0x7FF2);
+}
+
+#[test]
+fn process_bcs_relative() {
+    let mut cpu = cpu(bus());
+    cpu.registers.p.insert(StatusFlags::CARRY);
+
+    process_instruction(&mut cpu, &[0xB0, 0x0F]);
+    assert_eq!(cpu.registers.pc, 0x8011);
 }
