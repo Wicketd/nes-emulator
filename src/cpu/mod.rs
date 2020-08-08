@@ -77,7 +77,10 @@ impl Cpu {
                 let input = self.determine_input(instruction.mode(), bytes)?;
                 self.run_adc(self.resolve_input_byte(input)?);
             },
-            InstructionOperation::And => unimplemented!("call | And"),
+            InstructionOperation::And => {
+                let input = self.determine_input(instruction.mode(), bytes)?;
+                self.run_and(self.resolve_input_byte(input)?);
+            },
             InstructionOperation::Asl => unimplemented!("call | Asl"),
             InstructionOperation::Bcc => unimplemented!("call | Bcc"),
             InstructionOperation::Bcs => unimplemented!("call | Bcs"),
@@ -229,6 +232,12 @@ impl Cpu {
         self.set_status_flag_zero(result);
         self.set_status_flag_overflow(a_old, result);
         self.set_status_flag_negative(result);
+    }
+
+    fn run_and(&mut self, input: u8) {
+        self.registers.a &= input;
+        self.set_status_flag_zero(self.registers.a);
+        self.set_status_flag_negative(self.registers.a);
     }
 
     fn run_brk(&self) {

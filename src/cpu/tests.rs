@@ -25,11 +25,15 @@ fn cpu(bus: Bus) -> Cpu {
     Cpu::new(bus).unwrap()
 }
 
-fn process_instruction(cpu: &mut Cpu, opcode: u8, args: &[u8]) {
-    cpu.bus.write(cpu.registers.pc, opcode);
-    cpu.bus.write_n(cpu.registers.pc + 1, args);
+fn process_instruction(cpu: &mut Cpu, bytes: &[u8]) {
+    cpu.bus.write_n(cpu.registers.pc, bytes);
     let instruction = cpu.determine_instruction_next().unwrap();
     cpu.process_instruction(instruction).unwrap();
+}
+
+fn lda_no_flags(cpu: &mut Cpu, value: u8) {
+    process_instruction(cpu, &[0xA9, value]);
+    cpu.registers.p = StatusFlags::empty();
 }
 
 #[test]
@@ -239,39 +243,59 @@ fn process_adc_absolute() {
     let mut cpu = cpu(bus());
 
     cpu.bus.write(INPUT_ADDRESS, 0x10);
-    process_instruction(&mut cpu, 0x6D, &[INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    process_instruction(&mut cpu, &[0x6D, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
     assert_eq!(cpu.registers.a, 0x10);
     assert_eq!(cpu.registers.p, StatusFlags::empty());
 
     cpu.bus.write(INPUT_ADDRESS, 0x70);
-    process_instruction(&mut cpu, 0x6D, &[INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    process_instruction(&mut cpu, &[0x6D, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
     assert_eq!(cpu.registers.a, 0x80);
     assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE | StatusFlags::OVERFLOW);
 
     cpu.bus.write(INPUT_ADDRESS, 0x80);
-    process_instruction(&mut cpu, 0x6D, &[INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    process_instruction(&mut cpu, &[0x6D,INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
     assert_eq!(cpu.registers.a, 0x00);
     assert_eq!(cpu.registers.p, StatusFlags::OVERFLOW | StatusFlags::ZERO | StatusFlags::CARRY);
 
     cpu.bus.write(INPUT_ADDRESS, 0x10);
-    process_instruction(&mut cpu, 0x6D, &[INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    process_instruction(&mut cpu, &[0x6D, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
     assert_eq!(cpu.registers.a, 0x11);
     assert_eq!(cpu.registers.p, StatusFlags::empty());
+}
+
+#[test]
+fn process_and_immediate() {
+    let mut cpu = cpu(bus());
+
+    lda_no_flags(&mut cpu, 0xFF);
+    process_instruction(&mut cpu, &[0x29, 0x08]);
+    assert_eq!(cpu.registers.a, 0x08);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    lda_no_flags(&mut cpu, 0xFF);
+    process_instruction(&mut cpu, &[0x29, 0x00]);
+    assert_eq!(cpu.registers.a, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    lda_no_flags(&mut cpu, 0xFF);
+    process_instruction(&mut cpu, &[0x29, 0x80]);
+    assert_eq!(cpu.registers.a, 0x80);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
 
 #[test]
 fn process_lda_immediate() {
     let mut cpu = cpu(bus());
 
-    process_instruction(&mut cpu, 0xA9, &[0x10]);
+    process_instruction(&mut cpu, &[0xA9, 0x10]);
     assert_eq!(cpu.registers.a, 0x10);
     assert_eq!(cpu.registers.p, StatusFlags::empty());
 
-    process_instruction(&mut cpu, 0xA9, &[0x00]);
+    process_instruction(&mut cpu, &[0xA9, 0x00]);
     assert_eq!(cpu.registers.a, 0x00);
     assert_eq!(cpu.registers.p, StatusFlags::ZERO);
 
-    process_instruction(&mut cpu, 0xA9, &[0xF0]);
+    process_instruction(&mut cpu, &[0xA9, 0xF0]);
     assert_eq!(cpu.registers.a, 0xF0);
     assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }

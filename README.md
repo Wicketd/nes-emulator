@@ -1,6 +1,6 @@
 ## Instructions
 - [x] ADC
-- [ ] AND
+- [x] AND
 - [ ] ASL
 - [ ] BCC
 - [ ] BCS
