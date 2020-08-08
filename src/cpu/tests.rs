@@ -351,6 +351,18 @@ fn process_bmi_relative() {
 }
 
 #[test]
+fn process_bne_relative() {
+    let mut cpu = cpu(bus());
+
+    process_instruction(&mut cpu, &[0xD0, 0x0F]);
+    assert_eq!(cpu.registers.pc, 0x8011);
+
+    cpu.registers.p.insert(StatusFlags::ZERO);
+    process_instruction(&mut cpu, &[0xD0, 0x0F]);
+    assert_eq!(cpu.registers.pc, 0x8013);
+}
+
+#[test]
 fn process_lda_immediate() {
     let mut cpu = cpu(bus());
 

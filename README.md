@@ -7,7 +7,7 @@
 - [x] BEQ
 - [x] BIT
 - [x] BMI
-- [ ] BNE
+- [x] BNE
 - [ ] BPL
 - [ ] BRK
 - [ ] BVC
