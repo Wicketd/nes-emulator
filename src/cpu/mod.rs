@@ -73,20 +73,13 @@ impl Cpu {
     }
 
     fn call_instruction(&mut self, instruction: Instruction, bytes: &[u8]) -> Result {
+        let input = self.determine_input(instruction.mode(), bytes)?;
+
         match instruction.operation() {
-            InstructionOperation::Adc => {
-                let input = self.determine_input(instruction.mode(), bytes)?;
-                self.run_adc(self.resolve_input_byte(input)?);
-            },
-            InstructionOperation::And => {
-                let input = self.determine_input(instruction.mode(), bytes)?;
-                self.run_and(self.resolve_input_byte(input)?);
-            },
-            InstructionOperation::Asl => {
-                let input = self.determine_input(instruction.mode(), bytes)?;
-                self.run_asl(input.unwrap_location()?);
-            },
-            InstructionOperation::Bcc => unimplemented!("call | Bcc"),
+            InstructionOperation::Adc => self.run_adc(self.resolve_input_byte(input)?),
+            InstructionOperation::And => self.run_and(self.resolve_input_byte(input)?),
+            InstructionOperation::Asl => self.run_asl(input.unwrap_location()?),
+            InstructionOperation::Bcc => self.run_bcc(input.unwrap_address()?),
             InstructionOperation::Bcs => unimplemented!("call | Bcs"),
             InstructionOperation::Beq => unimplemented!("call | Beq"),
             InstructionOperation::Bit => unimplemented!("call | Bit"),
@@ -112,10 +105,7 @@ impl Cpu {
             InstructionOperation::Iny => unimplemented!("call | Iny"),
             InstructionOperation::Jmp => unimplemented!("call | Jmp"),
             InstructionOperation::Jsr => unimplemented!("call | Jsr"),
-            InstructionOperation::Lda => {
-                let input = self.determine_input(instruction.mode(), bytes)?;
-                self.run_lda(self.resolve_input_byte(input)?);
-            },
+            InstructionOperation::Lda => self.run_lda(self.resolve_input_byte(input)?),
             InstructionOperation::Ldx => unimplemented!("call | Ldx"),
             InstructionOperation::Ldy => unimplemented!("call | Ldy"),
             InstructionOperation::Lsr => unimplemented!("call | Lsr"),
@@ -260,6 +250,12 @@ impl Cpu {
         self.set_status_flag_carry(input, result);
         self.set_status_flag_zero(result);
         self.set_status_flag_negative(result);
+    }
+
+    fn run_bcc(&mut self, target: u16) {
+        if !self.registers.p.contains(StatusFlags::CARRY) {
+            self.registers.pc = target;
+        }
     }
 
     fn run_brk(&self) {

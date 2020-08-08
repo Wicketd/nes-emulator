@@ -2,7 +2,7 @@
 - [x] ADC
 - [x] AND
 - [x] ASL
-- [ ] BCC
+- [x] BCC
 - [ ] BCS
 - [ ] BEQ
 - [ ] BIT

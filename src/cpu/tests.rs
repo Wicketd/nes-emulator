@@ -317,3 +317,10 @@ fn process_lda_immediate() {
     assert_eq!(cpu.registers.a, 0xF0);
     assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
+
+#[test]
+fn process_bcc_relative() {
+    let mut cpu = cpu(bus());
+    process_instruction(&mut cpu, &[0x90, 0xF0]);
+    assert_eq!(cpu.registers.pc, 0x7FF2);
+}
