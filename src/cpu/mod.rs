@@ -111,7 +111,7 @@ impl Cpu {
             InstructionOperation::Lsr => unimplemented!("call | Lsr"),
             InstructionOperation::Nop => {},
             InstructionOperation::Ora => unimplemented!("call | Ora"),
-            InstructionOperation::Pha => unimplemented!("call | Pha"),
+            InstructionOperation::Pha => self.run_pha(),
             InstructionOperation::Php => unimplemented!("call | Php"),
             InstructionOperation::Pla => unimplemented!("call | Pla"),
             InstructionOperation::Plp => unimplemented!("call | Plp"),
@@ -284,6 +284,10 @@ impl Cpu {
         self.registers.a = input;
         self.set_status_flag_zero(input);
         self.set_status_flag_negative(input);
+    }
+
+    fn run_pha(&mut self) {
+        self.stack_push(self.registers.a);
     }
 
     fn set_status_flag_carry(&mut self, input: u8, result: u8) {

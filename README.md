@@ -34,7 +34,7 @@
 - [ ] LSR
 - [x] NOP
 - [ ] ORA
-- [ ] PHA
+- [x] PHA
 - [ ] PHP
 - [ ] PLA
 - [ ] PLP

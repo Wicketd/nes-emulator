@@ -361,3 +361,12 @@ fn process_lda_immediate() {
     assert_eq!(cpu.registers.a, 0xF0);
     assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
+
+#[test]
+fn process_pha_implied() {
+    let mut cpu = cpu(bus());
+    cpu.registers.a = 0xF4;
+
+    process_instruction(&mut cpu, &[0x48]);
+    assert_eq!(cpu.stack_pull(), 0xF4);
+}
