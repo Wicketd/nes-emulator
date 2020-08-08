@@ -9,7 +9,7 @@
 - [x] BMI
 - [x] BNE
 - [x] BPL
-- [ ] BRK
+- [x] BRK
 - [ ] BVC
 - [ ] BVS
 - [ ] CLC

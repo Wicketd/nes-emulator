@@ -13,9 +13,9 @@ use self::instruction::{
 use crate::bus::Bus;
 use crate::types::{Result, BitRead};
 
-const ADDRESS_NMI: u16 = 0xFFFA;
-const ADDRESS_RESET: u16 = 0xFFFC;
-const ADDRESS_IRQ: u16 = 0xFFFE;
+const ADDRESS_VECTOR_NMI: u16 = 0xFFFA;
+const ADDRESS_VECTOR_RESET: u16 = 0xFFFC;
+const ADDRESS_VECTOR_IRQ: u16 = 0xFFFE;
 
 pub struct Cpu {
     bus: Bus,
@@ -27,9 +27,9 @@ pub struct Cpu {
 impl Cpu {
     pub fn new(bus: Bus) -> Result<Self> {
         let vectors = VectorSet {
-            nmi: bus.read_u16(ADDRESS_NMI)?,
-            reset: bus.read_u16(ADDRESS_RESET)?,
-            irq: bus.read_u16(ADDRESS_IRQ)?,
+            nmi: bus.read_u16(ADDRESS_VECTOR_NMI)?,
+            reset: bus.read_u16(ADDRESS_VECTOR_RESET)?,
+            irq: bus.read_u16(ADDRESS_VECTOR_IRQ)?,
         };
 
         let mut registers = RegisterSet::new();
@@ -54,7 +54,7 @@ impl Cpu {
         let instruction = Instruction::from_opcode(opcode);
 
         // TODO: check if correct
-        if (self.registers.pc + instruction.len() as u16) < ADDRESS_NMI {
+        if (self.registers.pc + instruction.len() as u16) < ADDRESS_VECTOR_NMI {
             Some(instruction)
         } else {
             None
@@ -64,12 +64,13 @@ impl Cpu {
     fn process_instruction(&mut self, instruction: Instruction) -> Result {
         let len = instruction.len() as u16;
         let bytes = self.bus.read_n(self.registers.pc, len)?;
-        self.registers.pc += len;
 
         // TODO: calculate final cycles
         self.clock.tick(instruction.cycles_base());
+        self.call_instruction(instruction, &bytes)?;
+        self.registers.pc += len;
 
-        self.call_instruction(instruction, &bytes)
+        Ok(())
     }
 
     fn call_instruction(&mut self, instruction: Instruction, bytes: &[u8]) -> Result {
@@ -276,8 +277,13 @@ impl Cpu {
         self.registers.p.set(StatusFlags::NEGATIVE, input.is_bit_set(7));
     }
 
-    fn run_brk(&self) {
-        // TODO: implement
+    fn run_brk(&mut self) {
+        if !self.registers.p.contains(StatusFlags::INTERRUPT_DISABLE) {
+            self.generate_interrupt(BreakType::Program);
+
+            // TODO: hacky, find better way to account for instruction length being added
+            self.registers.pc -= 1;
+        }
     }
 
     fn run_bmi(&mut self, target: u16) {
@@ -340,6 +346,12 @@ impl Cpu {
         self.registers.s = self.registers.s.wrapping_sub(1);
     }
 
+    fn stack_push_u16(&mut self, value: u16) {
+        let bytes = value.to_le_bytes();
+        self.stack_push(bytes[0]);
+        self.stack_push(bytes[1]);
+    }
+
     fn stack_pull(&mut self) -> u8 {
         let address = self.stack_determine_address().wrapping_add(1);
         let value = self.bus.read(address);
@@ -348,8 +360,22 @@ impl Cpu {
         value
     }
 
+    fn stack_pull_u16(&mut self) -> u16 {
+        let mut bytes = [self.stack_pull(), self.stack_pull()];
+        bytes.reverse();
+        u16::from_le_bytes(bytes)
+    }
+
     fn stack_determine_address(&self) -> u16 {
         0x0100 + self.registers.s as u16
+    }
+
+    // TODO: unit test separately?
+    fn generate_interrupt(&mut self, break_type: BreakType) {
+        self.stack_push_u16(self.registers.pc);
+        self.stack_push(self.registers.p.bits());
+        self.registers.pc = self.vectors.irq;
+        self.registers.p.set_break(break_type);
     }
 }
 
@@ -370,7 +396,7 @@ impl RegisterSet {
             x: 0,
             y: 0,
             s: 0xFF,
-            p: StatusFlags::empty(),
+            p: StatusFlags::default(),
             pc: 0,
         }
     }
@@ -393,4 +419,32 @@ bitflags! {
         const ZERO = 0b0000_0010;
         const CARRY = 0b0000_0001;
     }
+}
+
+impl StatusFlags {
+    pub fn set_break(&mut self, break_type: BreakType) {
+        match break_type {
+            BreakType::Internal => {
+                self.insert(StatusFlags::BREAK_LEFT);
+                self.remove(StatusFlags::BREAK_RIGHT);
+            },
+            BreakType::Program => {
+                self.insert(StatusFlags::BREAK_LEFT);
+                self.insert(StatusFlags::BREAK_RIGHT);
+            },
+        }
+    }
+}
+
+impl Default for StatusFlags {
+    fn default() -> Self {
+        let mut flags = Self::empty();
+        flags |= StatusFlags::INTERRUPT_DISABLE;
+        flags
+    }
+}
+
+enum BreakType {
+    Internal,
+    Program,
 }

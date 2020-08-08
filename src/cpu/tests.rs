@@ -5,6 +5,7 @@
 use super::*;
 
 const ADDRESS_PRG: u16 = 0x8000;
+const ADDRESS_IRQ: u16 = 0x5555;
 const INPUT_OPCODE: u8 = 0xFF;
 const INPUT_BYTE: u8 = 0x4F;
 const INPUT_ADDRESS_ZP: u16 = 0x0040;
@@ -19,12 +20,14 @@ const OFFSET_REGISTER_Y: u8 = 0x24;
 
 fn bus() -> Bus {
     let mut bus = Bus::new();
-    bus.write_u16(ADDRESS_RESET, ADDRESS_PRG).unwrap();
+    bus.write_u16(ADDRESS_VECTOR_RESET, ADDRESS_PRG).unwrap();
     bus
 }
 
 fn cpu(bus: Bus) -> Cpu {
-    Cpu::new(bus).unwrap()
+    let mut cpu = Cpu::new(bus).unwrap();
+    cpu.registers.p.remove(StatusFlags::INTERRUPT_DISABLE);
+    cpu
 }
 
 fn process_instruction(cpu: &mut Cpu, bytes: &[u8]) {
@@ -54,6 +57,21 @@ fn stack_push_pull() {
     assert_eq!(cpu.stack_pull(), 0x10);
     assert_eq!(cpu.bus.read(0x01FF), 0);
     assert_eq!(cpu.registers.s, 0xFF);
+}
+
+#[test]
+fn stack_push_pull_u16() {
+    let mut cpu = cpu(bus());
+    cpu.stack_push_u16(0x2040);
+    cpu.stack_push_u16(0x4080);
+
+    assert_eq!(cpu.stack_pull_u16(), 0x4080);
+    assert_eq!(cpu.bus.read(0x01FC), 0);
+    assert_eq!(cpu.bus.read(0x01FD), 0);
+
+    assert_eq!(cpu.stack_pull_u16(), 0x2040);
+    assert_eq!(cpu.bus.read(0x01FE), 0);
+    assert_eq!(cpu.bus.read(0x01FF), 0);
 }
 
 #[test]
@@ -372,6 +390,26 @@ fn process_bpl_relative() {
     cpu.registers.p.insert(StatusFlags::NEGATIVE);
     process_instruction(&mut cpu,&[0x10, 0x0F]);
     assert_eq!(cpu.registers.pc, 0x8013);
+}
+
+#[test]
+fn process_brk_implied() {
+    let mut bus = bus();
+    bus.write_u16(ADDRESS_VECTOR_IRQ, ADDRESS_IRQ).unwrap();
+
+    let mut cpu = cpu(bus);
+    cpu.registers.p = StatusFlags::INTERRUPT_DISABLE | StatusFlags::ZERO;
+
+    process_instruction(&mut cpu, &[0x00]);
+    assert_eq!(cpu.registers.pc, 0x8001);
+    cpu.registers.p.remove(StatusFlags::INTERRUPT_DISABLE);
+
+    let pc_old = cpu.registers.pc;
+    process_instruction(&mut cpu, &[0x00]);
+    assert_eq!(cpu.stack_pull(), StatusFlags::ZERO.bits());
+    assert_eq!(cpu.stack_pull_u16(), pc_old);
+    assert_eq!(cpu.registers.pc, ADDRESS_IRQ);
+    assert!(cpu.registers.p.contains(StatusFlags::BREAK_LEFT | StatusFlags::BREAK_RIGHT));
 }
 
 #[test]
