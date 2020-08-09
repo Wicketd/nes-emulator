@@ -104,7 +104,7 @@ impl Cpu {
             InstructionOperation::Inc => self.run_inc(input.unwrap_address()?),
             InstructionOperation::Inx => self.run_inx(),
             InstructionOperation::Iny => self.run_iny(),
-            InstructionOperation::Jmp => unimplemented!("call | Jmp"),
+            InstructionOperation::Jmp => self.run_jmp(input.unwrap_address()?),
             InstructionOperation::Jsr => unimplemented!("call | Jsr"),
             InstructionOperation::Lda => self.run_lda(self.resolve_input_byte(input)?),
             InstructionOperation::Ldx => self.run_ldx(self.resolve_input_byte(input)?),
@@ -395,6 +395,11 @@ impl Cpu {
         self.registers.y = self.registers.y.wrapping_add(1);
         self.set_status_flag_zero(self.registers.y);
         self.set_status_flag_negative(self.registers.y);
+    }
+
+    fn run_jmp(&mut self, target: u16) {
+        // TODO: hacky, find better way to account for instruction length being added
+        self.registers.pc = target - 3;
     }
 
     fn run_lda(&mut self, input: u8) {

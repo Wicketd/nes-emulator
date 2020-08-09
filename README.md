@@ -26,7 +26,7 @@
 - [x] INC
 - [x] INX
 - [x] INY
-- [ ] JMP
+- [x] JMP
 - [ ] JSR
 - [x] LDA
 - [x] LDX

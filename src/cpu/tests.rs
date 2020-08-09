@@ -674,6 +674,13 @@ fn process_iny_implied() {
 }
 
 #[test]
+fn process_jmp_absolute() {
+    let mut cpu = cpu(bus());
+    process_instruction(&mut cpu, &[0x4C, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.registers.pc, INPUT_ADDRESS);
+}
+
+#[test]
 fn process_lda_immediate() {
     let mut cpu = cpu(bus());
 
