@@ -844,10 +844,24 @@ fn process_rol_accumulator() {
     assert_eq!(cpu.registers.a, 0b1000_0001);
     assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 
-    lda_no_flags(&mut cpu, 0x00);
+    lda_no_flags(&mut cpu, 0b1000_0000);
     process_instruction(&mut cpu, &[0x2A]);
     assert_eq!(cpu.registers.a, 0x00);
-    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO | StatusFlags::CARRY);
+}
+
+#[test]
+fn process_ror_accumulator() {
+    let mut cpu = cpu(bus());
+    lda_no_flags(&mut cpu, 0x01);
+
+    process_instruction(&mut cpu, &[0x6A]);
+    assert_eq!(cpu.registers.a, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO | StatusFlags::CARRY);
+
+    process_instruction(&mut cpu, &[0x6A]);
+    assert_eq!(cpu.registers.a, 0x80);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
 
 #[test]

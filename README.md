@@ -39,7 +39,7 @@
 - [x] PLA
 - [x] PLP
 - [x] ROL
-- [ ] ROR
+- [x] ROR
 - [ ] RTI
 - [ ] RTS
 - [ ] SBC
