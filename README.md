@@ -30,7 +30,7 @@
 - [ ] JSR
 - [x] LDA
 - [x] LDX
-- [ ] LDY
+- [x] LDY
 - [ ] LSR
 - [x] NOP
 - [ ] ORA

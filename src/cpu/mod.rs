@@ -108,7 +108,7 @@ impl Cpu {
             InstructionOperation::Jsr => unimplemented!("call | Jsr"),
             InstructionOperation::Lda => self.run_lda(self.resolve_input_byte(input)?),
             InstructionOperation::Ldx => self.run_ldx(self.resolve_input_byte(input)?),
-            InstructionOperation::Ldy => unimplemented!("call | Ldy"),
+            InstructionOperation::Ldy => self.run_ldy(self.resolve_input_byte(input)?),
             InstructionOperation::Lsr => unimplemented!("call | Lsr"),
             InstructionOperation::Nop => {},
             InstructionOperation::Ora => unimplemented!("call | Ora"),
@@ -340,6 +340,12 @@ impl Cpu {
 
     fn run_ldx(&mut self, input: u8) {
         self.registers.x = input;
+        self.set_status_flag_zero(input);
+        self.set_status_flag_negative(input);
+    }
+
+    fn run_ldy(&mut self, input: u8) {
+        self.registers.y = input;
         self.set_status_flag_zero(input);
         self.set_status_flag_negative(input);
     }
