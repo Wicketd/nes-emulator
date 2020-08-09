@@ -31,7 +31,7 @@
 - [x] LDA
 - [x] LDX
 - [x] LDY
-- [ ] LSR
+- [x] LSR
 - [x] NOP
 - [ ] ORA
 - [x] PHA

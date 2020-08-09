@@ -742,6 +742,25 @@ fn proces_ldy_immediate() {
 }
 
 #[test]
+fn process_lsr_immediate() {
+    let mut cpu = cpu(bus());
+    cpu.registers.p.insert(StatusFlags::NEGATIVE);
+    lda_no_flags(&mut cpu, 0b0000_0011);
+
+    process_instruction(&mut cpu, &[0x4A]);
+    assert_eq!(cpu.registers.a, 0b0000_0001);
+    assert_eq!(cpu.registers.p, StatusFlags::CARRY);
+
+    process_instruction(&mut cpu, &[0x4A]);
+    assert_eq!(cpu.registers.a, 0b0000_0000);
+    assert_eq!(cpu.registers.p, StatusFlags::CARRY | StatusFlags::ZERO);
+
+    process_instruction(&mut cpu, &[0x4A]);
+    assert_eq!(cpu.registers.a, 0b0000_0000);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+}
+
+#[test]
 fn process_pha_implied() {
     let mut cpu = cpu(bus());
     cpu.run_lda(0xF4);

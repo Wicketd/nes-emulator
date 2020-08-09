@@ -109,7 +109,7 @@ impl Cpu {
             InstructionOperation::Lda => self.run_lda(self.resolve_input_byte(input)?),
             InstructionOperation::Ldx => self.run_ldx(self.resolve_input_byte(input)?),
             InstructionOperation::Ldy => self.run_ldy(self.resolve_input_byte(input)?),
-            InstructionOperation::Lsr => unimplemented!("call | Lsr"),
+            InstructionOperation::Lsr => self.run_lsr(input.unwrap_location()?),
             InstructionOperation::Nop => {},
             InstructionOperation::Ora => unimplemented!("call | Ora"),
             InstructionOperation::Pha => self.run_pha(),
@@ -426,6 +426,21 @@ impl Cpu {
         self.registers.y = input;
         self.set_status_flag_zero(input);
         self.set_status_flag_negative(input);
+    }
+
+    fn run_lsr(&mut self, target: InstructionInputLocation) {
+        let input = match target {
+            InstructionInputLocation::Accumulator => self.registers.a,
+            InstructionInputLocation::Address(address) => self.bus.read(address),
+        };
+        let result = input.wrapping_shr(1);
+        self.persist_result_by_location(result, target);
+
+        self.registers.p.set(StatusFlags::CARRY, input.is_bit_set(0));
+        self.set_status_flag_zero(result);
+
+        // TODO: is this correct? bit 7 seems to never be set
+        self.registers.p.remove(StatusFlags::NEGATIVE);
     }
 
     fn run_pha(&mut self) {
