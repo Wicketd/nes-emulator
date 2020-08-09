@@ -25,7 +25,7 @@
 - [x] EOR
 - [x] INC
 - [x] INX
-- [ ] INY
+- [x] INY
 - [ ] JMP
 - [ ] JSR
 - [x] LDA

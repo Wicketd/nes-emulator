@@ -654,6 +654,26 @@ fn process_inx_implied() {
 }
 
 #[test]
+fn process_iny_implied() {
+    let mut cpu = cpu(bus());
+
+    ldy_no_flags(&mut cpu, 0x10);
+    process_instruction(&mut cpu, &[0xC8]);
+    assert_eq!(cpu.registers.y, 0x11);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    ldy_no_flags(&mut cpu, 0xFF);
+    process_instruction(&mut cpu, &[0xC8]);
+    assert_eq!(cpu.registers.y, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    ldy_no_flags(&mut cpu, 0x7F);
+    process_instruction(&mut cpu, &[0xC8]);
+    assert_eq!(cpu.registers.y, 0x80);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
+
+#[test]
 fn process_lda_immediate() {
     let mut cpu = cpu(bus());
 

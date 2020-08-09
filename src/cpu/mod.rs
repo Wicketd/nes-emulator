@@ -103,7 +103,7 @@ impl Cpu {
             InstructionOperation::Eor => self.run_eor(self.resolve_input_byte(input)?),
             InstructionOperation::Inc => self.run_inc(input.unwrap_address()?),
             InstructionOperation::Inx => self.run_inx(),
-            InstructionOperation::Iny => unimplemented!("call | Iny"),
+            InstructionOperation::Iny => self.run_iny(),
             InstructionOperation::Jmp => unimplemented!("call | Jmp"),
             InstructionOperation::Jsr => unimplemented!("call | Jsr"),
             InstructionOperation::Lda => self.run_lda(self.resolve_input_byte(input)?),
@@ -389,6 +389,12 @@ impl Cpu {
         self.registers.x = self.registers.x.wrapping_add(1);
         self.set_status_flag_zero(self.registers.x);
         self.set_status_flag_negative(self.registers.x);
+    }
+
+    fn run_iny(&mut self) {
+        self.registers.y = self.registers.y.wrapping_add(1);
+        self.set_status_flag_zero(self.registers.y);
+        self.set_status_flag_negative(self.registers.y);
     }
 
     fn run_lda(&mut self, input: u8) {
