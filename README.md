@@ -20,7 +20,7 @@
 - [x] CPX
 - [x] CPY
 - [x] DEC
-- [ ] DEX
+- [x] DEX
 - [ ] DEY
 - [ ] EOR
 - [ ] INC

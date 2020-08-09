@@ -554,6 +554,26 @@ fn process_dec_absolute() {
 }
 
 #[test]
+fn process_dex_implied() {
+    let mut cpu = cpu(bus());
+
+    ldx_no_flags(&mut cpu, 0x10);
+    process_instruction(&mut cpu, &[0xCA]);
+    assert_eq!(cpu.registers.x, 0x0F);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    ldx_no_flags(&mut cpu, 0x01);
+    process_instruction(&mut cpu, &[0xCA]);
+    assert_eq!(cpu.registers.x, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    ldx_no_flags(&mut cpu, 0x00);
+    process_instruction(&mut cpu, &[0xCA]);
+    assert_eq!(cpu.registers.x, 0xFF);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
+
+#[test]
 fn process_lda_immediate() {
     let mut cpu = cpu(bus());
 
