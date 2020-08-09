@@ -125,7 +125,7 @@ impl Cpu {
             InstructionOperation::Sed => self.run_sed(),
             InstructionOperation::Sei => self.run_sei(),
             InstructionOperation::Sta => self.run_sta(input.unwrap_address()?),
-            InstructionOperation::Stx => unimplemented!("call | Stx"),
+            InstructionOperation::Stx => self.run_stx(input.unwrap_address()?),
             InstructionOperation::Sty => unimplemented!("call | Sty"),
             InstructionOperation::Tax => unimplemented!("call | Tax"),
             InstructionOperation::Tay => unimplemented!("call | Tay"),
@@ -378,6 +378,10 @@ impl Cpu {
 
     fn run_sta(&mut self, target: u16) {
         self.bus.write(target, self.registers.a);
+    }
+
+    fn run_stx(&mut self, target: u16) {
+        self.bus.write(target, self.registers.x);
     }
 
     fn set_status_flag_carry(&mut self, input: u8, result: u8) {

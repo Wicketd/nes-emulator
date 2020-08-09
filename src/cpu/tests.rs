@@ -588,3 +588,12 @@ fn process_sta_absolute() {
     process_instruction(&mut cpu, &[0x8D, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
     assert_eq!(cpu.bus.read(INPUT_ADDRESS), 0xF4);
 }
+
+#[test]
+fn process_stx_absolute() {
+    let mut cpu = cpu(bus());
+    cpu.run_ldx(0xF4);
+
+    process_instruction(&mut cpu, &[0x8E, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.bus.read(INPUT_ADDRESS), 0xF4);
+}
