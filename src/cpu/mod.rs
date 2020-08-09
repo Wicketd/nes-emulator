@@ -115,7 +115,7 @@ impl Cpu {
             InstructionOperation::Pha => self.run_pha(),
             InstructionOperation::Php => self.run_php(),
             InstructionOperation::Pla => self.run_pla(),
-            InstructionOperation::Plp => unimplemented!("call | Plp"),
+            InstructionOperation::Plp => self.run_plp(),
             InstructionOperation::Rol => unimplemented!("call | Rol"),
             InstructionOperation::Ror => unimplemented!("call | Ror"),
             InstructionOperation::Rti => unimplemented!("call | Rti"),
@@ -440,6 +440,10 @@ impl Cpu {
         self.registers.a = self.stack_pull();
         self.set_status_flag_zero(self.registers.a);
         self.set_status_flag_negative(self.registers.a);
+    }
+
+    fn run_plp(&mut self) {
+        self.registers.p = StatusFlags::from_bits(self.stack_pull()).unwrap();
     }
 
     fn run_sec(&mut self) {

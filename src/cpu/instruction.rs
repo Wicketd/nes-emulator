@@ -121,6 +121,7 @@ impl Instruction {
             0x48 => instruction!(Pha, Implied,     3),
             0x08 => instruction!(Php, Implied,     3),
             0x68 => instruction!(Pla, Implied,     4),
+            0x28 => instruction!(Plp, Implied,     4),
             0x38 => instruction!(Sec, Implied,     2),
             0xF8 => instruction!(Sed, Implied,     2),
             0x78 => instruction!(Sei, Implied,     2),

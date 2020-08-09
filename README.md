@@ -37,7 +37,7 @@
 - [x] PHA
 - [x] PHP
 - [x] PLA
-- [ ] PLP
+- [x] PLP
 - [ ] ROL
 - [ ] ROR
 - [ ] RTI

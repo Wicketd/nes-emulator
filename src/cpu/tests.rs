@@ -781,6 +781,18 @@ fn process_pla_implied() {
 }
 
 #[test]
+fn process_plp_implied() {
+    let mut cpu = cpu(bus());
+    let flags = StatusFlags::ZERO | StatusFlags::DECIMAL;
+    cpu.registers.p = flags;
+    cpu.run_php();
+
+    cpu.registers.p = StatusFlags::empty();
+    process_instruction(&mut cpu, &[0x28]);
+    assert_eq!(cpu.registers.p, flags);
+}
+
+#[test]
 fn process_sec_implied() {
     let mut cpu = cpu(bus());
     process_instruction(&mut cpu, &[0x38]);
