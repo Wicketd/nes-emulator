@@ -668,10 +668,50 @@ fn process_tsx_implied() {
 }
 
 #[test]
+fn process_txa_implied() {
+    let mut cpu = cpu(bus());
+
+    cpu.run_ldx(0x10);
+    process_instruction(&mut cpu, &[0x8A]);
+    assert_eq!(cpu.registers.a, 0x10);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    cpu.run_ldx(0x00);
+    process_instruction(&mut cpu, &[0x8A]);
+    assert_eq!(cpu.registers.a, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    cpu.run_ldx(0x80);
+    process_instruction(&mut cpu, &[0x8A]);
+    assert_eq!(cpu.registers.a, 0x80);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
+
+#[test]
 fn process_txs_implied() {
     let mut cpu = cpu(bus());
     cpu.run_ldx(0xF4);
 
     process_instruction(&mut cpu, &[0x9A]);
     assert_eq!(cpu.registers.s, 0xF4);
+}
+
+#[test]
+fn process_tya_implied() {
+    let mut cpu = cpu(bus());
+
+    cpu.run_ldy(0x10);
+    process_instruction(&mut cpu, &[0x98]);
+    assert_eq!(cpu.registers.a, 0x10);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    cpu.run_ldy(0x00);
+    process_instruction(&mut cpu, &[0x98]);
+    assert_eq!(cpu.registers.a, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    cpu.run_ldy(0x80);
+    process_instruction(&mut cpu, &[0x98]);
+    assert_eq!(cpu.registers.a, 0x80);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
