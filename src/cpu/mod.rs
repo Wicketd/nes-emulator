@@ -101,7 +101,7 @@ impl Cpu {
             InstructionOperation::Dex => self.run_dex(),
             InstructionOperation::Dey => self.run_dey(),
             InstructionOperation::Eor => self.run_eor(self.resolve_input_byte(input)?),
-            InstructionOperation::Inc => unimplemented!("call | Inc"),
+            InstructionOperation::Inc => self.run_inc(input.unwrap_address()?),
             InstructionOperation::Inx => unimplemented!("call | Inx"),
             InstructionOperation::Iny => unimplemented!("call | Iny"),
             InstructionOperation::Jmp => unimplemented!("call | Jmp"),
@@ -376,6 +376,13 @@ impl Cpu {
         self.registers.a ^= input;
         self.set_status_flag_zero(self.registers.a);
         self.set_status_flag_negative(self.registers.a);
+    }
+
+    fn run_inc(&mut self, target: u16) {
+        let result = self.bus.read(target).wrapping_add(1);
+        self.bus.write(target, result);
+        self.set_status_flag_zero(result);
+        self.set_status_flag_negative(result);
     }
 
     fn run_lda(&mut self, input: u8) {

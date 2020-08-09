@@ -614,6 +614,26 @@ fn process_eor_immediate() {
 }
 
 #[test]
+fn process_inc_absolute() {
+    let mut cpu = cpu(bus());
+
+    cpu.bus.write(INPUT_ADDRESS, 0x10);
+    process_instruction(&mut cpu, &[0xEE, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.bus.read(INPUT_ADDRESS), 0x11);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    cpu.bus.write(INPUT_ADDRESS, 0xFF);
+    process_instruction(&mut cpu, &[0xEE, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.bus.read(INPUT_ADDRESS), 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    cpu.bus.write(INPUT_ADDRESS, 0x7F);
+    process_instruction(&mut cpu, &[0xEE, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.bus.read(INPUT_ADDRESS), 0x80);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
+
+#[test]
 fn process_lda_immediate() {
     let mut cpu = cpu(bus());
 
