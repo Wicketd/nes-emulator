@@ -146,6 +146,7 @@ impl Instruction {
             0x6E => instruction!(Ror, Absolute,    6),
             0x7E => instruction!(Ror, AbsoluteX,   7),
             0x40 => instruction!(Rti, Implied,     6),
+            0x60 => instruction!(Rts, Implied,     6),
             0x38 => instruction!(Sec, Implied,     2),
             0xF8 => instruction!(Sed, Implied,     2),
             0x78 => instruction!(Sei, Implied,     2),

@@ -41,7 +41,7 @@
 - [x] ROL
 - [x] ROR
 - [x] RTI
-- [ ] RTS
+- [x] RTS
 - [ ] SBC
 - [x] SEC
 - [x] SED

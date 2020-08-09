@@ -881,6 +881,22 @@ fn process_rti_implied() {
 }
 
 #[test]
+fn process_rts_implied() {
+    let mut cpu = cpu(bus());
+    let pc_old = cpu.registers.pc;
+    // JSR
+    process_instruction(&mut cpu, &[0x20, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+
+    // NOP
+    process_instruction(&mut cpu, &[0xEA]);
+    process_instruction(&mut cpu, &[0xEA]);
+    process_instruction(&mut cpu, &[0xEA]);
+
+    process_instruction(&mut cpu, &[0x60]);
+    assert_eq!(cpu.registers.pc, pc_old + 2);
+}
+
+#[test]
 fn process_sec_implied() {
     let mut cpu = cpu(bus());
     process_instruction(&mut cpu, &[0x38]);

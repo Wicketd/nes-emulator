@@ -119,7 +119,7 @@ impl Cpu {
             InstructionOperation::Rol => self.run_rol(input.unwrap_location()?),
             InstructionOperation::Ror => self.run_ror(input.unwrap_location()?),
             InstructionOperation::Rti => self.run_rti(),
-            InstructionOperation::Rts => unimplemented!("call | Rts"),
+            InstructionOperation::Rts => self.run_rts(),
             InstructionOperation::Sbc => unimplemented!("call | Sbc"),
             InstructionOperation::Sec => self.run_sec(),
             InstructionOperation::Sed => self.run_sed(),
@@ -500,6 +500,13 @@ impl Cpu {
 
         // TODO: hacky, find better way to account for instruction length being added
         self.registers.pc = self.stack_pull_u16().wrapping_sub(1);
+    }
+
+    fn run_rts(&mut self) {
+        let address = self.stack_pull_u16();
+
+        // TODO: hacky, find better way to account for instruction length being added
+        self.registers.pc = address.wrapping_sub(1);
     }
 
     fn run_sec(&mut self) {
