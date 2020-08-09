@@ -124,7 +124,7 @@ impl Cpu {
             InstructionOperation::Sec => self.run_sec(),
             InstructionOperation::Sed => self.run_sed(),
             InstructionOperation::Sei => self.run_sei(),
-            InstructionOperation::Sta => unimplemented!("call | Sta"),
+            InstructionOperation::Sta => self.run_sta(input.unwrap_address()?),
             InstructionOperation::Stx => unimplemented!("call | Stx"),
             InstructionOperation::Sty => unimplemented!("call | Sty"),
             InstructionOperation::Tax => unimplemented!("call | Tax"),
@@ -362,6 +362,10 @@ impl Cpu {
 
     fn run_sei(&mut self) {
         self.registers.p.insert(StatusFlags::INTERRUPT_DISABLE);
+    }
+
+    fn run_sta(&mut self, target: u16) {
+        self.bus.write(target, self.registers.a);
     }
 
     fn set_status_flag_carry(&mut self, input: u8, result: u8) {

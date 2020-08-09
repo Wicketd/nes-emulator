@@ -77,6 +77,13 @@ impl Instruction {
             0x38 => instruction!(Sec, Implied,     2),
             0xF8 => instruction!(Sed, Implied,     2),
             0x78 => instruction!(Sei, Implied,     2),
+            0x85 => instruction!(Sta, ZeroPage,    3),
+            0x95 => instruction!(Sta, ZeroPageX,   4),
+            0x8D => instruction!(Sta, Absolute,    4),
+            0x9D => instruction!(Sta, AbsoluteX,   5),
+            0x99 => instruction!(Sta, AbsoluteY,   5),
+            0x81 => instruction!(Sta, IndirectX,   6),
+            0x91 => instruction!(Sta, IndirectY,   6),
             _ => unimplemented!("no instruction found for opcode `${:02X}`", opcode),
         }
     }

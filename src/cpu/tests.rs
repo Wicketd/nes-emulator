@@ -545,3 +545,12 @@ fn process_sei_implied() {
     process_instruction(&mut cpu, &[0x78]);
     assert_eq!(cpu.registers.p, StatusFlags::INTERRUPT_DISABLE);
 }
+
+#[test]
+fn process_sta_absolute() {
+    let mut cpu = cpu(bus());
+    cpu.run_lda(0xF4);
+
+    process_instruction(&mut cpu, &[0x8D, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.registers.a, 0xF4);
+}

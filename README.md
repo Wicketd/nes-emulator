@@ -46,7 +46,7 @@
 - [x] SEC
 - [x] SED
 - [x] SEI
-- [ ] STA
+- [x] STA
 - [ ] STX
 - [ ] STY
 - [ ] TAX
