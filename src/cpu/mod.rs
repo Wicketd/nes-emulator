@@ -97,7 +97,7 @@ impl Cpu {
             InstructionOperation::Cmp => self.run_cmp(self.resolve_input_byte(input)?),
             InstructionOperation::Cpx => self.run_cpx(self.resolve_input_byte(input)?),
             InstructionOperation::Cpy => self.run_cpy(self.resolve_input_byte(input)?),
-            InstructionOperation::Dec => unimplemented!("call | Dec"),
+            InstructionOperation::Dec => self.run_dec(input.unwrap_address()?),
             InstructionOperation::Dex => unimplemented!("call | Dex"),
             InstructionOperation::Dey => unimplemented!("call | Dey"),
             InstructionOperation::Eor => unimplemented!("call | Eor"),
@@ -351,6 +351,13 @@ impl Cpu {
         self.registers.p.set(StatusFlags::CARRY, self.registers.y >= input);
         self.registers.p.set(StatusFlags::ZERO, self.registers.y == input);
         self.registers.p.set(StatusFlags::NEGATIVE, result.is_bit_set(7));
+    }
+
+    fn run_dec(&mut self, target: u16) {
+        let result = self.bus.read(target).wrapping_sub(1);
+        self.bus.write(target, result);
+        self.set_status_flag_zero(result);
+        self.set_status_flag_negative(result);
     }
 
     fn run_lda(&mut self, input: u8) {

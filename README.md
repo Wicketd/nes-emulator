@@ -19,7 +19,7 @@
 - [x] CMP
 - [x] CPX
 - [x] CPY
-- [ ] DEC
+- [x] DEC
 - [ ] DEX
 - [ ] DEY
 - [ ] EOR

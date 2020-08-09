@@ -534,6 +534,26 @@ fn process_cpy_immediate() {
 }
 
 #[test]
+fn process_dec_absolute() {
+    let mut cpu = cpu(bus());
+
+    cpu.bus.write(INPUT_ADDRESS, 0x10);
+    process_instruction(&mut cpu, &[0xCE, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.bus.read(INPUT_ADDRESS), 0x0F);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    cpu.bus.write(INPUT_ADDRESS, 0x01);
+    process_instruction(&mut cpu, &[0xCE, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.bus.read(INPUT_ADDRESS), 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    cpu.bus.write(INPUT_ADDRESS, 0x00);
+    process_instruction(&mut cpu, &[0xCE, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.bus.read(INPUT_ADDRESS), 0xFF);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
+
+#[test]
 fn process_lda_immediate() {
     let mut cpu = cpu(bus());
 
