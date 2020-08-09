@@ -832,6 +832,25 @@ fn process_plp_implied() {
 }
 
 #[test]
+fn process_rol_accumulator() {
+    let mut cpu = cpu(bus());
+    lda_no_flags(&mut cpu, 0b1010_0000);
+
+    process_instruction(&mut cpu, &[0x2A]);
+    assert_eq!(cpu.registers.a, 0b0100_0000);
+    assert_eq!(cpu.registers.p, StatusFlags::CARRY);
+
+    process_instruction(&mut cpu, &[0x2A]);
+    assert_eq!(cpu.registers.a, 0b1000_0001);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+
+    lda_no_flags(&mut cpu, 0x00);
+    process_instruction(&mut cpu, &[0x2A]);
+    assert_eq!(cpu.registers.a, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+}
+
+#[test]
 fn process_sec_implied() {
     let mut cpu = cpu(bus());
     process_instruction(&mut cpu, &[0x38]);

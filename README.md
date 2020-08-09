@@ -38,7 +38,7 @@
 - [x] PHP
 - [x] PLA
 - [x] PLP
-- [ ] ROL
+- [x] ROL
 - [ ] ROR
 - [ ] RTI
 - [ ] RTS

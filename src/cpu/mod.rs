@@ -116,7 +116,7 @@ impl Cpu {
             InstructionOperation::Php => self.run_php(),
             InstructionOperation::Pla => self.run_pla(),
             InstructionOperation::Plp => self.run_plp(),
-            InstructionOperation::Rol => unimplemented!("call | Rol"),
+            InstructionOperation::Rol => self.run_rol(input.unwrap_location()?),
             InstructionOperation::Ror => unimplemented!("call | Ror"),
             InstructionOperation::Rti => unimplemented!("call | Rti"),
             InstructionOperation::Rts => unimplemented!("call | Rts"),
@@ -465,6 +465,20 @@ impl Cpu {
 
     fn run_plp(&mut self) {
         self.registers.p = StatusFlags::from_bits(self.stack_pull()).unwrap();
+    }
+
+    fn run_rol(&mut self, target: InstructionInputLocation) {
+        let input = match target {
+            InstructionInputLocation::Accumulator => self.registers.a,
+            InstructionInputLocation::Address(address) => self.bus.read(address),
+        };
+        let carry = (self.registers.p & StatusFlags::CARRY).bits();
+        let result = input.wrapping_shl(1) + carry;
+        self.persist_result_by_location(result, target);
+
+        self.registers.p.set(StatusFlags::CARRY, input.is_bit_set(7));
+        self.set_status_flag_zero(result);
+        self.set_status_flag_negative(result);
     }
 
     fn run_sec(&mut self) {
