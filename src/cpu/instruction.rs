@@ -98,6 +98,7 @@ impl Instruction {
             0xC8 => instruction!(Iny, Implied,     2),
             0x4C => instruction!(Jmp, Absolute,    3),
             0x6C => instruction!(Jmp, Indirect,    5),
+            0x20 => instruction!(Jsr, Absolute,    6),
             0xA9 => instruction!(Lda, Immediate,   2),
             0xA5 => instruction!(Lda, ZeroPage,    3),
             0xB5 => instruction!(Lda, ZeroPageX,   4),

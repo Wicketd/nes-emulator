@@ -681,6 +681,16 @@ fn process_jmp_absolute() {
 }
 
 #[test]
+fn process_jsr_absolute() {
+    let mut cpu = cpu(bus());
+
+    let pc_old = cpu.registers.pc;
+    process_instruction(&mut cpu, &[0x20, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.stack_pull_u16(), pc_old + 3 - 1);
+    assert_eq!(cpu.registers.pc, INPUT_ADDRESS);
+}
+
+#[test]
 fn process_lda_immediate() {
     let mut cpu = cpu(bus());
 

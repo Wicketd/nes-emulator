@@ -27,7 +27,7 @@
 - [x] INX
 - [x] INY
 - [x] JMP
-- [ ] JSR
+- [x] JSR
 - [x] LDA
 - [x] LDX
 - [x] LDY
