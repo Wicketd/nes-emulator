@@ -43,7 +43,7 @@
 - [ ] RTI
 - [ ] RTS
 - [ ] SBC
-- [ ] SEC
+- [x] SEC
 - [ ] SED
 - [ ] SEI
 - [ ] STA

@@ -524,3 +524,10 @@ fn process_pla_implied() {
     assert_eq!(cpu.registers.a, 0x80);
     assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
+
+#[test]
+fn process_sec_implied() {
+    let mut cpu = cpu(bus());
+    process_instruction(&mut cpu, &[0x38]);
+    assert_eq!(cpu.registers.p, StatusFlags::CARRY);
+}

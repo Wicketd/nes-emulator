@@ -121,7 +121,7 @@ impl Cpu {
             InstructionOperation::Rti => unimplemented!("call | Rti"),
             InstructionOperation::Rts => unimplemented!("call | Rts"),
             InstructionOperation::Sbc => unimplemented!("call | Sbc"),
-            InstructionOperation::Sec => unimplemented!("call | Sec"),
+            InstructionOperation::Sec => self.run_sec(),
             InstructionOperation::Sed => unimplemented!("call | Sed"),
             InstructionOperation::Sei => unimplemented!("call | Sei"),
             InstructionOperation::Sta => unimplemented!("call | Sta"),
@@ -350,6 +350,10 @@ impl Cpu {
         self.registers.a = self.stack_pull();
         self.set_status_flag_zero(self.registers.a);
         self.set_status_flag_negative(self.registers.a);
+    }
+
+    fn run_sec(&mut self) {
+        self.registers.p.insert(StatusFlags::CARRY);
     }
 
     fn set_status_flag_carry(&mut self, input: u8, result: u8) {
