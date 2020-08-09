@@ -626,3 +626,23 @@ fn process_tax_implied() {
     assert_eq!(cpu.registers.x, 0x80);
     assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
+
+#[test]
+fn process_tay_implied() {
+    let mut cpu = cpu(bus());
+
+    cpu.run_lda(0x10);
+    process_instruction(&mut cpu, &[0xA8]);
+    assert_eq!(cpu.registers.y, 0x10);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    cpu.run_lda(0x00);
+    process_instruction(&mut cpu, &[0xA8]);
+    assert_eq!(cpu.registers.y, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    cpu.run_lda(0x80);
+    process_instruction(&mut cpu, &[0xA8]);
+    assert_eq!(cpu.registers.y, 0x80);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
