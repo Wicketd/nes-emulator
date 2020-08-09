@@ -648,6 +648,26 @@ fn process_tay_implied() {
 }
 
 #[test]
+fn process_tsx_implied() {
+    let mut cpu = cpu(bus());
+
+    cpu.registers.s = 0x10;
+    process_instruction(&mut cpu, &[0xBA]);
+    assert_eq!(cpu.registers.x, 0x10);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    cpu.registers.s = 0x00;
+    process_instruction(&mut cpu, &[0xBA]);
+    assert_eq!(cpu.registers.x, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    cpu.registers.s = 0x80;
+    process_instruction(&mut cpu, &[0xBA]);
+    assert_eq!(cpu.registers.x, 0x80);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
+
+#[test]
 fn process_txs_implied() {
     let mut cpu = cpu(bus());
     cpu.run_ldx(0xF4);

@@ -129,7 +129,7 @@ impl Cpu {
             InstructionOperation::Sty => self.run_sty(input.unwrap_address()?),
             InstructionOperation::Tax => self.run_tax(),
             InstructionOperation::Tay => self.run_tay(),
-            InstructionOperation::Tsx => unimplemented!("call | Tsx"),
+            InstructionOperation::Tsx => self.run_tsx(),
             InstructionOperation::Txa => unimplemented!("call | Txa"),
             InstructionOperation::Txs => self.run_txs(),
             InstructionOperation::Tya => unimplemented!("call | Tya"),
@@ -398,6 +398,12 @@ impl Cpu {
         self.registers.y = self.registers.a;
         self.set_status_flag_zero(self.registers.y);
         self.set_status_flag_negative(self.registers.y);
+    }
+
+    fn run_tsx(&mut self) {
+        self.registers.x = self.registers.s;
+        self.set_status_flag_zero(self.registers.x);
+        self.set_status_flag_negative(self.registers.x);
     }
 
     fn run_txs(&mut self) {

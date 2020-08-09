@@ -51,7 +51,7 @@
 - [x] STY
 - [x] TAX
 - [x] TAY
-- [ ] TSX
+- [x] TSX
 - [ ] TXA
 - [x] TXS
 - [ ] TYA
