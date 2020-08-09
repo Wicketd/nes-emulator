@@ -81,6 +81,7 @@ impl Instruction {
             0xCE => instruction!(Dec, Absolute,    6),
             0xDE => instruction!(Dec, AbsoluteX,   7),
             0xCA => instruction!(Dex, Implied,     2),
+            0x88 => instruction!(Dey, Implied,     2),
             0xA9 => instruction!(Lda, Immediate,   2),
             0xA5 => instruction!(Lda, ZeroPage,    3),
             0xB5 => instruction!(Lda, ZeroPageX,   4),

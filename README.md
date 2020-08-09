@@ -21,7 +21,7 @@
 - [x] CPY
 - [x] DEC
 - [x] DEX
-- [ ] DEY
+- [x] DEY
 - [ ] EOR
 - [ ] INC
 - [ ] INX

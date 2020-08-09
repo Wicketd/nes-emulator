@@ -574,6 +574,26 @@ fn process_dex_implied() {
 }
 
 #[test]
+fn process_dey_implied() {
+    let mut cpu = cpu(bus());
+
+    ldy_no_flags(&mut cpu, 0x10);
+    process_instruction(&mut cpu, &[0x88]);
+    assert_eq!(cpu.registers.y, 0x0F);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    ldy_no_flags(&mut cpu, 0x01);
+    process_instruction(&mut cpu, &[0x88]);
+    assert_eq!(cpu.registers.y, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    ldy_no_flags(&mut cpu, 0x00);
+    process_instruction(&mut cpu, &[0x88]);
+    assert_eq!(cpu.registers.y, 0xFF);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
+
+#[test]
 fn process_lda_immediate() {
     let mut cpu = cpu(bus());
 
