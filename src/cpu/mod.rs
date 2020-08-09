@@ -111,7 +111,7 @@ impl Cpu {
             InstructionOperation::Ldy => self.run_ldy(self.resolve_input_byte(input)?),
             InstructionOperation::Lsr => self.run_lsr(input.unwrap_location()?),
             InstructionOperation::Nop => {},
-            InstructionOperation::Ora => unimplemented!("call | Ora"),
+            InstructionOperation::Ora => self.run_ora(self.resolve_input_byte(input)?),
             InstructionOperation::Pha => self.run_pha(),
             InstructionOperation::Php => self.run_php(),
             InstructionOperation::Pla => self.run_pla(),
@@ -441,6 +441,12 @@ impl Cpu {
 
         // TODO: is this correct? bit 7 seems to never be set
         self.registers.p.remove(StatusFlags::NEGATIVE);
+    }
+
+    fn run_ora(&mut self, input: u8) {
+        self.registers.a |= input;
+        self.set_status_flag_zero(self.registers.a);
+        self.set_status_flag_negative(self.registers.a);
     }
 
     fn run_pha(&mut self) {
