@@ -123,7 +123,7 @@ impl Cpu {
             InstructionOperation::Sbc => unimplemented!("call | Sbc"),
             InstructionOperation::Sec => self.run_sec(),
             InstructionOperation::Sed => self.run_sed(),
-            InstructionOperation::Sei => unimplemented!("call | Sei"),
+            InstructionOperation::Sei => self.run_sei(),
             InstructionOperation::Sta => unimplemented!("call | Sta"),
             InstructionOperation::Stx => unimplemented!("call | Stx"),
             InstructionOperation::Sty => unimplemented!("call | Sty"),
@@ -358,6 +358,10 @@ impl Cpu {
 
     fn run_sed(&mut self) {
         self.registers.p.insert(StatusFlags::DECIMAL);
+    }
+
+    fn run_sei(&mut self) {
+        self.registers.p.insert(StatusFlags::INTERRUPT_DISABLE);
     }
 
     fn set_status_flag_carry(&mut self, input: u8, result: u8) {

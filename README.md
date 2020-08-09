@@ -45,7 +45,7 @@
 - [ ] SBC
 - [x] SEC
 - [x] SED
-- [ ] SEI
+- [x] SEI
 - [ ] STA
 - [ ] STX
 - [ ] STY
