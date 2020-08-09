@@ -246,7 +246,7 @@ impl Cpu {
             InstructionInputLocation::Address(address) => self.bus.read(address),
         };
         let result = input.wrapping_shl(1);
-        self.persist_result(result, target);
+        self.persist_result_by_location(result, target);
 
         self.set_status_flag_carry(input, result);
         self.set_status_flag_zero(result);
@@ -452,7 +452,7 @@ impl Cpu {
         self.registers.p.set(StatusFlags::NEGATIVE, value.is_bit_set(7));
     }
 
-    fn persist_result(&mut self, result: u8, target: InstructionInputLocation) {
+    fn persist_result_by_location(&mut self, result: u8, target: InstructionInputLocation) {
         match target {
             InstructionInputLocation::Accumulator => self.registers.a = result,
             InstructionInputLocation::Address(address) => self.bus.write(address, result),
