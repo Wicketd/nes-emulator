@@ -53,7 +53,7 @@
 - [x] TAY
 - [ ] TSX
 - [ ] TXA
-- [ ] TXS
+- [x] TXS
 - [ ] TYA
 
 ## Miscellaneous

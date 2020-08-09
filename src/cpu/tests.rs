@@ -646,3 +646,12 @@ fn process_tay_implied() {
     assert_eq!(cpu.registers.y, 0x80);
     assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
+
+#[test]
+fn process_txs_implied() {
+    let mut cpu = cpu(bus());
+    cpu.run_ldx(0xF4);
+
+    process_instruction(&mut cpu, &[0x9A]);
+    assert_eq!(cpu.registers.s, 0xF4);
+}

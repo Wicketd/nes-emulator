@@ -102,6 +102,7 @@ impl Instruction {
             0x8C => instruction!(Sty, Absolute,    4),
             0xAA => instruction!(Tax, Implied,     2),
             0xA8 => instruction!(Tay, Implied,     2),
+            0x9A => instruction!(Txs, Implied,     2),
             _ => unimplemented!("no instruction found for opcode `${:02X}`", opcode),
         }
     }
