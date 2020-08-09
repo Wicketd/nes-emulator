@@ -68,7 +68,7 @@ impl Cpu {
         // TODO: calculate final cycles
         self.clock.tick(instruction.cycles_base());
         self.call_instruction(instruction, &bytes)?;
-        self.registers.pc += len;
+        self.registers.pc = self.registers.pc.wrapping_add(len);
 
         Ok(())
     }
@@ -118,7 +118,7 @@ impl Cpu {
             InstructionOperation::Plp => self.run_plp(),
             InstructionOperation::Rol => self.run_rol(input.unwrap_location()?),
             InstructionOperation::Ror => self.run_ror(input.unwrap_location()?),
-            InstructionOperation::Rti => unimplemented!("call | Rti"),
+            InstructionOperation::Rti => self.run_rti(),
             InstructionOperation::Rts => unimplemented!("call | Rts"),
             InstructionOperation::Sbc => unimplemented!("call | Sbc"),
             InstructionOperation::Sec => self.run_sec(),
@@ -300,7 +300,7 @@ impl Cpu {
             self.generate_interrupt(BreakType::Program);
 
             // TODO: hacky, find better way to account for instruction length being added
-            self.registers.pc -= 1;
+            self.registers.pc = self.registers.pc.wrapping_sub(1);
         }
     }
 
@@ -493,6 +493,13 @@ impl Cpu {
         self.registers.p.set(StatusFlags::CARRY, input.is_bit_set(0));
         self.set_status_flag_zero(result);
         self.set_status_flag_negative(result);
+    }
+
+    fn run_rti(&mut self) {
+        self.registers.p = StatusFlags::from_bits(self.stack_pull()).unwrap();
+
+        // TODO: hacky, find better way to account for instruction length being added
+        self.registers.pc = self.stack_pull_u16().wrapping_sub(1);
     }
 
     fn run_sec(&mut self) {

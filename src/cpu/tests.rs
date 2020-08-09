@@ -865,6 +865,22 @@ fn process_ror_accumulator() {
 }
 
 #[test]
+fn process_rti_implied() {
+    let mut cpu = cpu(bus());
+    let flags = StatusFlags::DECIMAL | StatusFlags::ZERO;
+    cpu.registers.p = flags;
+
+    let pc_old = cpu.registers.pc;
+    // BRK
+    process_instruction(&mut cpu, &[0x00]);
+    cpu.registers.p = StatusFlags::empty();
+
+    process_instruction(&mut cpu, &[0x40]);
+    assert_eq!(cpu.registers.p, flags);
+    assert_eq!(cpu.registers.pc, pc_old);
+}
+
+#[test]
 fn process_sec_implied() {
     let mut cpu = cpu(bus());
     process_instruction(&mut cpu, &[0x38]);

@@ -40,7 +40,7 @@
 - [x] PLP
 - [x] ROL
 - [x] ROR
-- [ ] RTI
+- [x] RTI
 - [ ] RTS
 - [ ] SBC
 - [x] SEC
