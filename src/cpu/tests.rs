@@ -46,6 +46,11 @@ fn ldx_no_flags(cpu: &mut Cpu, value: u8) {
     cpu.registers.p = StatusFlags::empty();
 }
 
+fn ldy_no_flags(cpu: &mut Cpu, value: u8) {
+    process_instruction(cpu, &[0xA0, value]);
+    cpu.registers.p = StatusFlags::empty();
+}
+
 #[test]
 fn stack_push_pull() {
     let mut cpu = cpu(bus());
@@ -508,6 +513,23 @@ fn process_cpx_immediate() {
 
     ldx_no_flags(&mut cpu, 0x80);
     process_instruction(&mut cpu, &[0xE0, 0xFF]);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
+
+#[test]
+fn process_cpy_immediate() {
+    let mut cpu = cpu(bus());
+
+    ldy_no_flags(&mut cpu, 0x20);
+    process_instruction(&mut cpu, &[0xC0, 0x10]);
+    assert_eq!(cpu.registers.p, StatusFlags::CARRY);
+
+    ldy_no_flags(&mut cpu, 0xAA);
+    process_instruction(&mut cpu, &[0xC0, 0xAA]);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO | StatusFlags::CARRY);
+
+    ldy_no_flags(&mut cpu, 0x80);
+    process_instruction(&mut cpu, &[0xC0, 0xFF]);
     assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
 

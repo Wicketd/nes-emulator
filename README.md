@@ -18,7 +18,7 @@
 - [x] CLV
 - [x] CMP
 - [x] CPX
-- [ ] CPY
+- [x] CPY
 - [ ] DEC
 - [ ] DEX
 - [ ] DEY

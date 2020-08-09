@@ -96,7 +96,7 @@ impl Cpu {
             InstructionOperation::Clv => self.run_clv(),
             InstructionOperation::Cmp => self.run_cmp(self.resolve_input_byte(input)?),
             InstructionOperation::Cpx => self.run_cpx(self.resolve_input_byte(input)?),
-            InstructionOperation::Cpy => unimplemented!("call | Cpy"),
+            InstructionOperation::Cpy => self.run_cpy(self.resolve_input_byte(input)?),
             InstructionOperation::Dec => unimplemented!("call | Dec"),
             InstructionOperation::Dex => unimplemented!("call | Dex"),
             InstructionOperation::Dey => unimplemented!("call | Dey"),
@@ -343,6 +343,13 @@ impl Cpu {
         let result = self.registers.x.wrapping_sub(input);
         self.registers.p.set(StatusFlags::CARRY, self.registers.x >= input);
         self.registers.p.set(StatusFlags::ZERO, self.registers.x == input);
+        self.registers.p.set(StatusFlags::NEGATIVE, result.is_bit_set(7));
+    }
+
+    fn run_cpy(&mut self, input: u8) {
+        let result = self.registers.y.wrapping_sub(input);
+        self.registers.p.set(StatusFlags::CARRY, self.registers.y >= input);
+        self.registers.p.set(StatusFlags::ZERO, self.registers.y == input);
         self.registers.p.set(StatusFlags::NEGATIVE, result.is_bit_set(7));
     }
 
