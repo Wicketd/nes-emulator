@@ -17,7 +17,7 @@
 - [x] CLI
 - [x] CLV
 - [x] CMP
-- [ ] CPX
+- [x] CPX
 - [ ] CPY
 - [ ] DEC
 - [ ] DEX

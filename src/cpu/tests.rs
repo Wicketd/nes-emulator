@@ -41,6 +41,11 @@ fn lda_no_flags(cpu: &mut Cpu, value: u8) {
     cpu.registers.p = StatusFlags::empty();
 }
 
+fn ldx_no_flags(cpu: &mut Cpu, value: u8) {
+    process_instruction(cpu, &[0xA2, value]);
+    cpu.registers.p = StatusFlags::empty();
+}
+
 #[test]
 fn stack_push_pull() {
     let mut cpu = cpu(bus());
@@ -470,7 +475,7 @@ fn process_clv_implied() {
 }
 
 #[test]
-fn process_cmp_immediate() {
+fn process_cmp_absolute() {
     let mut cpu = cpu(bus());
 
     cpu.bus.write(INPUT_ADDRESS, 0x10);
@@ -486,6 +491,23 @@ fn process_cmp_immediate() {
     cpu.bus.write(INPUT_ADDRESS, 0xFF);
     lda_no_flags(&mut cpu, 0x80);
     process_instruction(&mut cpu, &[0xCD, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
+
+#[test]
+fn process_cpx_immediate() {
+    let mut cpu = cpu(bus());
+
+    ldx_no_flags(&mut cpu, 0x20);
+    process_instruction(&mut cpu, &[0xE0, 0x10]);
+    assert_eq!(cpu.registers.p, StatusFlags::CARRY);
+
+    ldx_no_flags(&mut cpu, 0xAA);
+    process_instruction(&mut cpu, &[0xE0, 0xAA]);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO | StatusFlags::CARRY);
+
+    ldx_no_flags(&mut cpu, 0x80);
+    process_instruction(&mut cpu, &[0xE0, 0xFF]);
     assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
 }
 
