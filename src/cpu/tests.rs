@@ -606,3 +606,23 @@ fn process_sty_absolute() {
     process_instruction(&mut cpu, &[0x8C, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
     assert_eq!(cpu.bus.read(INPUT_ADDRESS), 0xF4);
 }
+
+#[test]
+fn process_tax_implied() {
+    let mut cpu = cpu(bus());
+
+    cpu.run_lda(0x10);
+    process_instruction(&mut cpu, &[0xAA]);
+    assert_eq!(cpu.registers.x, 0x10);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    cpu.run_lda(0x00);
+    process_instruction(&mut cpu, &[0xAA]);
+    assert_eq!(cpu.registers.x, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    cpu.run_lda(0x80);
+    process_instruction(&mut cpu, &[0xAA]);
+    assert_eq!(cpu.registers.x, 0x80);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}

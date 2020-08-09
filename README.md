@@ -49,7 +49,7 @@
 - [x] STA
 - [x] STX
 - [x] STY
-- [ ] TAX
+- [x] TAX
 - [ ] TAY
 - [ ] TSX
 - [ ] TXA
