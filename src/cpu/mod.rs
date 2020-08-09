@@ -197,8 +197,8 @@ impl Cpu {
             },
             InstructionMode::IndirectY => {
                 Self::assert_input_len(2, bytes);
-                let address_indirect = bytes[1].wrapping_add(self.registers.y) as u16;
-                let address = self.bus.read_u16(address_indirect)?;
+                let address = self.bus.read_u16(bytes[1].into())?
+                    .wrapping_add(self.registers.y as u16);
                 InstructionInput::from_address(address)
             },
         };

@@ -57,6 +57,6 @@
 - [x] TYA
 
 ## Miscellaneous
-- [ ] Fix IndirectY, currently a copy of IndirectX, but should have separate indirection logic
+- [x] Fix IndirectY, currently a copy of IndirectX, but should have separate indirection logic
 - [ ] Check if status flags modified during instructions are only set if relevant, or _always_ overridden (latter is currently the case)
 - [ ] Check overflow and wrapping rules for each instruction

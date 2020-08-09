@@ -256,7 +256,7 @@ fn determine_input_indirect_x() {
 #[test]
 fn determine_input_indirect_y() {
     let mut bus = bus();
-    bus.write_u16(INPUT_ADDRESS_ZP + OFFSET_REGISTER_Y as u16, INPUT_ADDRESS).unwrap();
+    bus.write_u16(INPUT_ADDRESS_ZP, INPUT_ADDRESS).unwrap();
 
     let mut cpu = cpu(bus);
     cpu.registers.y = OFFSET_REGISTER_Y;
@@ -265,7 +265,7 @@ fn determine_input_indirect_y() {
         InstructionMode::IndirectY,
         &[INPUT_OPCODE, INPUT_ADDRESS_ZP as u8],
     ).unwrap();
-    assert_eq!(input, InstructionInput::from_address(INPUT_ADDRESS));
+    assert_eq!(input, InstructionInput::from_address(INPUT_ADDRESS + OFFSET_REGISTER_Y as u16));
 }
 
 #[test]
