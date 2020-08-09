@@ -29,7 +29,7 @@
 - [ ] JMP
 - [ ] JSR
 - [x] LDA
-- [ ] LDX
+- [x] LDX
 - [ ] LDY
 - [ ] LSR
 - [x] NOP

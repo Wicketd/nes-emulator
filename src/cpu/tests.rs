@@ -487,6 +487,23 @@ fn process_lda_immediate() {
 }
 
 #[test]
+fn proces_ldx_immediate() {
+    let mut cpu = cpu(bus());
+
+    process_instruction(&mut cpu, &[0xA2, 0x10]);
+    assert_eq!(cpu.registers.x, 0x10);
+    assert_eq!(cpu.registers.p, StatusFlags::empty());
+
+    process_instruction(&mut cpu, &[0xA2, 0x00]);
+    assert_eq!(cpu.registers.x, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO);
+
+    process_instruction(&mut cpu, &[0xA2, 0xF0]);
+    assert_eq!(cpu.registers.x, 0xF0);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
+
+#[test]
 fn process_pha_implied() {
     let mut cpu = cpu(bus());
     cpu.run_lda(0xF4);
@@ -552,5 +569,5 @@ fn process_sta_absolute() {
     cpu.run_lda(0xF4);
 
     process_instruction(&mut cpu, &[0x8D, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
-    assert_eq!(cpu.registers.a, 0xF4);
+    assert_eq!(cpu.bus.read(INPUT_ADDRESS), 0xF4);
 }
