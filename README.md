@@ -48,7 +48,7 @@
 - [x] SEI
 - [x] STA
 - [x] STX
-- [ ] STY
+- [x] STY
 - [ ] TAX
 - [ ] TAY
 - [ ] TSX

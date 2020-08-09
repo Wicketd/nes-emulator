@@ -97,6 +97,9 @@ impl Instruction {
             0x86 => instruction!(Stx, ZeroPage,    3),
             0x96 => instruction!(Stx, ZeroPageY,   4),
             0x8E => instruction!(Stx, Absolute,    4),
+            0x84 => instruction!(Sty, ZeroPage,    3),
+            0x94 => instruction!(Sty, ZeroPageX,   4),
+            0x8C => instruction!(Sty, Absolute,    4),
             _ => unimplemented!("no instruction found for opcode `${:02X}`", opcode),
         }
     }
