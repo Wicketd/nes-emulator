@@ -24,7 +24,7 @@
 - [x] DEY
 - [x] EOR
 - [x] INC
-- [ ] INX
+- [x] INX
 - [ ] INY
 - [ ] JMP
 - [ ] JSR
