@@ -44,7 +44,7 @@
 - [ ] RTS
 - [ ] SBC
 - [x] SEC
-- [ ] SED
+- [x] SED
 - [ ] SEI
 - [ ] STA
 - [ ] STX

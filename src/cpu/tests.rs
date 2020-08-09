@@ -531,3 +531,10 @@ fn process_sec_implied() {
     process_instruction(&mut cpu, &[0x38]);
     assert_eq!(cpu.registers.p, StatusFlags::CARRY);
 }
+
+#[test]
+fn process_sed_implied() {
+    let mut cpu = cpu(bus());
+    process_instruction(&mut cpu, &[0xF8]);
+    assert_eq!(cpu.registers.p, StatusFlags::DECIMAL);
+}
