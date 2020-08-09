@@ -16,7 +16,7 @@
 - [x] CLD
 - [x] CLI
 - [x] CLV
-- [ ] CMP
+- [x] CMP
 - [ ] CPX
 - [ ] CPY
 - [ ] DEC
@@ -58,3 +58,4 @@
 
 ## Miscellaneous
 - [ ] Check if status flags modified during instructions are only set if relevant, or _always_ overridden (latter is currently the case)
+- [ ] Check overflow and wrapping rules for each instruction

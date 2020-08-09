@@ -470,6 +470,26 @@ fn process_clv_implied() {
 }
 
 #[test]
+fn process_cmp_immediate() {
+    let mut cpu = cpu(bus());
+
+    cpu.bus.write(INPUT_ADDRESS, 0x10);
+    lda_no_flags(&mut cpu, 0x20);
+    process_instruction(&mut cpu, &[0xCD, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.registers.p, StatusFlags::CARRY);
+
+    cpu.bus.write(INPUT_ADDRESS, 0xAA);
+    lda_no_flags(&mut cpu, 0xAA);
+    process_instruction(&mut cpu, &[0xCD, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO | StatusFlags::CARRY);
+
+    cpu.bus.write(INPUT_ADDRESS, 0xFF);
+    lda_no_flags(&mut cpu, 0x80);
+    process_instruction(&mut cpu, &[0xCD, INPUT_ADDRESS_LOW, INPUT_ADDRESS_HIGH]);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+}
+
+#[test]
 fn process_lda_immediate() {
     let mut cpu = cpu(bus());
 

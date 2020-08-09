@@ -94,7 +94,7 @@ impl Cpu {
             InstructionOperation::Cld => self.run_cld(),
             InstructionOperation::Cli => self.run_cli(),
             InstructionOperation::Clv => self.run_clv(),
-            InstructionOperation::Cmp => unimplemented!("call | Cmp"),
+            InstructionOperation::Cmp => self.run_cmp(self.resolve_input_byte(input)?),
             InstructionOperation::Cpx => unimplemented!("call | Cpx"),
             InstructionOperation::Cpy => unimplemented!("call | Cpy"),
             InstructionOperation::Dec => unimplemented!("call | Dec"),
@@ -330,6 +330,13 @@ impl Cpu {
 
     fn run_clv(&mut self) {
         self.registers.p.remove(StatusFlags::OVERFLOW);
+    }
+
+    fn run_cmp(&mut self, input: u8) {
+        let result = self.registers.a.wrapping_sub(input);
+        self.registers.p.set(StatusFlags::CARRY, self.registers.a >= input);
+        self.registers.p.set(StatusFlags::ZERO, self.registers.a == input);
+        self.registers.p.set(StatusFlags::NEGATIVE, result.is_bit_set(7));
     }
 
     fn run_lda(&mut self, input: u8) {
