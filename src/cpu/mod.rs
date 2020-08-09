@@ -120,7 +120,7 @@ impl Cpu {
             InstructionOperation::Ror => self.run_ror(input.unwrap_location()?),
             InstructionOperation::Rti => self.run_rti(),
             InstructionOperation::Rts => self.run_rts(),
-            InstructionOperation::Sbc => unimplemented!("call | Sbc"),
+            InstructionOperation::Sbc => self.run_sbc(self.resolve_input_byte(input)?),
             InstructionOperation::Sec => self.run_sec(),
             InstructionOperation::Sed => self.run_sed(),
             InstructionOperation::Sei => self.run_sei(),
@@ -507,6 +507,11 @@ impl Cpu {
 
         // TODO: hacky, find better way to account for instruction length being added
         self.registers.pc = address.wrapping_sub(1);
+    }
+
+    // TODO: figure out how exactly this bad boy works with flags C/V
+    fn run_sbc(&mut self, input: u8) {
+        self.run_adc(!input);
     }
 
     fn run_sec(&mut self) {

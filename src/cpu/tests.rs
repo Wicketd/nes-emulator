@@ -897,6 +897,27 @@ fn process_rts_implied() {
 }
 
 #[test]
+fn process_sbc_immediate() {
+    let mut cpu = cpu(bus());
+    lda_no_flags(&mut cpu, 0xFF);
+
+    cpu.registers.p.insert(StatusFlags::CARRY);
+    process_instruction(&mut cpu, &[0xE9, 0x7F]);
+    assert_eq!(cpu.registers.a, 0x80);
+    assert_eq!(cpu.registers.p, StatusFlags::NEGATIVE);
+
+    cpu.registers.p.insert(StatusFlags::CARRY);
+    process_instruction(&mut cpu, &[0xE9, 0x01]);
+    assert_eq!(cpu.registers.a, 0x7F);
+    assert_eq!(cpu.registers.p, StatusFlags::OVERFLOW | StatusFlags::CARRY);
+
+    cpu.registers.p.insert(StatusFlags::CARRY);
+    process_instruction(&mut cpu, &[0xE9, 0x7F]);
+    assert_eq!(cpu.registers.a, 0x00);
+    assert_eq!(cpu.registers.p, StatusFlags::ZERO | StatusFlags::CARRY);
+}
+
+#[test]
 fn process_sec_implied() {
     let mut cpu = cpu(bus());
     process_instruction(&mut cpu, &[0x38]);
