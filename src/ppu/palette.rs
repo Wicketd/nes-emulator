@@ -1,5 +1,5 @@
 use crate::types::{Result, Asset};
-use piston_window::types::{Color, ColorComponent};
+use piston::types::{Color, ColorComponent};
 
 pub struct Palette(Vec<Color>);
 

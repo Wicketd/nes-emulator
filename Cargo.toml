@@ -9,4 +9,4 @@ anyhow = "1.0.31"
 bitflags = "1.2.1"
 getset = "0.1.1"
 rust-embed = "5.6.0"
-piston_window = "0.110.0"
+piston = { package = "piston_window", version = "0.110.0" }
