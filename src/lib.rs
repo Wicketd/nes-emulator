@@ -8,6 +8,7 @@ extern crate getset;
 mod types;
 mod bus;
 mod cpu;
+mod ppu;
 mod ui;
 
 use types::Result;
