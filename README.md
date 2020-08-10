@@ -15,4 +15,3 @@
 
 ## PPU
 - [ ] Pre-rendered frame buffer
-- [ ] Load palette colors from .pal file
