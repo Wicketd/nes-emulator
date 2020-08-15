@@ -1,5 +1,4 @@
 use std::ops::Shl;
-use rust_embed::RustEmbed;
 
 pub type Result<T = ()> = anyhow::Result<T>;
 
@@ -23,7 +22,3 @@ impl BitRead for u8 {
         self.read_bit(n) == 0
     }
 }
-
-#[derive(RustEmbed)]
-#[folder = "assets/"]
-pub struct Asset;
