@@ -29,7 +29,7 @@ impl Rom {
         let header = Self::read_header(&mut file)?;
 
         let mut bytes = vec![];
-        file.read_to_end(&mut bytes);
+        file.read_to_end(&mut bytes)?;
 
         Ok(Self {
             prg_size: header.prg_chunks as u32 * 16 * 1024,
@@ -40,7 +40,7 @@ impl Rom {
 
     fn read_header(file: &mut File) -> Result<Header> {
         let mut buffer = [0u8; 16];
-        file.read_exact(&mut buffer);
+        file.read_exact(&mut buffer)?;
 
         if buffer[0..=HEADER_LEN] == HEADER_BYTES {
             Ok(Header {
@@ -48,7 +48,7 @@ impl Rom {
                 chr_chunks: buffer[5],
             })
         } else {
-            error!(RomError::HeaderSignatureInvalid)
+            create_error!(RomError::HeaderSignatureInvalid)
         }
     }
 

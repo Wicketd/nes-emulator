@@ -1,5 +1,5 @@
 #![macro_use]
 
-macro_rules! error {
-    ($error:path) => { Err($error.into()) };
+macro_rules! create_error {
+    ($error:expr) => { Err($error.into()) };
 }
