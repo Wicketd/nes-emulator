@@ -68,9 +68,14 @@ struct Header {
 mod tests {
     use super::*;
 
+    fn load_test_rom(path: &str) -> Rom {
+        let path = format!("rom/{}.bin", path);
+        Rom::from_file(Path::new(&path)).unwrap()
+    }
+
     #[test]
     fn from_file() {
-        let rom = load_test_rom!("skeleton");
+        let rom = load_test_rom("skeleton");
         assert_eq!(rom.prg_size, 2 * 16 * 1024);
         assert_eq!(rom.chr_size, 8 * 1024);
         assert_ne!(rom.bytes[0..=HEADER_LEN], HEADER_BYTES);
