@@ -1,10 +1,7 @@
 use crate::types::Result;
+use crate::bus::DeviceRead;
 use anyhow::Context;
-use std::{
-    path::Path,
-    fs::File,
-    io::Read,
-};
+use std::{fs::File, io::Read, path::Path};
 
 const HEADER_LEN: usize = 3;
 const HEADER_BYTES: [u8; 4] = [0x4E, 0x45, 0x53, 0x1A];
@@ -23,8 +20,7 @@ pub struct Rom {
 
 impl Rom {
     pub fn from_file(path: &Path) -> Result<Self> {
-        let mut file = File::open(path)
-            .with_context(|| "failed to read rom file")?;
+        let mut file = File::open(path).with_context(|| "failed to read ROM file")?;
 
         let header = Self::read_header(&mut file)?;
 
@@ -54,6 +50,12 @@ impl Rom {
 
     pub fn as_bytes(self) -> Vec<u8> {
         self.bytes
+    }
+}
+
+impl DeviceRead for Rom {
+    fn device_read(&self, address: u16) -> u8 {
+        0
     }
 }
 

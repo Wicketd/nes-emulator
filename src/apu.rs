@@ -1,21 +1,20 @@
 use crate::bus::{DeviceRead, DeviceWrite};
 
-pub struct Ppu {}
+pub struct Apu {}
 
-impl Ppu {
+impl Apu {
     pub fn new() -> Self {
         Self {}
     }
 }
 
-impl DeviceRead for Ppu {
+impl DeviceRead for Apu {
     fn device_read(&self, address: u16) -> u8 {
         0
     }
 }
 
-impl DeviceWrite for Ppu {
+impl DeviceWrite for Apu {
     fn device_write(&mut self, address: u16, value: u8) {
-
     }
 }

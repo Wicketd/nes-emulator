@@ -1,70 +1,48 @@
-use crate::types::Result;
+use crate::apu::Apu;
 use crate::ppu::Ppu;
-
-#[derive(Error, Debug)]
-pub enum BusError {
-    #[error("no device found at address `${0:04X}`")]
-    DeviceNotFound(u16),
-}
+use crate::rom::Rom;
 
 pub struct Bus {
-    connections: Vec<DeviceConnection>,
-}
-
-struct DeviceConnection {
-    device: BusDevice,
-    address_start: u16,
-    address_end: u16,
-}
-
-#[derive(Debug)]
-pub enum BusDevice {
-    Ppu(Ppu),
+    ppu: Ppu,
+    apu: Apu,
+    rom: Rom,
 }
 
 impl Bus {
-    pub fn new() -> Self {
-        Self { connections: vec![] }
+    pub fn new(ppu: Ppu, apu: Apu, rom: Rom) -> Self {
+        Self { ppu, apu, rom }
     }
 
-    pub fn connect_device(&mut self, device: BusDevice, address_start: u16, address_end: u16) {
-        info!("connecting device {:?} to address range `${:04X}..=${:04X}", device, address_start, address_end);
-        self.connections.push(DeviceConnection { device, address_start, address_end });
+    pub fn read(&self, address: u16) -> u8 {
+        self.select_device(address).device_read(address)
     }
 
-    pub fn read(&self, address: u16) -> Result<u8> {
-        let result = match self.get_device(address)? {
-            BusDevice::Ppu(device) => device.bus_read(address),
-        };
-
-        Ok(result)
-    }
-
-    fn get_device(&self, address: u16) -> Result<&BusDevice> {
-        self.connections.iter().find_map(|connection| {
-            if address >= connection.address_start && address <= connection.address_end {
-                Some(&connection.device)
-            } else {
-                None
-            }
-        }).ok_or_else(|| BusError::DeviceNotFound(address).into())
-    }
-
-    pub fn write(&self, address: u16, value: u8) -> Result {
-        match self.get_device_mut(address)? {
-            BusDevice::Ppu(device) => device.bus_write(address, value),
+    fn select_device(&self, address: u16) -> &dyn DeviceRead {
+        match address {
+            (0x2000..=0x3FFF) => &self.ppu as &dyn DeviceRead,
+            (0x4000..=0x401F) => &self.apu as &dyn DeviceRead,
+            (0x4200..=0xFFFF) => &self.rom as &dyn DeviceRead,
+            _ => unimplemented!("no readable device connected to address `${:04X}`", address),
         }
-
-        Ok(())
     }
 
-    fn get_device_mut(&mut self, address: u16) -> Result<&mut BusDevice> {
-        self.connections.iter_mut().find_map(|connection| {
-            if address >= connection.address_start && address <= connection.address_end {
-                Some(&mut connection.device)
-            } else {
-                None
-            }
-        }).ok_or_else(|| BusError::DeviceNotFound(address).into())
+    pub fn write(&mut self, address: u16, value: u8) {
+        self.select_device_mut(address).device_write(address, value)
     }
+
+    fn select_device_mut(&mut self, address: u16) -> &mut dyn DeviceWrite {
+        match address {
+            (0x2000..=0x3FFF) => &mut self.ppu as &mut dyn DeviceWrite,
+            (0x4000..=0x401F) => &mut self.apu as &mut dyn DeviceWrite,
+            _ => unimplemented!("no writable device connected to address `${:04X}`", address),
+        }
+    }
+}
+
+pub trait DeviceRead {
+    fn device_read(&self, address: u16) -> u8;
+}
+
+pub trait DeviceWrite {
+    fn device_write(&mut self, address: u16, value: u8);
 }

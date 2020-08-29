@@ -3,6 +3,8 @@ extern crate anyhow;
 #[macro_use]
 extern crate bitflags;
 #[macro_use]
+extern crate enum_dispatch;
+#[macro_use]
 extern crate getset;
 #[macro_use]
 extern crate thiserror;
@@ -11,25 +13,29 @@ extern crate log;
 
 #[rustfmt::skip]
 mod macros;
-mod types;
 mod bus;
-mod rom;
+mod apu;
 mod ppu;
+mod rom;
+mod types;
 
 use types::Result;
-use bus::{Bus, BusDevice};
+use bus::Bus;
+use apu::Apu;
 use ppu::Ppu;
+use rom::Rom;
 
 pub fn run() -> Result {
     // TODO: remove me
     std::env::set_var("RUST_LOG", "info");
-
     pretty_env_logger::init();
 
-    let mut bus = Bus::new();
-
-    let ppu = Ppu::new();
-    bus.connect_device(BusDevice::Ppu(ppu), 0x2000, 0x3FFF);
+    let mut bus = Bus::new(
+        Ppu::new(),
+        Apu::new(),
+        // TODO: remove me
+        Rom::from_file(std::path::Path::new("test"))?
+    );
 
     Ok(())
 }
