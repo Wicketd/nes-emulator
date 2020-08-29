@@ -1,7 +1,8 @@
 .PHONY: test build-rom clean
 
-TEST_ROM_DIR := tests/rom
-TEST_ROM_BIN := $(TEST_ROM_DIR)/main.bin
+TEST_ROM_DIR := rom
+TEST_ROM_SRC := $(wildcard $(TEST_ROM_DIR)/*.s)
+TEST_ROM_BIN := $(TEST_ROM_SRC:.s=.bin)
 
 test: build-rom
 	cargo test

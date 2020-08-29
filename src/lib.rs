@@ -3,8 +3,6 @@ extern crate anyhow;
 #[macro_use]
 extern crate bitflags;
 #[macro_use]
-extern crate enum_dispatch;
-#[macro_use]
 extern crate getset;
 #[macro_use]
 extern crate thiserror;
