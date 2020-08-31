@@ -11,6 +11,7 @@ extern crate log;
 
 #[rustfmt::skip]
 mod macros;
+mod constants;
 mod bus;
 mod apu;
 mod ppu;
