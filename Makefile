@@ -14,7 +14,7 @@ clean:
 	cargo clean
 
 %.bin: %.o
-	ld65 --config config/nrom_256.cfg $< -o $@
+	ld65 --config $(TEST_ROM_DIR)/config/nrom_256.cfg $< -o $@
 
 %.o: %.s
 	ca65 $<
